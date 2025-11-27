@@ -1,0 +1,7 @@
+{
+  "name": "resolveit-ecommerce-grievance",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "mvnw.cmd spring-boot:run"
+  }
+}

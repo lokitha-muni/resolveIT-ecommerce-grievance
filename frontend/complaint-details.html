@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Details – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="complaint-details-body">
+    <!-- Split Background -->
+    <div class="complaint-split-bg">
+        <div class="complaint-bg-left"></div>
+        <div class="complaint-bg-right"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="complaint-main">
+        <!-- Top Navigation -->
+        <nav class="complaint-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AK</div>
+                <span>Hi, Aisha Khan</span>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="nav-btn">Dashboard</a>
+                <a href="about.html" class="nav-btn">About</a>
+                <button class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1>Complaint Details</h1>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="complaint-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Complaint Header Card -->
+                <div class="complaint-header-card">
+                    <div class="detail-row">
+                        <span class="label">Complaint ID:</span>
+                        <span class="value">CMP-001</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Order ID:</span>
+                        <span class="value">ORD-12345</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Category:</span>
+                        <span class="value">Wrong Product</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Date Submitted:</span>
+                        <span class="value">May 8, 2024</span>
+                    </div>
+                </div>
+
+                <!-- Status Tracker -->
+                <div class="status-tracker-card">
+                    <h3>Complaint Status</h3>
+                    <div class="progress-tracker">
+                        <div class="step completed">
+                            <div class="step-circle">✓</div>
+                            <span class="step-label">Submitted</span>
+                        </div>
+                        <div class="progress-line completed"></div>
+                        <div class="step completed">
+                            <div class="step-circle">✓</div>
+                            <span class="step-label">Under Review</span>
+                        </div>
+                        <div class="progress-line completed"></div>
+                        <div class="step current">
+                            <div class="step-circle">3</div>
+                            <span class="step-label">Assigned</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="step">
+                            <div class="step-circle">4</div>
+                            <span class="step-label">In Progress</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="step">
+                            <div class="step-circle">5</div>
+                            <span class="step-label">Resolved</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Notes Timeline -->
+                <div class="timeline-card">
+                    <h3>Admin Notes / Updates</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">May 10, 2024</div>
+                            <div class="timeline-content">We are reviewing your issue</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">May 9, 2024</div>
+                            <div class="timeline-content">Case assigned to support agent</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">May 8, 2024</div>
+                            <div class="timeline-content">Complaint submitted successfully</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- User View Card -->
+                <div class="user-view-card">
+                    <h3>User View</h3>
+                    <p class="resolution-time">Estimated resolution time: 2-3 business days</p>
+                    <div class="messaging-box">
+                        <input type="text" placeholder="Type a message..." class="message-input">
+                        <button class="send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

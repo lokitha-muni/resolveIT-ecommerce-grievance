@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard – ResolveIT Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Background -->
+    <div class="split-background"></div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AD</div>
+                <span>Hi, Admin</span>
+            </div>
+            <div class="nav-right">
+                <a href="about.html" class="nav-btn">About</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Total Complaints</div>
+                <div class="stat-number">45</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Pending Review</div>
+                <div class="stat-number">3</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-label">In Progress</div>
+                <div class="stat-number">7</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Resolved Today</div>
+                <div class="stat-number">12</div>
+            </div>
+        </section>
+
+        <!-- Admin Actions -->
+        <div class="action-button-container">
+            <button class="primary-action-btn">Manage All Complaints</button>
+        </div>
+
+        <!-- Complaints Management Section -->
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Complaint Management</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Complaint ID</th>
+                                <th>Customer</th>
+                                <th>Order ID</th>
+                                <th>Issue Type</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CMP-001</td>
+                                <td>John Doe</td>
+                                <td>ORD-12345</td>
+                                <td><span class="tag orange">Wrong Product</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="tag yellow">Pending</span></td>
+                                <td>Agent Smith</td>
+                                <td>
+                                    <button class="action-btn update">Update</button>
+                                    <button class="action-btn assign">Assign</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CMP-002</td>
+                                <td>Jane Smith</td>
+                                <td>ORD-67890</td>
+                                <td><span class="tag blue">Late Delivery</span></td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td><span class="tag blue">In Progress</span></td>
+                                <td>Agent Johnson</td>
+                                <td>
+                                    <button class="action-btn update">Update</button>
+                                    <button class="action-btn resolve">Resolve</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CMP-003</td>
+                                <td>Mike Wilson</td>
+                                <td>ORD-11223</td>
+                                <td><span class="tag orange">Damaged Product</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="tag green">Resolved</span></td>
+                                <td>Agent Davis</td>
+                                <td>
+                                    <button class="action-btn view">View Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CMP-004</td>
+                                <td>Sarah Brown</td>
+                                <td>ORD-44556</td>
+                                <td><span class="tag yellow">Missing Item</span></td>
+                                <td><span class="priority low">Low</span></td>
+                                <td><span class="tag yellow">Pending</span></td>
+                                <td>Unassigned</td>
+                                <td>
+                                    <button class="action-btn assign">Assign</button>
+                                    <button class="action-btn update">Update</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Admin Tools -->
+        <section class="admin-tools">
+            <div class="dashboard-container">
+                <h2>Admin Tools</h2>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">👥</div>
+                        <h3>Manage Agents</h3>
+                        <p>Add, remove, or update support agents</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📈</div>
+                        <h3>Analytics</h3>
+                        <p>View detailed reports and statistics</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">⚙️</div>
+                        <h3>System Settings</h3>
+                        <p>Configure system preferences</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📧</div>
+                        <h3>Notifications</h3>
+                        <p>Manage system notifications</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
