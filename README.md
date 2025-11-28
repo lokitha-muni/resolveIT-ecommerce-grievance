@@ -23,18 +23,20 @@ Ecommerce_grievance/
 
 ## 🚀 Running the Application
 
-### Backend (Spring Boot)
+### Start Both Frontend & Backend Together
 ```bash
-cd backend/test-spring
 npm start
-# Server runs on: http://localhost:9090
+# Backend runs on: http://localhost:9090
+# Frontend runs on: http://localhost:3000
 ```
 
-### Frontend (Static Files)
+### Individual Services (Optional)
 ```bash
-cd frontend
-npm start
-# Frontend runs on: http://localhost:3000
+# Backend only
+npm run backend
+
+# Frontend only
+npm run frontend
 ```
 
 ## 🔌 API Endpoints

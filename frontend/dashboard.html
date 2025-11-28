@@ -19,11 +19,11 @@
         <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo">AK</div>
+                <div class="profile-photo" onclick="window.location.href='edit-profile.html'">AK</div>
                 <span>Hi, Aisha Khan</span>
             </div>
             <div class="nav-right">
-                <div class="bell-icon">🔔</div>
+                <div class="bell-icon" onclick="toggleNotifications()">🔔<span class="notification-badge">3</span></div>
                 <a href="index.html" class="logout-btn">Logout</a>
             </div>
         </nav>
@@ -54,7 +54,7 @@
 
         <!-- Primary Action Button -->
         <div class="action-button-container">
-            <button class="primary-action-btn">Submit New Order Issue</button>
+            <button class="primary-action-btn" onclick="window.location.href='submit-complaint.html'">Submit New Order Issue</button>
         </div>
 
         <!-- Recent Complaints Section -->
@@ -107,5 +107,82 @@
             </div>
         </section>
     </div>
+
+    <!-- Notifications Popup -->
+    <div id="notificationsPopup" class="notifications-popup">
+        <div class="notifications-header">
+            <h3>Notifications</h3>
+            <button class="close-btn" onclick="toggleNotifications()">×</button>
+        </div>
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-icon">✅</div>
+                <div class="notification-content">
+                    <div class="notification-title">Complaint Resolved</div>
+                    <div class="notification-text">Your complaint CMP-001 has been resolved successfully.</div>
+                    <div class="notification-time">2 hours ago</div>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon">🔄</div>
+                <div class="notification-content">
+                    <div class="notification-title">Status Update</div>
+                    <div class="notification-text">Your complaint CMP-002 is now in progress.</div>
+                    <div class="notification-time">1 day ago</div>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon">📧</div>
+                <div class="notification-content">
+                    <div class="notification-title">New Message</div>
+                    <div class="notification-text">Support team has replied to your complaint CMP-003.</div>
+                    <div class="notification-time">2 days ago</div>
+                </div>
+            </div>
+            <div class="notification-item read">
+                <div class="notification-icon">📝</div>
+                <div class="notification-content">
+                    <div class="notification-title">Complaint Received</div>
+                    <div class="notification-text">We have received your complaint CMP-004 and will review it shortly.</div>
+                    <div class="notification-time">3 days ago</div>
+                </div>
+            </div>
+        </div>
+        <div class="notifications-footer">
+            <button class="mark-all-read-btn" onclick="markAllAsRead()">Mark All as Read</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleNotifications() {
+            const popup = document.getElementById('notificationsPopup');
+            popup.classList.toggle('show');
+        }
+
+        function markAllAsRead() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            unreadItems.forEach(item => {
+                item.classList.remove('unread');
+                item.classList.add('read');
+            });
+            
+            // Update badge
+            const badge = document.querySelector('.notification-badge');
+            badge.textContent = '0';
+            badge.style.display = 'none';
+            
+            alert('All notifications marked as read!');
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(event) {
+            const popup = document.getElementById('notificationsPopup');
+            const bellIcon = document.querySelector('.bell-icon');
+            
+            if (!popup.contains(event.target) && !bellIcon.contains(event.target)) {
+                popup.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

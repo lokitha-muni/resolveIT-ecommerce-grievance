@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Split Background -->
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AK</div>
+                <span>Hi, Aisha Khan</span>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Edit Profile</h1>
+            <p>Update your personal information and preferences</p>
+        </section>
+
+
+
+        <!-- Profile Form -->
+        <section class="profile-form-section">
+            <div class="form-container">
+                <!-- Profile Picture Section -->
+                <div class="profile-pic-inline">
+                    <div class="profile-pic-container">
+                        <div class="large-profile-photo">AK</div>
+                        <div class="upload-overlay" onclick="document.getElementById('profilePicture').click()">
+                            <span>📷</span>
+                        </div>
+                    </div>
+                    <input type="file" id="profilePicture" accept="image/*" style="display: none;">
+                    <div class="profile-pic-info">
+                        <h3>Profile Picture</h3>
+                        <p>Click the camera icon to change your photo</p>
+                    </div>
+                </div>
+                
+                <div class="form-card modern-form">
+                    <form id="profileForm" class="profile-form">
+                        <!-- Personal Information -->
+                        <div class="form-section-title">
+                            <div class="section-icon">👤</div>
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Update your basic details</p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" value="Aisha" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" value="Khan" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" value="aisha.khan@example.com" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" id="dateOfBirth" value="1995-06-15">
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="form-section-title">
+                            <div class="section-icon">🏠</div>
+                            <div>
+                                <h3>Address Information</h3>
+                                <p>Your delivery and billing address</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Street Address</label>
+                            <input type="text" id="address" value="123 Main Street, Apt 4B">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" value="New York">
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State/Province</label>
+                                <input type="text" id="state" value="NY">
+                            </div>
+                            <div class="form-group">
+                                <label for="zipCode">ZIP/Postal Code</label>
+                                <input type="text" id="zipCode" value="10001">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <select id="country">
+                                <option value="US" selected>United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="AU">Australia</option>
+                                <option value="IN">India</option>
+                                <option value="DE">Germany</option>
+                                <option value="FR">France</option>
+                                <option value="JP">Japan</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div class="form-section-title">
+                            <div class="section-icon">🔔</div>
+                            <div>
+                                <h3>Notification Preferences</h3>
+                                <p>Choose how you want to be notified</p>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="checkmark"></span>
+                                Email notifications for complaint updates
+                            </label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="smsNotifications">
+                                <span class="checkmark"></span>
+                                SMS notifications for urgent updates
+                            </label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="marketingEmails">
+                                <span class="checkmark"></span>
+                                Receive promotional emails and offers
+                            </label>
+                        </div>
+
+                        <!-- Security -->
+                        <div class="form-section-title">
+                            <div class="section-icon">🔒</div>
+                            <div>
+                                <h3>Security Settings</h3>
+                                <p>Keep your account secure</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" placeholder="Enter current password to change">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions modern-actions">
+                            <button type="button" class="cancel-btn modern-cancel" onclick="window.location.href='dashboard.html'">
+                                <span class="btn-icon">←</span>
+                                Cancel
+                            </button>
+                            <button type="submit" class="submit-btn modern-submit">
+                                <span class="btn-icon">✓</span>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Profile picture change handler
+        document.getElementById('profilePicture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const profilePic = document.querySelector('.large-profile-photo');
+                    profilePic.style.backgroundImage = `url(${e.target.result})`;
+                    profilePic.style.backgroundSize = 'cover';
+                    profilePic.style.backgroundPosition = 'center';
+                    profilePic.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form submission handler
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const profileData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                dateOfBirth: document.getElementById('dateOfBirth').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                zipCode: document.getElementById('zipCode').value,
+                country: document.getElementById('country').value,
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                smsNotifications: document.getElementById('smsNotifications').checked,
+                marketingEmails: document.getElementById('marketingEmails').checked
+            };
+
+            // Password validation if changing password
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword || confirmPassword) {
+                if (!currentPassword) {
+                    alert('Please enter your current password to change it.');
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match.');
+                    return;
+                }
+                if (newPassword.length < 6) {
+                    alert('New password must be at least 6 characters long.');
+                    return;
+                }
+                profileData.newPassword = newPassword;
+            }
+
+            // Validate required fields
+            if (!profileData.firstName || !profileData.lastName || !profileData.email) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Simulate saving (in real app, this would call backend API)
+            console.log('Profile updated:', profileData);
+            
+            // Show success message
+            alert('Profile updated successfully!');
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>

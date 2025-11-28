@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Agents – ResolveIT Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AD</div>
+                <span>Admin - Manage Agents</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">← Back to Dashboard</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-label">Total Agents</div>
+                <div class="stat-number">12</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Agents</div>
+                <div class="stat-number">10</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-label">On Break</div>
+                <div class="stat-number">2</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-label">Avg Performance</div>
+                <div class="stat-number">4.6/5</div>
+            </div>
+        </section>
+
+        <div class="action-button-container">
+            <button class="primary-action-btn" onclick="addAgent()">Add New Agent</button>
+        </div>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Support Agents</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Agent ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Current Load</th>
+                                <th>Performance</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>AGT-001</strong></td>
+                                <td>Agent Smith</td>
+                                <td>smith@resolveit.com</td>
+                                <td><span class="status-badge resolved">Active</span></td>
+                                <td>4 complaints</td>
+                                <td>4.8/5</td>
+                                <td>Jan 2024</td>
+                                <td>
+                                    <button class="action-btn update" onclick="editAgent('AGT-001')">Edit</button>
+                                    <button class="action-btn escalate" onclick="deactivateAgent('AGT-001')">Deactivate</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>AGT-002</strong></td>
+                                <td>Agent Johnson</td>
+                                <td>johnson@resolveit.com</td>
+                                <td><span class="status-badge resolved">Active</span></td>
+                                <td>3 complaints</td>
+                                <td>4.5/5</td>
+                                <td>Feb 2024</td>
+                                <td>
+                                    <button class="action-btn update" onclick="editAgent('AGT-002')">Edit</button>
+                                    <button class="action-btn escalate" onclick="deactivateAgent('AGT-002')">Deactivate</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>AGT-003</strong></td>
+                                <td>Agent Davis</td>
+                                <td>davis@resolveit.com</td>
+                                <td><span class="status-badge progress">On Break</span></td>
+                                <td>0 complaints</td>
+                                <td>4.7/5</td>
+                                <td>Mar 2024</td>
+                                <td>
+                                    <button class="action-btn update" onclick="editAgent('AGT-003')">Edit</button>
+                                    <button class="action-btn resolve" onclick="activateAgent('AGT-003')">Activate</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function addAgent() {
+            const name = prompt('Enter agent name:');
+            const email = prompt('Enter agent email:');
+            if (name && email) {
+                alert(`Agent ${name} (${email}) added successfully!`);
+            }
+        }
+
+        function editAgent(id) {
+            const newName = prompt(`Edit agent ${id}:\nEnter new name:`);
+            if (newName) {
+                alert(`Agent ${id} updated successfully!`);
+            }
+        }
+
+        function deactivateAgent(id) {
+            if (confirm(`Deactivate agent ${id}?`)) {
+                alert(`Agent ${id} deactivated!`);
+            }
+        }
+
+        function activateAgent(id) {
+            if (confirm(`Activate agent ${id}?`)) {
+                alert(`Agent ${id} activated!`);
+            }
+        }
+    </script>
+</body>
+</html>
