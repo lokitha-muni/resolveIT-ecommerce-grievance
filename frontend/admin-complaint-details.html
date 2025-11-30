@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Complaint Details – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="complaint-details-body">
+    <!-- Split Background -->
+    <div class="complaint-split-bg"></div>
+
+    <!-- Main Container -->
+    <div class="complaint-main">
+        <!-- Top Navigation -->
+        <nav class="complaint-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AD</div>
+                <span>Admin View - Complaint Details</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">← Dashboard</a>
+                <a href="admin-complaints.html" class="nav-btn">All Complaints</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1 id="adminComplaintTitle">Admin View - Complaint CMP-001</h1>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="complaint-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Complaint Header Card -->
+                <div class="complaint-header-card">
+                    <div class="detail-row">
+                        <span class="label">Complaint ID:</span>
+                        <span class="value" id="adminComplaintId">CMP-001</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Customer:</span>
+                        <span class="value" id="adminCustomerName">John Doe</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Email:</span>
+                        <span class="value" id="adminCustomerEmail">john.doe@email.com</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Phone:</span>
+                        <span class="value" id="adminCustomerPhone">+1 (555) 123-4567</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Order ID:</span>
+                        <span class="value" id="adminOrderId">ORD-12345</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Issue Type:</span>
+                        <span class="value" id="adminIssueType">Wrong Product</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Priority:</span>
+                        <span class="value" id="adminPriority">High</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Current Status:</span>
+                        <span class="value" id="adminStatus">Pending</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Assigned Agent:</span>
+                        <span class="value" id="adminAssignedAgent">Agent Smith</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Date Created:</span>
+                        <span class="value" id="adminDateCreated">May 8, 2024</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">SLA Deadline:</span>
+                        <span class="value" id="adminSlaDeadline">May 10, 2024 - 4:00 PM</span>
+                    </div>
+                </div>
+
+                <!-- Customer Description -->
+                <div class="complaint-header-card">
+                    <h3>Customer Description</h3>
+                    <div class="customer-description" id="adminCustomerDescription">
+                        I ordered a blue wireless headphone (Model: WH-1000XM4) but received a red wired headphone instead. The package was sealed properly but contained the wrong item. I need the correct product delivered as soon as possible as this was a gift for my daughter's birthday.
+                    </div>
+                </div>
+
+                <!-- Status History -->
+                <div class="timeline-card">
+                    <h3>Status History & Admin Notes</h3>
+                    <div class="timeline" id="adminTimeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">May 10, 2024 - 2:30 PM</div>
+                            <div class="timeline-content">Admin assigned complaint to Agent Smith. Priority set to High due to customer tier.</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">May 9, 2024 - 10:15 AM</div>
+                            <div class="timeline-content">Initial review completed by system. Issue type confirmed as "Wrong Product".</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">May 8, 2024 - 4:45 PM</div>
+                            <div class="timeline-content">Complaint submitted by customer via online portal. Auto-assigned ID: CMP-001.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Admin Actions Card -->
+                <div class="user-view-card">
+                    <h3>Admin Actions</h3>
+                    <div class="admin-actions">
+                        <button class="admin-action-btn priority" onclick="changePriority()">Change Priority</button>
+                        <button class="admin-action-btn assign" onclick="reassignAgent()">Reassign Agent</button>
+                        <button class="admin-action-btn status" onclick="updateStatus()">Update Status</button>
+                        <button class="admin-action-btn escalate" onclick="escalateToManager()">Escalate to Manager</button>
+                        <button class="admin-action-btn close" onclick="forceClose()">Force Close</button>
+                    </div>
+                </div>
+
+                <!-- Agent Performance -->
+                <div class="user-view-card">
+                    <h3>Agent Performance</h3>
+                    <div class="agent-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Response Time:</span>
+                            <span class="stat-value">1.2h</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Resolution Rate:</span>
+                            <span class="stat-value">89%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Current Workload:</span>
+                            <span class="stat-value">4 complaints</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Customer Rating:</span>
+                            <span class="stat-value">4.7/5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="user-view-card">
+                    <h3>System Information</h3>
+                    <div class="system-info">
+                        <div class="info-item">
+                            <span class="info-label">Customer Tier:</span>
+                            <span class="info-value">Premium</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Order Value:</span>
+                            <span class="info-value">$299.99</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Previous Complaints:</span>
+                            <span class="info-value">2 (All Resolved)</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Account Status:</span>
+                            <span class="info-value">Active - Good Standing</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">SLA Status:</span>
+                            <span class="info-value sla-warning">⚠️ 2h remaining</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Notes -->
+                <div class="user-view-card">
+                    <h3>Admin Notes</h3>
+                    <div class="admin-notes">
+                        <textarea placeholder="Add internal admin notes..." class="admin-note-input" id="adminNotes"></textarea>
+                        <button class="admin-note-btn" onclick="saveAdminNote()">Save Note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get complaint ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const complaintId = urlParams.get('id') || 'CMP-001';
+
+        // Admin complaint data
+        const adminComplaintData = {
+            'CMP-001': {
+                customer: 'John Doe',
+                email: 'john.doe@email.com',
+                phone: '+1 (555) 123-4567',
+                orderId: 'ORD-12345',
+                issueType: 'Wrong Product',
+                priority: 'High',
+                status: 'Pending',
+                assignedAgent: 'Agent Smith',
+                description: 'I ordered a blue wireless headphone (Model: WH-1000XM4) but received a red wired headphone instead. The package was sealed properly but contained the wrong item. I need the correct product delivered as soon as possible as this was a gift for my daughter\'s birthday.'
+            },
+            'CMP-002': {
+                customer: 'Jane Smith',
+                email: 'jane.smith@email.com',
+                phone: '+1 (555) 987-6543',
+                orderId: 'ORD-67890',
+                issueType: 'Late Delivery',
+                priority: 'Medium',
+                status: 'In Progress',
+                assignedAgent: 'Agent Johnson',
+                description: 'My order was supposed to be delivered 3 days ago but I still haven\'t received it. The tracking shows it\'s been stuck at the local facility.'
+            },
+            'CMP-003': {
+                customer: 'Mike Wilson',
+                email: 'mike.wilson@email.com',
+                phone: '+1 (555) 456-7890',
+                orderId: 'ORD-11223',
+                issueType: 'Damaged Product',
+                priority: 'High',
+                status: 'Resolved',
+                assignedAgent: 'Agent Davis',
+                description: 'The laptop I received has a cracked screen and damaged keyboard. The packaging was also damaged when it arrived.'
+            },
+            'CMP-004': {
+                customer: 'Sarah Brown',
+                email: 'sarah.brown@email.com',
+                phone: '+1 (555) 321-9876',
+                orderId: 'ORD-44556',
+                issueType: 'Missing Item',
+                priority: 'Low',
+                status: 'Unassigned',
+                assignedAgent: 'Not Assigned',
+                description: 'One item from my order is missing. I ordered 3 books but only received 2. The missing book is "JavaScript Guide".'
+            },
+            'CMP-005': {
+                customer: 'Alice Johnson',
+                email: 'alice.j@email.com',
+                phone: '+1 (555) 789-0123',
+                orderId: 'ORD-77889',
+                issueType: 'Late Delivery',
+                priority: 'Medium',
+                status: 'In Progress',
+                assignedAgent: 'Agent Smith',
+                description: 'My package is 2 days late. I need it for an event this weekend. Please expedite the delivery.'
+            },
+            'CMP-007': {
+                customer: 'Bob Wilson',
+                email: 'bob.wilson@email.com',
+                phone: '+1 (555) 654-3210',
+                orderId: 'ORD-99001',
+                issueType: 'Damaged Item',
+                priority: 'High',
+                status: 'Pending',
+                assignedAgent: 'Agent Johnson',
+                description: 'The product arrived with significant damage. The box was crushed and the item inside is unusable.'
+            }
+        };
+
+        // Load complaint data
+        function loadAdminComplaintData() {
+            const data = adminComplaintData[complaintId];
+            if (data) {
+                document.getElementById('adminComplaintTitle').textContent = `Admin View - Complaint ${complaintId}`;
+                document.getElementById('adminComplaintId').textContent = complaintId;
+                document.getElementById('adminCustomerName').textContent = data.customer;
+                document.getElementById('adminCustomerEmail').textContent = data.email;
+                document.getElementById('adminCustomerPhone').textContent = data.phone;
+                document.getElementById('adminOrderId').textContent = data.orderId;
+                document.getElementById('adminIssueType').textContent = data.issueType;
+                document.getElementById('adminPriority').textContent = data.priority;
+                document.getElementById('adminStatus').textContent = data.status;
+                document.getElementById('adminAssignedAgent').textContent = data.assignedAgent;
+                document.getElementById('adminCustomerDescription').textContent = data.description;
+            }
+        }
+
+        function changePriority() {
+            const newPriority = prompt('Set new priority (High, Medium, Low):');
+            if (newPriority) {
+                document.getElementById('adminPriority').textContent = newPriority;
+                alert(`Priority changed to: ${newPriority}`);
+                addAdminTimelineItem(`Priority changed to ${newPriority} by Admin`);
+            }
+        }
+
+        function reassignAgent() {
+            const newAgent = prompt('Assign to agent:');
+            if (newAgent) {
+                document.getElementById('adminAssignedAgent').textContent = newAgent;
+                alert(`Complaint reassigned to: ${newAgent}`);
+                addAdminTimelineItem(`Complaint reassigned to ${newAgent} by Admin`);
+            }
+        }
+
+        function updateStatus() {
+            const newStatus = prompt('Set new status (Pending, In Progress, Resolved, Escalated):');
+            if (newStatus) {
+                document.getElementById('adminStatus').textContent = newStatus;
+                alert(`Status updated to: ${newStatus}`);
+                addAdminTimelineItem(`Status updated to ${newStatus} by Admin`);
+            }
+        }
+
+        function escalateToManager() {
+            if (confirm(`Escalate complaint ${complaintId} to management?`)) {
+                alert(`Complaint ${complaintId} escalated to management!`);
+                addAdminTimelineItem('Complaint escalated to management by Admin');
+            }
+        }
+
+        function forceClose() {
+            if (confirm(`Force close complaint ${complaintId}? This action cannot be undone.`)) {
+                document.getElementById('adminStatus').textContent = 'Force Closed';
+                alert(`Complaint ${complaintId} force closed by Admin!`);
+                addAdminTimelineItem('Complaint force closed by Admin');
+            }
+        }
+
+        function saveAdminNote() {
+            const note = document.getElementById('adminNotes').value;
+            if (note.trim()) {
+                alert('Admin note saved successfully!');
+                addAdminTimelineItem(`Admin note added: ${note}`);
+                document.getElementById('adminNotes').value = '';
+            } else {
+                alert('Please enter a note');
+            }
+        }
+
+        function addAdminTimelineItem(content) {
+            const timeline = document.getElementById('adminTimeline');
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' - ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'timeline-item';
+            newItem.innerHTML = `
+                <div class="timeline-date">${timeString}</div>
+                <div class="timeline-content">${content}</div>
+            `;
+            
+            timeline.insertBefore(newItem, timeline.firstChild);
+        }
+
+        // Load data when page loads
+        loadAdminComplaintData();
+    </script>
+</body>
+</html>

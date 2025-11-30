@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard – ResolveIT Support</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Background -->
+    <div class="split-background"></div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">ST</div>
+                <span>Hi, Support Agent</span>
+            </div>
+            <div class="nav-right">
+                <a href="about.html" class="nav-btn">About</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-label">Assigned to Me</div>
+                <div class="stat-number">8</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Pending Action</div>
+                <div class="stat-number">3</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-label">In Progress</div>
+                <div class="stat-number">4</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Resolved Today</div>
+                <div class="stat-number">6</div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <div class="action-button-container">
+            <button class="primary-action-btn" onclick="window.location.href='staff-queue.html'">View My Queue</button>
+        </div>
+
+        <!-- My Assigned Complaints -->
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>My Assigned Complaints</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Complaint ID</th>
+                                <th>Customer</th>
+                                <th>Issue Type</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Time Left</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CMP-001</td>
+                                <td>John Doe</td>
+                                <td><span class="tag orange">Wrong Product</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="tag yellow">Pending</span></td>
+                                <td>2h 30m</td>
+                                <td>
+                                    <a href="staff-complaint-details.html?id=CMP-001" class="view-link">View Details</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CMP-005</td>
+                                <td>Alice Johnson</td>
+                                <td><span class="tag blue">Late Delivery</span></td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td><span class="tag blue">In Progress</span></td>
+                                <td>4h 15m</td>
+                                <td>
+                                    <a href="staff-complaint-details.html?id=CMP-005" class="view-link">View Details</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CMP-007</td>
+                                <td>Bob Wilson</td>
+                                <td><span class="tag orange">Damaged Item</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="tag yellow">Pending</span></td>
+                                <td>1h 45m</td>
+                                <td>
+                                    <a href="staff-complaint-details.html?id=CMP-007" class="view-link">View Details</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CMP-012</td>
+                                <td>Sarah Brown</td>
+                                <td><span class="tag blue">Missing Item</span></td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td><span class="tag blue">In Progress</span></td>
+                                <td>6h 20m</td>
+                                <td>
+                                    <a href="staff-complaint-details.html?id=CMP-012" class="view-link">View Details</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff Tools -->
+        <section class="admin-tools">
+            <div class="dashboard-container">
+                <h2>Staff Tools</h2>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">💬</div>
+                        <h3>Customer Chat</h3>
+                        <p>Communicate with customers directly</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📞</div>
+                        <h3>Call Customer</h3>
+                        <p>Make calls for urgent issues</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📝</div>
+                        <h3>Update Status</h3>
+                        <p>Change complaint status and add notes</p>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📊</div>
+                        <h3>My Performance</h3>
+                        <p>View your resolution statistics</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="recent-activity">
+            <div class="dashboard-container">
+                <h2>Recent Activity</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-time">10:30 AM</div>
+                        <div class="activity-content">Resolved complaint CMP-003 for Sarah Brown</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">09:45 AM</div>
+                        <div class="activity-content">Updated status for CMP-005 to "In Progress"</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">09:15 AM</div>
+                        <div class="activity-content">Contacted customer for CMP-001 verification</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

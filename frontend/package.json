@@ -1,0 +1,12 @@
+{
+  "name": "resolveit-frontend",
+  "version": "1.0.0",
+  "description": "ResolveIT Frontend - E-commerce Grievance System",
+  "scripts": {
+    "start": "python -m http.server 3000",
+    "dev": "live-server --port=3000"
+  },
+  "keywords": ["frontend", "ecommerce", "grievance", "complaints"],
+  "author": "ResolveIT Team",
+  "license": "MIT"
+}

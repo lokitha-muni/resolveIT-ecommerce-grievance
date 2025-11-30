@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – ResolveIT Delivery Grievance System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Split Background -->
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" onclick="window.location.href='edit-profile.html'">AK</div>
+                <span>Hi, Aisha Khan</span>
+            </div>
+            <div class="nav-right">
+                <div class="bell-icon" onclick="toggleNotifications()">🔔<span class="notification-badge">3</span></div>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Total Complaints</div>
+                <div class="stat-number">45</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Pending</div>
+                <div class="stat-number">3</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-label">In Progress</div>
+                <div class="stat-number">7</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Resolved</div>
+                <div class="stat-number">35</div>
+            </div>
+        </section>
+
+        <!-- Primary Action Button -->
+        <div class="action-button-container">
+            <button class="primary-action-btn" onclick="window.location.href='submit-complaint.html'">Submit New Order Issue</button>
+        </div>
+
+        <!-- Recent Complaints Section -->
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Recent Complaints</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Complaint ID</th>
+                                <th>Order Title</th>
+                                <th>Issue Title</th>
+                                <th>Last Updated</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CMP-001</td>
+                                <td>ORD-12345</td>
+                                <td><span class="tag orange">Wrong Product</span></td>
+                                <td>1 day ago</td>
+                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>CMP-002</td>
+                                <td>ORD-67890</td>
+                                <td><span class="tag yellow">Restoring</span></td>
+                                <td>2 days ago</td>
+                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>CMP-003</td>
+                                <td>ORD-67890</td>
+                                <td><span class="tag blue">Late Delivery</span> <span class="tag green">Resolved</span></td>
+                                <td>5 mins ago</td>
+                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>CMP-004</td>
+                                <td>ORD-11223</td>
+                                <td><span class="tag orange">Damaged Product</span></td>
+                                <td>5 mins ago</td>
+                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notifications Popup -->
+    <div id="notificationsPopup" class="notifications-popup">
+        <div class="notifications-header">
+            <h3>Notifications</h3>
+            <button class="close-btn" onclick="toggleNotifications()">×</button>
+        </div>
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-icon">✅</div>
+                <div class="notification-content">
+                    <div class="notification-title">Complaint Resolved</div>
+                    <div class="notification-text">Your complaint CMP-001 has been resolved successfully.</div>
+                    <div class="notification-time">2 hours ago</div>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon">🔄</div>
+                <div class="notification-content">
+                    <div class="notification-title">Status Update</div>
+                    <div class="notification-text">Your complaint CMP-002 is now in progress.</div>
+                    <div class="notification-time">1 day ago</div>
+                </div>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon">📧</div>
+                <div class="notification-content">
+                    <div class="notification-title">New Message</div>
+                    <div class="notification-text">Support team has replied to your complaint CMP-003.</div>
+                    <div class="notification-time">2 days ago</div>
+                </div>
+            </div>
+            <div class="notification-item read">
+                <div class="notification-icon">📝</div>
+                <div class="notification-content">
+                    <div class="notification-title">Complaint Received</div>
+                    <div class="notification-text">We have received your complaint CMP-004 and will review it shortly.</div>
+                    <div class="notification-time">3 days ago</div>
+                </div>
+            </div>
+        </div>
+        <div class="notifications-footer">
+            <button class="mark-all-read-btn" onclick="markAllAsRead()">Mark All as Read</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleNotifications() {
+            const popup = document.getElementById('notificationsPopup');
+            popup.classList.toggle('show');
+        }
+
+        function markAllAsRead() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            unreadItems.forEach(item => {
+                item.classList.remove('unread');
+                item.classList.add('read');
+            });
+            
+            // Update badge
+            const badge = document.querySelector('.notification-badge');
+            badge.textContent = '0';
+            badge.style.display = 'none';
+            
+            alert('All notifications marked as read!');
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(event) {
+            const popup = document.getElementById('notificationsPopup');
+            const bellIcon = document.querySelector('.bell-icon');
+            
+            if (!popup.contains(event.target) && !bellIcon.contains(event.target)) {
+                popup.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

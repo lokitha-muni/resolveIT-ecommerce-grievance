@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage All Complaints – ResolveIT Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Background -->
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AD</div>
+                <span>Admin - All Complaints</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">← Back to Dashboard</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Admin Stats -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-label">Total Complaints</div>
+                <div class="stat-number">45</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Unassigned</div>
+                <div class="stat-number">8</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-label">Active Agents</div>
+                <div class="stat-number">12</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-label">Avg Resolution</div>
+                <div class="stat-number">2.3h</div>
+            </div>
+        </section>
+
+        <!-- Admin Controls -->
+        <div class="admin-controls">
+            <div class="control-group">
+                <select class="admin-select">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="assigned">Assigned</option>
+                    <option value="progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+                <select class="admin-select">
+                    <option value="all">All Priority</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                </select>
+                <select class="admin-select">
+                    <option value="all">All Agents</option>
+                    <option value="unassigned">Unassigned</option>
+                    <option value="agent1">Agent Smith</option>
+                    <option value="agent2">Agent Johnson</option>
+                    <option value="agent3">Agent Davis</option>
+                </select>
+                <button class="admin-filter-btn">Apply Filters</button>
+            </div>
+            <div class="bulk-admin-actions">
+                <button class="admin-bulk-btn" onclick="bulkAssign()">Bulk Assign</button>
+                <button class="admin-bulk-btn" onclick="bulkExport()">Export All</button>
+                <button class="admin-bulk-btn" onclick="generateReport()">Generate Report</button>
+            </div>
+        </div>
+
+        <!-- All Complaints Table -->
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <div class="admin-table-header">
+                    <h2>All System Complaints</h2>
+                    <div class="table-actions">
+                        <button class="table-action-btn" onclick="refreshData()">Refresh</button>
+                        <button class="table-action-btn" onclick="addComplaint()">Add Complaint</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="complaints-table admin-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllAdmin" onchange="toggleSelectAllAdmin()"></th>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Order ID</th>
+                                <th>Issue Type</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Assigned Agent</th>
+                                <th>Created</th>
+                                <th>SLA Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="urgent-row" data-id="CMP-001">
+                                <td><input type="checkbox" class="admin-row-select"></td>
+                                <td><strong>CMP-001</strong></td>
+                                <td>John Doe</td>
+                                <td>ORD-12345</td>
+                                <td><span class="tag orange">Wrong Product</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>Agent Smith</td>
+                                <td>2h ago</td>
+                                <td><span class="sla-warning">2h left</span></td>
+                                <td><a href="admin-complaint-details.html?id=CMP-001" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr data-id="CMP-002">
+                                <td><input type="checkbox" class="admin-row-select"></td>
+                                <td><strong>CMP-002</strong></td>
+                                <td>Jane Smith</td>
+                                <td>ORD-67890</td>
+                                <td><span class="tag blue">Late Delivery</span></td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td><span class="status-badge progress">In Progress</span></td>
+                                <td>Agent Johnson</td>
+                                <td>4h ago</td>
+                                <td><span class="sla-ok">On Track</span></td>
+                                <td><a href="admin-complaint-details.html?id=CMP-002" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr data-id="CMP-003">
+                                <td><input type="checkbox" class="admin-row-select"></td>
+                                <td><strong>CMP-003</strong></td>
+                                <td>Mike Wilson</td>
+                                <td>ORD-11223</td>
+                                <td><span class="tag orange">Damaged Product</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="status-badge resolved">Resolved</span></td>
+                                <td>Agent Davis</td>
+                                <td>1 day ago</td>
+                                <td><span class="sla-ok">Completed</span></td>
+                                <td><a href="admin-complaint-details.html?id=CMP-003" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr class="unassigned-row" data-id="CMP-004">
+                                <td><input type="checkbox" class="admin-row-select"></td>
+                                <td><strong>CMP-004</strong></td>
+                                <td>Sarah Brown</td>
+                                <td>ORD-44556</td>
+                                <td><span class="tag yellow">Missing Item</span></td>
+                                <td><span class="priority low">Low</span></td>
+                                <td><span class="status-badge unassigned">Unassigned</span></td>
+                                <td><em>Not Assigned</em></td>
+                                <td>6h ago</td>
+                                <td><span class="sla-warning">Needs Assignment</span></td>
+                                <td><a href="admin-complaint-details.html?id=CMP-004" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr data-id="CMP-005">
+                                <td><input type="checkbox" class="admin-row-select"></td>
+                                <td><strong>CMP-005</strong></td>
+                                <td>Alice Johnson</td>
+                                <td>ORD-77889</td>
+                                <td><span class="tag blue">Late Delivery</span></td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td><span class="status-badge progress">In Progress</span></td>
+                                <td>Agent Smith</td>
+                                <td>3h ago</td>
+                                <td><span class="sla-ok">On Track</span></td>
+                                <td><a href="admin-complaint-details.html?id=CMP-005" class="view-link">View Details</a></td>
+                            </tr>
+                            <tr data-id="CMP-007">
+                                <td><input type="checkbox" class="admin-row-select"></td>
+                                <td><strong>CMP-007</strong></td>
+                                <td>Bob Wilson</td>
+                                <td>ORD-99001</td>
+                                <td><span class="tag orange">Damaged Item</span></td>
+                                <td><span class="priority high">High</span></td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>Agent Johnson</td>
+                                <td>1h ago</td>
+                                <td><span class="sla-critical">Critical</span></td>
+                                <td><a href="admin-complaint-details.html?id=CMP-007" class="view-link">View Details</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Analytics -->
+        <section class="admin-analytics">
+            <div class="dashboard-container">
+                <h2>System Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Resolution Rate</h3>
+                        <div class="metric-value">87%</div>
+                        <div class="metric-trend">+5% this week</div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Avg Response Time</h3>
+                        <div class="metric-value">1.2h</div>
+                        <div class="metric-trend">-15min improved</div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Customer Satisfaction</h3>
+                        <div class="metric-value">4.6/5</div>
+                        <div class="metric-trend">+0.2 this month</div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Agent Workload</h3>
+                        <div class="metric-value">3.8</div>
+                        <div class="metric-trend">Balanced</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function toggleSelectAllAdmin() {
+            const selectAll = document.getElementById('selectAllAdmin');
+            const checkboxes = document.querySelectorAll('.admin-row-select');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.admin-row-select:checked').length;
+            console.log(`${selected} complaints selected`);
+        }
+
+        function bulkAssign() {
+            const selected = document.querySelectorAll('.admin-row-select:checked');
+            if (selected.length === 0) {
+                alert('Please select complaints to assign');
+                return;
+            }
+            
+            const agent = prompt('Enter agent name to assign selected complaints:');
+            if (agent) {
+                alert(`${selected.length} complaints assigned to ${agent}`);
+            }
+        }
+
+        function bulkExport() {
+            alert('Exporting all complaints data...');
+        }
+
+        function generateReport() {
+            alert('Generating comprehensive system report...');
+        }
+
+        function refreshData() {
+            alert('Refreshing complaint data...');
+            location.reload();
+        }
+
+        function addComplaint() {
+            alert('Opening new complaint form...');
+        }
+
+        // Add event listeners for row selection
+        document.querySelectorAll('.admin-row-select').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+    </script>
+</body>
+</html>

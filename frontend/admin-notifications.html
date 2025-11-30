@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Notifications – ResolveIT Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AD</div>
+                <span>Admin - Notifications</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">← Back to Dashboard</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-label">Total Sent</div>
+                <div class="stat-number">1,247</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending</div>
+                <div class="stat-number">23</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-label">Delivery Rate</div>
+                <div class="stat-number">98.5%</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-label">Open Rate</div>
+                <div class="stat-number">87%</div>
+            </div>
+        </section>
+
+        <div class="action-button-container">
+            <button class="primary-action-btn" onclick="sendNotification()">Send New Notification</button>
+        </div>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Notification Settings</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            Email notifications for new complaints
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            SMS alerts for high priority issues
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Push notifications for mobile app
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            SLA breach alerts
+                        </label>
+                    </div>
+                    <button class="admin-action-btn status" onclick="saveNotificationSettings()">Save Settings</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Recent Notifications</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Recipients</th>
+                                <th>Subject</th>
+                                <th>Sent</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NOT-001</strong></td>
+                                <td><span class="tag blue">System Alert</span></td>
+                                <td>All Users</td>
+                                <td>Scheduled Maintenance Notice</td>
+                                <td>2h ago</td>
+                                <td><span class="status-badge resolved">Delivered</span></td>
+                                <td><button class="action-btn view" onclick="viewNotification('NOT-001')">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>NOT-002</strong></td>
+                                <td><span class="tag orange">SLA Alert</span></td>
+                                <td>Agents</td>
+                                <td>SLA Breach Warning - CMP-007</td>
+                                <td>4h ago</td>
+                                <td><span class="status-badge resolved">Delivered</span></td>
+                                <td><button class="action-btn view" onclick="viewNotification('NOT-002')">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>NOT-003</strong></td>
+                                <td><span class="tag green">Welcome</span></td>
+                                <td>New Agent</td>
+                                <td>Welcome to ResolveIT Support Team</td>
+                                <td>1 day ago</td>
+                                <td><span class="status-badge resolved">Delivered</span></td>
+                                <td><button class="action-btn view" onclick="viewNotification('NOT-003')">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong>NOT-004</strong></td>
+                                <td><span class="tag yellow">Update</span></td>
+                                <td>Customers</td>
+                                <td>Service Improvement Updates</td>
+                                <td>2 days ago</td>
+                                <td><span class="status-badge progress">Pending</span></td>
+                                <td><button class="action-btn update" onclick="resendNotification('NOT-004')">Resend</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Notification Templates</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Template Name</th>
+                                <th>Type</th>
+                                <th>Usage Count</th>
+                                <th>Last Modified</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>System Maintenance</strong></td>
+                                <td><span class="tag blue">System</span></td>
+                                <td>12 times</td>
+                                <td>1 week ago</td>
+                                <td>
+                                    <button class="action-btn update" onclick="editTemplate('maintenance')">Edit</button>
+                                    <button class="action-btn view" onclick="previewTemplate('maintenance')">Preview</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>SLA Breach Alert</strong></td>
+                                <td><span class="tag orange">Alert</span></td>
+                                <td>45 times</td>
+                                <td>3 days ago</td>
+                                <td>
+                                    <button class="action-btn update" onclick="editTemplate('sla')">Edit</button>
+                                    <button class="action-btn view" onclick="previewTemplate('sla')">Preview</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Welcome Message</strong></td>
+                                <td><span class="tag green">Welcome</span></td>
+                                <td>8 times</td>
+                                <td>2 weeks ago</td>
+                                <td>
+                                    <button class="action-btn update" onclick="editTemplate('welcome')">Edit</button>
+                                    <button class="action-btn view" onclick="previewTemplate('welcome')">Preview</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="admin-action-btn priority" onclick="createTemplate()">Create New Template</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function sendNotification() {
+            const type = prompt('Notification Type:\n1. System Alert\n2. SLA Warning\n3. General Update\n\nEnter choice (1-3):');
+            const recipients = prompt('Send to:\n1. All Users\n2. Agents Only\n3. Customers Only\n\nEnter choice (1-3):');
+            const message = prompt('Enter notification message:');
+            
+            if (type && recipients && message) {
+                alert('Notification sent successfully!');
+            }
+        }
+
+        function saveNotificationSettings() {
+            alert('Notification settings saved successfully!');
+        }
+
+        function viewNotification(id) {
+            alert(`Viewing notification ${id} details...`);
+        }
+
+        function resendNotification(id) {
+            if (confirm(`Resend notification ${id}?`)) {
+                alert(`Notification ${id} resent successfully!`);
+            }
+        }
+
+        function editTemplate(type) {
+            const newContent = prompt(`Edit ${type} template:\nEnter new content:`);
+            if (newContent) {
+                alert(`${type} template updated successfully!`);
+            }
+        }
+
+        function previewTemplate(type) {
+            const templates = {
+                maintenance: 'System maintenance scheduled for tonight 11 PM - 2 AM. Service may be temporarily unavailable.',
+                sla: 'ALERT: Complaint [ID] is approaching SLA deadline. Immediate attention required.',
+                welcome: 'Welcome to ResolveIT! We are excited to have you on our support team.'
+            };
+            alert(`Preview of ${type} template:\n\n${templates[type]}`);
+        }
+
+        function createTemplate() {
+            const name = prompt('Enter template name:');
+            const content = prompt('Enter template content:');
+            if (name && content) {
+                alert(`Template "${name}" created successfully!`);
+            }
+        }
+    </script>
+</body>
+</html>

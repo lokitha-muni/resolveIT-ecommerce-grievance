@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit New Complaint – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Split Background -->
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AK</div>
+                <span>Hi, Aisha Khan</span>
+            </div>
+            <div class="nav-right">
+                <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Submit New Complaint</h1>
+            <p>Report an issue with your recent order</p>
+        </section>
+
+        <!-- Complaint Form -->
+        <section class="form-section">
+            <div class="form-card">
+                <form id="complaintForm" class="complaint-form">
+                    <!-- Order Information -->
+                    <div class="form-group">
+                        <label for="orderDate">Order Date *</label>
+                        <input type="date" id="orderDate" required>
+                    </div>
+
+                    <!-- Issue Details -->
+                    <div class="form-group">
+                        <label for="issueType">Issue Type *</label>
+                        <select id="issueType" required>
+                            <option value="">Select issue type</option>
+                            <option value="late-delivery">Late Delivery</option>
+                            <option value="wrong-product">Wrong Product Delivered</option>
+                            <option value="damaged-product">Damaged Product</option>
+                            <option value="missing-items">Missing Items</option>
+                            <option value="poor-quality">Poor Product Quality</option>
+                            <option value="delivery-location">Wrong Delivery Location</option>
+                            <option value="payment-issue">Payment Issue</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issueTitle">Issue Title *</label>
+                        <input type="text" id="issueTitle" placeholder="Brief description of the issue" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="issueDescription">Detailed Description *</label>
+                        <textarea id="issueDescription" rows="5" placeholder="Please provide detailed information about your issue..." required></textarea>
+                    </div>
+
+                    <!-- Priority Level -->
+                    <div class="form-group">
+                        <label for="priority">Priority Level *</label>
+                        <select id="priority" required>
+                            <option value="">Select priority</option>
+                            <option value="low">Low - Minor inconvenience</option>
+                            <option value="medium">Medium - Moderate impact</option>
+                            <option value="high">High - Significant impact</option>
+                            <option value="urgent">Urgent - Critical issue</option>
+                        </select>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="form-group">
+                        <label for="contactPhone">Contact Phone Number</label>
+                        <input type="tel" id="contactPhone" placeholder="Enter your phone number">
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="form-group">
+                        <label for="attachments">Attachments (Optional)</label>
+                        <div class="file-upload-area">
+                            <input type="file" id="attachments" multiple accept="image/*,.pdf,.doc,.docx">
+                            <div class="file-upload-text">
+                                <span>📎 Click to upload images or documents</span>
+                                <small>Supported formats: JPG, PNG, PDF, DOC (Max 5MB each)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expected Resolution -->
+                    <div class="form-group">
+                        <label for="expectedResolution">Expected Resolution</label>
+                        <select id="expectedResolution">
+                            <option value="">Select preferred resolution</option>
+                            <option value="refund">Full Refund</option>
+                            <option value="replacement">Product Replacement</option>
+                            <option value="partial-refund">Partial Refund</option>
+                            <option value="store-credit">Store Credit</option>
+                            <option value="redelivery">Re-delivery</option>
+                            <option value="other">Other (specify in description)</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="window.location.href='dashboard.html'">Cancel</button>
+                        <button type="submit" class="submit-btn">Submit Complaint</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Generate automatic Order ID
+            const orderId = 'ORD-' + Date.now().toString().slice(-6);
+            
+            // Collect form data
+            const complaintData = {
+                orderId: orderId,
+                orderDate: document.getElementById('orderDate').value,
+                issueType: document.getElementById('issueType').value,
+                issueTitle: document.getElementById('issueTitle').value,
+                issueDescription: document.getElementById('issueDescription').value,
+                priority: document.getElementById('priority').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                expectedResolution: document.getElementById('expectedResolution').value,
+                submittedAt: new Date().toISOString()
+            };
+
+            // Validate required fields
+            if (!complaintData.orderDate || !complaintData.issueType || 
+                !complaintData.issueTitle || !complaintData.issueDescription || !complaintData.priority) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // For now, simulate successful submission
+            // In a real app, this would send data to the backend
+            console.log('Complaint submitted:', complaintData);
+            
+            // Show success message with Order ID
+            alert(`Complaint submitted successfully!\nYour Order ID: ${orderId}\nYou will receive a confirmation email shortly.`);
+            
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        });
+
+        // File upload preview
+        document.getElementById('attachments').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const uploadText = document.querySelector('.file-upload-text span');
+            
+            if (files.length > 0) {
+                uploadText.textContent = `📎 ${files.length} file(s) selected`;
+            } else {
+                uploadText.textContent = '📎 Click to upload images or documents';
+            }
+        });
+    </script>
+</body>
+</html>

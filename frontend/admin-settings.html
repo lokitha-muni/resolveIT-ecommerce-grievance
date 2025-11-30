@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings – ResolveIT Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo">AD</div>
+                <span>Admin - System Settings</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">← Back to Dashboard</a>
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>SLA Configuration</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>High Priority Response Time (hours):</label>
+                        <input type="number" value="2" id="highPriority">
+                    </div>
+                    <div class="form-group">
+                        <label>Medium Priority Response Time (hours):</label>
+                        <input type="number" value="4" id="mediumPriority">
+                    </div>
+                    <div class="form-group">
+                        <label>Low Priority Response Time (hours):</label>
+                        <input type="number" value="8" id="lowPriority">
+                    </div>
+                    <button class="admin-action-btn status" onclick="saveSLA()">Save SLA Settings</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Auto-Assignment Rules</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            Enable automatic complaint assignment
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            Balance workload across agents
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Assign based on agent expertise
+                        </label>
+                    </div>
+                    <button class="admin-action-btn assign" onclick="saveAssignment()">Save Assignment Rules</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Priority Rules</h2>
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Condition</th>
+                                <th>Priority Level</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Premium Customer + Order Value > $200</td>
+                                <td><span class="priority high">High</span></td>
+                                <td><button class="action-btn update" onclick="editRule(1)">Edit</button></td>
+                            </tr>
+                            <tr>
+                                <td>Damaged Product + Order Value > $100</td>
+                                <td><span class="priority high">High</span></td>
+                                <td><button class="action-btn update" onclick="editRule(2)">Edit</button></td>
+                            </tr>
+                            <tr>
+                                <td>Late Delivery + Standard Customer</td>
+                                <td><span class="priority medium">Medium</span></td>
+                                <td><button class="action-btn update" onclick="editRule(3)">Edit</button></td>
+                            </tr>
+                            <tr>
+                                <td>Refund Request + Order Value < $50</td>
+                                <td><span class="priority low">Low</span></td>
+                                <td><button class="action-btn update" onclick="editRule(4)">Edit</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="admin-action-btn priority" onclick="addRule()">Add New Rule</button>
+            </div>
+        </section>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2>Email Templates</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Welcome Message Template:</label>
+                        <textarea id="welcomeTemplate">Thank you for contacting ResolveIT. We have received your complaint and will respond within our SLA timeframe.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Status Update Template:</label>
+                        <textarea id="statusTemplate">Your complaint status has been updated. Current status: [STATUS]. We will keep you informed of any further updates.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Resolution Template:</label>
+                        <textarea id="resolutionTemplate">We are pleased to inform you that your complaint has been resolved. Thank you for your patience.</textarea>
+                    </div>
+                    <button class="admin-action-btn success" onclick="saveTemplates()">Save Templates</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function saveSLA() {
+            const high = document.getElementById('highPriority').value;
+            const medium = document.getElementById('mediumPriority').value;
+            const low = document.getElementById('lowPriority').value;
+            alert(`SLA settings saved:\nHigh: ${high}h, Medium: ${medium}h, Low: ${low}h`);
+        }
+
+        function saveAssignment() {
+            alert('Auto-assignment rules saved successfully!');
+        }
+
+        function editRule(id) {
+            const newRule = prompt(`Edit priority rule ${id}:\nEnter new condition:`);
+            if (newRule) {
+                alert(`Priority rule ${id} updated!`);
+            }
+        }
+
+        function addRule() {
+            const condition = prompt('Enter new priority rule condition:');
+            const priority = prompt('Enter priority level (High/Medium/Low):');
+            if (condition && priority) {
+                alert(`New priority rule added: ${condition} -> ${priority}`);
+            }
+        }
+
+        function saveTemplates() {
+            alert('Email templates saved successfully!');
+        }
+    </script>
+</body>
+</html>
