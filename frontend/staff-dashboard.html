@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Dashboard – ResolveIT Support</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/ui-enhancements.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
@@ -16,35 +17,47 @@
         <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">ST</div>
-                <span id="userGreeting">Hi, Staff</span>
+                <button class="mobile-nav-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;" tabindex="0" role="button" aria-label="View profile">ST</div>
+                <span id="userGreeting" data-translate="hi_staff">Hi, Staff</span>
             </div>
             <div class="nav-right">
-                <button onclick="logout()" class="logout-btn">Logout</button>
+                <div class="nav-controls">
+                    <label class="theme-toggle" aria-label="Toggle dark mode">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="theme-slider"></span>
+                    </label>
+                    <select id="languageSelect" aria-label="Select language" onchange="changeLanguage(this.value)">
+                        <option value="en">EN</option>
+                        <option value="es">ES</option>
+                        <option value="fr">FR</option>
+                    </select>
+                </div>
+                <button onclick="logout()" class="logout-btn" data-translate="logout">Logout</button>
             </div>
         </nav>
 
         <!-- Stats Section -->
-        <section class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-label">Total Complaints</div>
-                <div class="stat-number" id="totalComplaints">0</div>
+        <section class="stats-section" id="main-content">
+            <div class="stat-card" tabindex="0">
+                <div class="stat-icon" aria-hidden="true">📊</div>
+                <div class="stat-label" data-translate="total_complaints">Total Complaints</div>
+                <div class="stat-number" id="totalComplaints" aria-live="polite">0</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-label">Pending</div>
-                <div class="stat-number" id="pendingComplaints">0</div>
+            <div class="stat-card" tabindex="0">
+                <div class="stat-icon" aria-hidden="true">⏳</div>
+                <div class="stat-label" data-translate="pending">Pending</div>
+                <div class="stat-number" id="pendingComplaints" aria-live="polite">0</div>
             </div>
-            <div class="stat-card progress-card">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-label">In Progress</div>
-                <div class="stat-number" id="inProgressComplaints">0</div>
+            <div class="stat-card progress-card" tabindex="0">
+                <div class="stat-icon" aria-hidden="true">🔄</div>
+                <div class="stat-label" data-translate="in_progress">In Progress</div>
+                <div class="stat-number" id="inProgressComplaints" aria-live="polite">0</div>
             </div>
-            <div class="stat-card resolved-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Resolved</div>
-                <div class="stat-number" id="resolvedComplaints">0</div>
+            <div class="stat-card resolved-card" tabindex="0">
+                <div class="stat-icon" aria-hidden="true">✅</div>
+                <div class="stat-label" data-translate="resolved">Resolved</div>
+                <div class="stat-number" id="resolvedComplaints" aria-live="polite">0</div>
             </div>
         </section>
 
@@ -129,8 +142,11 @@
         </section>
     </div>
 
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/security.js"></script>
     <script>
         async function loadStaffDashboard() {
+            showLoading('Loading dashboard...');
             const staff = JSON.parse(localStorage.getItem('staff'));
             if (!staff || !staff.email) {
                 window.location.href = 'staff-login.html';
@@ -154,27 +170,31 @@
 
             // Load dashboard stats
             try {
-                const response = await fetch(`http://localhost:9090/api/staff/dashboard/${staff.email}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    
+                const data = await uiManager.apiCall(`http://localhost:9090/api/staff/dashboard/${staff.email}`, {}, 'Loading dashboard data...');
+                
+                if (data) {
                     // Update name from backend data
                     if (data.firstName) {
                         document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
                         document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                     }
                     
-                    // Update stats
-                    document.getElementById('totalComplaints').textContent = data.totalComplaints || 0;
-                    document.getElementById('pendingComplaints').textContent = data.pendingComplaints || 0;
-                    document.getElementById('inProgressComplaints').textContent = data.inProgressComplaints || 0;
-                    document.getElementById('resolvedComplaints').textContent = data.resolvedComplaints || 0;
+                    // Update stats with animation
+                    animateCounter('totalComplaints', data.totalComplaints || 0);
+                    animateCounter('pendingComplaints', data.pendingComplaints || 0);
+                    animateCounter('inProgressComplaints', data.inProgressComplaints || 0);
+                    animateCounter('resolvedComplaints', data.resolvedComplaints || 0);
 
                     // Update complaints table
                     updateComplaintsTable(data.recentComplaints || []);
+                    
+                    showToast('Dashboard loaded successfully', 'success');
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
+                showToast('Failed to load dashboard data', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -201,6 +221,7 @@
                     <td>${timeAgo}</td>
                     <td><a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a></td>
                 `;
+                row.classList.add('fade-in');
                 tbody.appendChild(row);
             });
         }
@@ -252,8 +273,36 @@
             }
         }
 
+        // Counter animation
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = parseInt(element.textContent) || 0;
+            const duration = 1000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+        
         // Load dashboard on page load
-        document.addEventListener('DOMContentLoaded', loadStaffDashboard);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStaffDashboard();
+            
+            // Set initial language
+            const savedLang = localStorage.getItem('language') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
+        });
     </script>
 </body>
 </html>

@@ -54,6 +54,7 @@
         </div>
     </div>
     
+    <script src="js/ui-enhancements.js"></script>
     <script src="js/security.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -68,28 +69,31 @@
             }
             
             try {
-                const response = await fetch('http://localhost:9090/api/auth/login', {
+                const data = await uiManager.apiCall('http://localhost:9090/api/auth/login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify({ email, password })
-                });
+                }, 'Signing in...');
                 
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    // Store JWT token securely
+                if (data && data.status === 'success') {
                     securityManager.setToken(data.token);
                     localStorage.setItem('user', JSON.stringify({email: email}));
-                    window.location.href = 'dashboard.html';
+                    showToast('Login successful!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
                 } else {
-                    alert(data.message);
+                    showToast(data?.message || 'Login failed', 'error');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert('Login failed. Please try again.');
+                showToast('Login failed. Please try again.', 'error');
             }
+        });
+        
+        // Initialize UI on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('language') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
         });
     </script>
 </body>

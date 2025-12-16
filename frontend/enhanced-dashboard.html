@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate="dashboard">Dashboard – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/ui-enhancements.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background"></div>
+
+    <div class="dashboard-main">
+        <!-- Enhanced Navigation -->
+        <nav class="dashboard-nav" role="navigation" aria-label="Main navigation">
+            <div class="nav-left">
+                <button class="mobile-nav-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+                <div class="profile-photo" onclick="window.location.href='profile.html'" id="profilePhoto" 
+                     tabindex="0" role="button" aria-label="View profile">U</div>
+                <span id="userGreeting" data-translate="welcome">Welcome</span>
+            </div>
+            <div class="nav-right">
+                <div class="nav-controls">
+                    <label class="theme-toggle" aria-label="Toggle dark mode">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="theme-slider"></span>
+                    </label>
+                    <select id="languageSelect" aria-label="Select language" onchange="changeLanguage(this.value)">
+                        <option value="en">🇺🇸 EN</option>
+                        <option value="es">🇪🇸 ES</option>
+                        <option value="fr">🇫🇷 FR</option>
+                    </select>
+                </div>
+                <button onclick="logout()" class="logout-btn" data-translate="logout">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Enhanced Stats Section -->
+        <section class="stats-section" id="main-content">
+            <div class="stat-card" tabindex="0" role="button" aria-describedby="total-desc">
+                <div class="stat-icon" aria-hidden="true">📊</div>
+                <div class="stat-label" data-translate="total_complaints">Total Complaints</div>
+                <div class="stat-number" id="totalComplaints" aria-live="polite">0</div>
+                <div id="total-desc" class="sr-only">Total number of complaints submitted</div>
+            </div>
+            <div class="stat-card" tabindex="0" role="button" aria-describedby="pending-desc">
+                <div class="stat-icon" aria-hidden="true">⏳</div>
+                <div class="stat-label" data-translate="pending">Pending</div>
+                <div class="stat-number" id="pendingComplaints" aria-live="polite">0</div>
+                <div id="pending-desc" class="sr-only">Complaints awaiting review</div>
+            </div>
+            <div class="stat-card progress-card" tabindex="0" role="button" aria-describedby="progress-desc">
+                <div class="stat-icon" aria-hidden="true">🔄</div>
+                <div class="stat-label" data-translate="in_progress">In Progress</div>
+                <div class="stat-number" id="inProgressComplaints" aria-live="polite">0</div>
+                <div id="progress-desc" class="sr-only">Complaints currently being processed</div>
+            </div>
+            <div class="stat-card resolved-card" tabindex="0" role="button" aria-describedby="resolved-desc">
+                <div class="stat-icon" aria-hidden="true">✅</div>
+                <div class="stat-label" data-translate="resolved">Resolved</div>
+                <div class="stat-number" id="resolvedComplaints" aria-live="polite">0</div>
+                <div id="resolved-desc" class="sr-only">Successfully resolved complaints</div>
+            </div>
+        </section>
+
+        <!-- Quick Actions with Loading States -->
+        <div class="action-button-container">
+            <button class="primary-action-btn" onclick="navigateWithLoading('complaint-form.html')" 
+                    data-translate="submit_complaint">Submit New Complaint</button>
+            <button class="secondary-action-btn" onclick="navigateWithLoading('my-complaints.html')" 
+                    data-translate="view_complaints">View My Complaints</button>
+        </div>
+
+        <!-- Enhanced Recent Complaints -->
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <h2 data-translate="recent_complaints">Recent Complaints</h2>
+                <div class="table-container" role="region" aria-label="Recent complaints table">
+                    <table class="complaints-table" role="table">
+                        <thead>
+                            <tr role="row">
+                                <th scope="col" data-translate="complaint_id">ID</th>
+                                <th scope="col" data-translate="issue_type">Issue Type</th>
+                                <th scope="col" data-translate="status">Status</th>
+                                <th scope="col" data-translate="date">Date</th>
+                                <th scope="col" data-translate="actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaintsTableBody" aria-live="polite">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="loading-text">
+        <div class="loading-spinner">
+            <div class="spinner" aria-hidden="true"></div>
+            <div class="loading-text" id="loading-text">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/security.js"></script>
+    <script>
+        // Enhanced dashboard functionality
+        async function loadDashboard() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.email) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            showLoading('Loading dashboard...');
+
+            try {
+                // Load user data with enhanced API call
+                const userData = await uiManager.apiCall(`http://localhost:9090/api/auth/profile/${user.email}`, {}, 'Loading profile...');
+                
+                if (userData) {
+                    document.getElementById('userGreeting').textContent = `Welcome, ${userData.firstName || 'User'}`;
+                    document.getElementById('profilePhoto').textContent = (userData.firstName || 'U').charAt(0).toUpperCase();
+                }
+
+                // Load complaints data
+                const complaintsData = await uiManager.apiCall(`http://localhost:9090/api/complaints/user/${user.email}`, {}, 'Loading complaints...');
+                
+                if (complaintsData) {
+                    updateStats(complaintsData);
+                    updateComplaintsTable(complaintsData.complaints || []);
+                }
+
+                showToast('Dashboard loaded successfully', 'success');
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+                showToast('Failed to load dashboard', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateStats(data) {
+            const stats = {
+                total: data.complaints?.length || 0,
+                pending: data.complaints?.filter(c => c.status === 'PENDING').length || 0,
+                inProgress: data.complaints?.filter(c => c.status === 'IN_PROGRESS').length || 0,
+                resolved: data.complaints?.filter(c => c.status === 'RESOLVED').length || 0
+            };
+
+            // Animate counters
+            animateCounter('totalComplaints', stats.total);
+            animateCounter('pendingComplaints', stats.pending);
+            animateCounter('inProgressComplaints', stats.inProgress);
+            animateCounter('resolvedComplaints', stats.resolved);
+        }
+
+        function updateComplaintsTable(complaints) {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+
+            if (!complaints || complaints.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;" data-translate="no_complaints">No complaints found</td></tr>`;
+                return;
+            }
+
+            complaints.slice(0, 5).forEach((complaint, index) => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                row.style.animationDelay = `${index * 0.1}s`;
+                
+                row.innerHTML = `
+                    <td>${complaint.complaintId || 'N/A'}</td>
+                    <td><span class="tag">${complaint.issueType || 'General'}</span></td>
+                    <td><span class="tag ${getStatusClass(complaint.status)}">${complaint.status || 'PENDING'}</span></td>
+                    <td>${formatDate(complaint.createdAt)}</td>
+                    <td>
+                        <button onclick="viewComplaint('${complaint.complaintId}')" 
+                                class="view-btn" aria-label="View complaint ${complaint.complaintId}">
+                            View
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = parseInt(element.textContent) || 0;
+            const duration = 1000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        function navigateWithLoading(url) {
+            showLoading('Navigating...');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 500);
+        }
+
+        function viewComplaint(id) {
+            navigateWithLoading(`complaint-details.html?id=${id}`);
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'PENDING': 'warning',
+                'IN_PROGRESS': 'info',
+                'RESOLVED': 'success',
+                'CLOSED': 'secondary'
+            };
+            return classes[status] || 'secondary';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            
+            // Set initial language
+            const savedLang = localStorage.getItem('language') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
+            
+            // Setup keyboard navigation
+            setupKeyboardNavigation();
+        });
+
+        function setupKeyboardNavigation() {
+            // Add keyboard support for stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+        }
+
+        // Enhanced logout with confirmation
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                showLoading('Logging out...');
+                setTimeout(() => {
+                    securityManager.logout();
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
