@@ -54,12 +54,18 @@
         </div>
     </div>
     
+    <script src="js/security.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('loginEmail').value;
+            const email = securityManager.sanitizeInput(document.getElementById('loginEmail').value);
             const password = document.getElementById('loginPassword').value;
+            
+            if (!securityManager.validateEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
             
             try {
                 const response = await fetch('http://localhost:9090/api/auth/login', {
@@ -73,12 +79,15 @@
                 const data = await response.json();
                 
                 if (data.status === 'success') {
+                    // Store JWT token securely
+                    securityManager.setToken(data.token);
                     localStorage.setItem('user', JSON.stringify({email: email}));
                     window.location.href = 'dashboard.html';
                 } else {
                     alert(data.message);
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 alert('Login failed. Please try again.');
             }
         });

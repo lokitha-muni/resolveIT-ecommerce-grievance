@@ -6,6 +6,7 @@ import com.example.test_spring.dto.ProfileUpdateRequest;
 import com.example.test_spring.service.AuthService;
 import com.example.test_spring.model.User;
 import com.example.test_spring.repository.UserRepository;
+import com.example.test_spring.security.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,18 @@ public class AuthController {
     
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
+    
+    @Autowired
+    private InputSanitizer inputSanitizer;
+    
+    @Autowired
+    private SessionManager sessionManager;
+    
+    @Autowired
+    private TwoFactorService twoFactorService;
     
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
@@ -67,17 +80,31 @@ public class AuthController {
         }
     }
     
-    // Login endpoint
+    // Login endpoint with JWT
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
         Map<String, String> response = new HashMap<>();
         
         try {
+            // Sanitize input
+            String email = inputSanitizer.sanitizeHtml(request.getEmail());
+            
+            if (!inputSanitizer.isValidEmail(email)) {
+                response.put("status", "error");
+                response.put("message", "Invalid email format");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
             String result = authService.loginUser(request);
             
             if (result.equals("Login successful")) {
+                // Generate JWT token
+                String token = jwtUtil.generateToken(email, "USER");
+                sessionManager.createSession(token);
+                
                 response.put("status", "success");
                 response.put("message", result);
+                response.put("token", token);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "error");
@@ -136,11 +163,23 @@ public class AuthController {
     }
     
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout() {
+    public ResponseEntity<Map<String, String>> logout(@RequestHeader("Authorization") String authHeader) {
         Map<String, String> response = new HashMap<>();
-        response.put("status", "success");
-        response.put("message", "Logged out successfully");
-        return ResponseEntity.ok(response);
+        
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                sessionManager.invalidateSession(token);
+            }
+            
+            response.put("status", "success");
+            response.put("message", "Logged out successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "success");
+            response.put("message", "Logged out successfully");
+            return ResponseEntity.ok(response);
+        }
     }
     
     @PostMapping("/forgot-password")
@@ -224,6 +263,111 @@ public class AuthController {
         } catch (Exception e) {
             response.put("status", "error");
             response.put("message", "Failed to verify email");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+    
+    // Staff login with 2FA
+    @PostMapping("/staff/login")
+    public ResponseEntity<Map<String, String>> staffLogin(@RequestBody LoginRequest request) {
+        Map<String, String> response = new HashMap<>();
+        
+        try {
+            String email = inputSanitizer.sanitizeHtml(request.getEmail());
+            
+            // Check staff credentials (hardcoded for demo)
+            if ((email.equals("staff@gmail.com") && request.getPassword().equals("staff@123")) ||
+                (email.equals("admin@gmail.com") && request.getPassword().equals("admin@123"))) {
+                
+                // Generate and send OTP
+                String otp = twoFactorService.generateOTP(email);
+                
+                response.put("status", "otp_required");
+                response.put("message", "OTP sent to your email");
+                response.put("email", email);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "error");
+                response.put("message", "Invalid credentials");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Login failed: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+    
+    @PostMapping("/staff/verify-otp")
+    public ResponseEntity<Map<String, String>> verifyStaffOTP(@RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+        
+        try {
+            String email = inputSanitizer.sanitizeHtml(request.get("email"));
+            String otp = request.get("otp");
+            
+            if (twoFactorService.verifyOTP(email, otp)) {
+                String role = email.equals("admin@gmail.com") ? "ADMIN" : "STAFF";
+                String token = jwtUtil.generateToken(email, role);
+                sessionManager.createSession(token);
+                
+                response.put("status", "success");
+                response.put("message", "Login successful");
+                response.put("token", token);
+                response.put("role", role);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "error");
+                response.put("message", "Invalid or expired OTP");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "OTP verification failed: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+    
+    @PostMapping("/validate-token")
+    public ResponseEntity<Map<String, String>> validateToken(@RequestHeader("Authorization") String authHeader) {
+        Map<String, String> response = new HashMap<>();
+        
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                response.put("status", "error");
+                response.put("message", "Invalid token format");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            String token = authHeader.substring(7);
+            
+            if (!sessionManager.isSessionValid(token)) {
+                response.put("status", "error");
+                response.put("message", "Session expired");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            String email = jwtUtil.extractEmail(token);
+            String role = jwtUtil.extractRole(token);
+            
+            if (jwtUtil.validateToken(token, email)) {
+                sessionManager.updateSession(token);
+                
+                response.put("status", "success");
+                response.put("email", email);
+                response.put("role", role);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "error");
+                response.put("message", "Invalid token");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Token validation failed");
             return ResponseEntity.internalServerError().body(response);
         }
     }

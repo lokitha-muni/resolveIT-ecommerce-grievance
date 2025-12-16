@@ -17,7 +17,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Value("${mongodb.username:resolveIT_db_user}")
     private String username;
     
-    @Value("${mongodb.password:your_password_here}")
+    @Value("${mongodb.password:lokitha2005}")
     private String password;
     
     @Value("${mongodb.cluster:cluster0.eqvpfku.mongodb.net}")

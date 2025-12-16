@@ -46,6 +46,7 @@
         </div>
     </div>
     
+    <script src="js/security.js"></script>
     <script>
         const staffToggle = document.getElementById('staffToggle');
         const staffLoginForm = document.getElementById('staffLoginForm');
@@ -68,19 +69,16 @@
         staffLoginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('staffEmail').value;
+            const email = securityManager.sanitizeInput(document.getElementById('staffEmail').value);
             const password = document.getElementById('staffPassword').value;
             
+            if (!securityManager.validateEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
             try {
-                // First initialize staff accounts
-                await fetch('http://localhost:9090/api/staff/init', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                const response = await fetch('http://localhost:9090/api/staff/login', {
+                const response = await fetch('http://localhost:9090/api/auth/staff/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -90,10 +88,18 @@
                 
                 const data = await response.json();
                 
-                if (data.status === 'success') {
-                    localStorage.setItem('staff', JSON.stringify(data.staff));
+                if (data.status === 'otp_required') {
+                    // Redirect to 2FA page
+                    window.location.href = `staff-2fa.html?email=${encodeURIComponent(email)}`;
+                } else if (data.status === 'success') {
+                    // Direct login (fallback)
+                    securityManager.setToken(data.token);
+                    localStorage.setItem('staff', JSON.stringify({
+                        email: email,
+                        role: data.role
+                    }));
                     
-                    if (data.staff.role === 'ADMIN') {
+                    if (data.role === 'ADMIN') {
                         window.location.href = 'admin-dashboard.html';
                     } else {
                         window.location.href = 'staff-dashboard.html';
