@@ -1,4 +1,23 @@
-node_modules/
+# Environment files
 .env
-dist/
+*.env
+backend/test-spring/.env
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Build files
+target/
 build/
+dist/
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
