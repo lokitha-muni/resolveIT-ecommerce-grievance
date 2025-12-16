@@ -1,7 +1,15 @@
 {
-  "name": "resolveit-ecommerce-grievance",
+  "name": "resolveit-backend",
   "version": "1.0.0",
+  "description": "ResolveIT Backend - Spring Boot REST API",
   "scripts": {
-    "start": "mvnw.cmd spring-boot:run"
-  }
+    "start": "./mvnw spring-boot:run",
+    "start:windows": "mvnw.cmd spring-boot:run",
+    "build": "./mvnw clean package",
+    "test": "./mvnw test",
+    "clean": "./mvnw clean"
+  },
+  "keywords": ["spring-boot", "java", "rest-api", "mongodb"],
+  "author": "ResolveIT Team",
+  "license": "MIT"
 }

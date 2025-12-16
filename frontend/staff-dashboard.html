@@ -9,16 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
-    <!-- Background -->
     <div class="split-background"></div>
 
-    <!-- Main Dashboard Container -->
     <div class="dashboard-main">
-        <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
                 <button class="mobile-nav-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
-                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;" tabindex="0" role="button" aria-label="View profile">ST</div>
+                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" tabindex="0" role="button" aria-label="View profile">ST</div>
                 <span id="userGreeting" data-translate="hi_staff">Hi, Staff</span>
             </div>
             <div class="nav-right">
@@ -37,7 +34,6 @@
             </div>
         </nav>
 
-        <!-- Stats Section -->
         <section class="stats-section" id="main-content">
             <div class="stat-card" tabindex="0">
                 <div class="stat-icon" aria-hidden="true">📊</div>
@@ -61,12 +57,10 @@
             </div>
         </section>
 
-        <!-- Quick Actions -->
         <div class="action-button-container">
             <button class="primary-action-btn" onclick="window.location.href='staff-my-queue.html'">View My Queue</button>
         </div>
 
-        <!-- My Assigned Complaints -->
         <section class="complaints-section">
             <div class="complaints-card">
                 <h2>My Assigned Complaints</h2>
@@ -91,7 +85,6 @@
             </div>
         </section>
 
-        <!-- Staff Tools -->
         <section class="admin-tools">
             <div class="dashboard-container">
                 <h2>Staff Tools</h2>
@@ -120,7 +113,6 @@
             </div>
         </section>
 
-        <!-- Recent Activity -->
         <section class="recent-activity">
             <div class="dashboard-container">
                 <h2>Recent Activity</h2>
@@ -153,13 +145,11 @@
                 return;
             }
             
-            // Redirect admin to admin dashboard
             if (staff.email === 'admin@gmail.com') {
                 window.location.href = 'admin-dashboard.html';
                 return;
             }
 
-            // Set default name immediately
             let displayName = 'Staff';
             if (staff.email === 'staff@gmail.com') {
                 displayName = 'Support';
@@ -168,26 +158,21 @@
             document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
             document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
 
-            // Load dashboard stats
             try {
                 const data = await uiManager.apiCall(`http://localhost:9090/api/staff/dashboard/${staff.email}`, {}, 'Loading dashboard data...');
                 
                 if (data) {
-                    // Update name from backend data
                     if (data.firstName) {
                         document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
                         document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                     }
                     
-                    // Update stats with animation
                     animateCounter('totalComplaints', data.totalComplaints || 0);
                     animateCounter('pendingComplaints', data.pendingComplaints || 0);
                     animateCounter('inProgressComplaints', data.inProgressComplaints || 0);
                     animateCounter('resolvedComplaints', data.resolvedComplaints || 0);
 
-                    // Update complaints table
                     updateComplaintsTable(data.recentComplaints || []);
-                    
                     showToast('Dashboard loaded successfully', 'success');
                 }
             } catch (error) {
@@ -248,92 +233,8 @@
             if (diffMins < 60) return `${diffMins} mins ago`;
             if (diffHours < 24) return `${diffHours} hours ago`;
             return `${diffDays} days ago`;
-        }ed successfully', 'success');
-                }
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-                showToast('Failed to load dashboard data', 'error');
-            } finally {
-                hideLoading();
-            }
         }
 
-        function updateComplaintsTable(complaints) {
-            const tbody = document.getElementById('complaintsTableBody');
-            tbody.innerHTML = '';
-
-            if (!complaints || complaints.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No complaints found</td></tr>';
-                return;
-            }
-
-            complaints.forEach(complaint => {
-                const row = document.createElement('tr');
-                const statusClass = getStatusClass(complaint.status);
-                const timeAgo = getTimeAgo(complaint.createdAt);
-
-                row.innerHTML = `
-                    <td>${complaint.complaintId || 'N/A'}</td>
-                    <td>${complaint.userEmail || 'N/A'}</td>
-                    <td><span class="tag orange">${complaint.issueType || 'General'}</span></td>
-                    <td><span class="priority medium">Medium</span></td>
-                    <td><span class="tag ${statusClass}">${complaint.status || 'PENDING'}</span></td>
-                    <td>${timeAgo}</td>
-                    <td><a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a></td>
-                `;
-                row.classList.add('fade-in');
-                tbody.appendChild(row);
-            });
-        }
-
-        function getStatusClass(status) {
-            switch(status) {
-                case 'PENDING': return 'yellow';
-                case 'IN_PROGRESS': return 'blue';
-                case 'RESOLVED': return 'green';
-                default: return 'gray';
-            }
-        }
-
-        function getTimeAgo(dateString) {
-            if (!dateString) return 'Unknown';
-            
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-            
-            if (diffHours < 1) {
-                return 'Just now';
-            } else if (diffHours < 24) {
-                return diffHours + 'h ago';
-            } else {
-                const diffDays = Math.floor(diffHours / 24);
-                return diffDays + 'd ago';
-            }
-        }
-        
-        async function logout() {
-            try {
-                const staff = JSON.parse(localStorage.getItem('staff'));
-                if (staff && staff.email) {
-                    await fetch('http://localhost:9090/api/staff/logout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email: staff.email })
-                    });
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-            } finally {
-                localStorage.removeItem('staff');
-                window.location.href = 'staff-login.html';
-            }
-        }
-
-        // Counter animation
         function animateCounter(elementId, targetValue) {
             const element = document.getElementById(elementId);
             const startValue = parseInt(element.textContent) || 0;
@@ -355,17 +256,11 @@
             requestAnimationFrame(updateCounter);
         }
         
-        // Load dashboard on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadStaffDashboard();
-            
-            // Set initial language
             const savedLang = localStorage.getItem('language') || 'en';
             document.getElementById('languageSelect').value = savedLang;
         });
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>

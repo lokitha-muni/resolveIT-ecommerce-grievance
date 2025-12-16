@@ -5,17 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ResolveIT - Login</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/ui-enhancements.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body class="auth-page">
     <div class="auth-container">
         <div class="auth-form-box">
-            <div class="auth-logo">
-                <div class="logo-icon">R</div>
-                <h1>ResolveIT</h1>
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <div class="logo-icon">R</div>
+                    <h1>ResolveIT</h1>
+                </div>
+                <div class="auth-controls">
+                    <label class="theme-toggle" aria-label="Toggle dark mode">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="theme-slider"></span>
+                    </label>
+                    <select id="languageSelect" aria-label="Select language" onchange="changeLanguage(this.value)">
+                        <option value="en">EN</option>
+                        <option value="es">ES</option>
+                        <option value="fr">FR</option>
+                    </select>
+                </div>
             </div>
-            <h2>Welcome Back</h2>
-            <p class="subtitle">Sign in to your account</p>
+            <h2 data-translate="welcome_back">Welcome Back</h2>
+            <p class="subtitle" data-translate="sign_in_account">Sign in to your account</p>
             
             <form id="loginForm">
                 <div class="input-group">
@@ -93,7 +107,9 @@
         // Initialize UI on page load
         document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('language') || 'en';
-            document.getElementById('languageSelect').value = savedLang;
+            if (document.getElementById('languageSelect')) {
+                document.getElementById('languageSelect').value = savedLang;
+            }
         });
     </script>
 </body>
