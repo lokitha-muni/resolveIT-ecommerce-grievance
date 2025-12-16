@@ -3,158 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard – ResolveIT Management System</title>
+    <title>Admin Dashboard – ResolveIT</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
-    <!-- Background -->
-    <div class="split-background"></div>
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
 
-    <!-- Main Dashboard Container -->
     <div class="dashboard-main">
-        <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo">AD</div>
-                <span>Hi, Admin</span>
+                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
+                <span id="userGreeting">Hi, Admin</span>
             </div>
             <div class="nav-right">
-                <a href="about.html" class="nav-btn">About</a>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <a href="admin-users.html" class="nav-btn">Manage Users</a>
+                <a href="admin-staff.html" class="nav-btn">Manage Staff</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </nav>
 
-        <!-- Stats Section -->
+        <section class="page-header">
+            <h1>Admin Dashboard</h1>
+            <p>System overview and management</p>
+        </section>
+
         <section class="stats-section">
             <div class="stat-card">
                 <div class="stat-icon">📊</div>
-                <div class="stat-label">Total Complaints</div>
-                <div class="stat-number">45</div>
+                <div class="stat-label">Total Users</div>
+                <div class="stat-number" id="totalUsers">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-label">Pending Review</div>
-                <div class="stat-number">3</div>
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Total Staff</div>
+                <div class="stat-number" id="totalStaff">0</div>
             </div>
-            <div class="stat-card progress-card">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-label">In Progress</div>
-                <div class="stat-number">7</div>
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-label">Total Complaints</div>
+                <div class="stat-number" id="totalComplaints">0</div>
             </div>
             <div class="stat-card resolved-card">
                 <div class="stat-icon">✅</div>
                 <div class="stat-label">Resolved Today</div>
-                <div class="stat-number">12</div>
+                <div class="stat-number" id="resolvedToday">0</div>
             </div>
         </section>
 
-        <!-- Admin Actions -->
-        <div class="action-button-container">
-            <button class="primary-action-btn" onclick="window.location.href='admin-complaints.html'">Manage All Complaints</button>
+        <div class="admin-grid">
+            <section class="complaints-section">
+                <div class="complaints-card">
+                    <h2>Recent Complaints</h2>
+                    <div class="table-container">
+                        <table class="complaints-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Issue</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintsTableBody">
+                                <!-- Complaints loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-tools">
+                <div class="dashboard-container">
+                    <h2>Admin Tools</h2>
+                    <div class="tools-grid">
+                        <div class="tool-card" onclick="window.location.href='admin-users.html'">
+                            <div class="tool-icon">👤</div>
+                            <h3>User Management</h3>
+                            <p>Manage customer accounts</p>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='admin-staff.html'">
+                            <div class="tool-icon">👥</div>
+                            <h3>Staff Management</h3>
+                            <p>Manage staff accounts</p>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='admin-reports.html'">
+                            <div class="tool-icon">📊</div>
+                            <h3>Reports</h3>
+                            <p>System analytics and reports</p>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='admin-settings.html'">
+                            <div class="tool-icon">⚙️</div>
+                            <h3>System Settings</h3>
+                            <p>Configure system parameters</p>
+                        </div>
+                        <div class="tool-card" onclick="window.location.href='admin-audit.html'">
+                            <div class="tool-icon">📄</div>
+                            <h3>Audit Logs</h3>
+                            <p>Track system activities</p>
+                        </div>
+                        <div class="tool-card" onclick="createBackup()">
+                            <div class="tool-icon">💾</div>
+                            <h3>Backup & Recovery</h3>
+                            <p>Data management tools</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-
-        <!-- Complaints Management Section -->
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>Complaint Management</h2>
-                <div class="table-container">
-                    <table class="complaints-table">
-                        <thead>
-                            <tr>
-                                <th>Complaint ID</th>
-                                <th>Customer</th>
-                                <th>Order ID</th>
-                                <th>Issue Type</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Assigned To</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>CMP-001</td>
-                                <td>John Doe</td>
-                                <td>ORD-12345</td>
-                                <td><span class="tag orange">Wrong Product</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="tag yellow">Pending</span></td>
-                                <td>Agent Smith</td>
-                                <td>
-                                    <a href="admin-complaint-details.html?id=CMP-001" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CMP-002</td>
-                                <td>Jane Smith</td>
-                                <td>ORD-67890</td>
-                                <td><span class="tag blue">Late Delivery</span></td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td><span class="tag blue">In Progress</span></td>
-                                <td>Agent Johnson</td>
-                                <td>
-                                    <a href="admin-complaint-details.html?id=CMP-002" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CMP-003</td>
-                                <td>Mike Wilson</td>
-                                <td>ORD-11223</td>
-                                <td><span class="tag orange">Damaged Product</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="tag green">Resolved</span></td>
-                                <td>Agent Davis</td>
-                                <td>
-                                    <a href="admin-complaint-details.html?id=CMP-003" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CMP-004</td>
-                                <td>Sarah Brown</td>
-                                <td>ORD-44556</td>
-                                <td><span class="tag yellow">Missing Item</span></td>
-                                <td><span class="priority low">Low</span></td>
-                                <td><span class="tag yellow">Pending</span></td>
-                                <td>Unassigned</td>
-                                <td>
-                                    <a href="admin-complaint-details.html?id=CMP-004" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Admin Tools -->
-        <section class="admin-tools">
-            <div class="dashboard-container">
-                <h2>Admin Tools</h2>
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <div class="tool-icon">👥</div>
-                        <h3>Manage Agents</h3>
-                        <p>Add, remove, or update support agents</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">📈</div>
-                        <h3>Analytics</h3>
-                        <p>View detailed reports and statistics</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">⚙️</div>
-                        <h3>System Settings</h3>
-                        <p>Configure system preferences</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">📧</div>
-                        <h3>Notifications</h3>
-                        <p>Manage system notifications</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminDashboard();
+        });
+
+        async function loadAdminDashboard() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (!staff || !staff.email) {
+                    window.location.href = 'staff-login.html';
+                    return;
+                }
+                
+                // Check if admin
+                if (staff.email !== 'admin@gmail.com') {
+                    alert('Admin access required');
+                    window.location.href = 'staff-dashboard.html';
+                    return;
+                }
+
+                // Initialize default staff accounts
+                await fetch('http://localhost:9090/api/staff/init', { method: 'POST' });
+                
+                // Set default name immediately
+                let displayName = 'Admin';
+                document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+
+                const response = await fetch(`http://localhost:9090/api/admin/dashboard/${staff.email}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update name from backend data
+                    if (data.firstName) {
+                        document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                        document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
+                    }
+
+                    document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                    document.getElementById('totalStaff').textContent = data.totalStaff || 0;
+                    document.getElementById('totalComplaints').textContent = data.totalComplaints || 0;
+                    document.getElementById('resolvedToday').textContent = data.resolvedToday || 0;
+
+                    updateComplaintsTable(data.recentComplaints || []);
+                } else {
+                    console.error('Failed to load admin dashboard');
+                }
+            } catch (error) {
+                console.error('Error loading admin dashboard:', error);
+            }
+        }
+
+        function updateComplaintsTable(complaints) {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+
+            if (!complaints || complaints.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No complaints found</td></tr>';
+                return;
+            }
+
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusClass(complaint.status);
+                const timeAgo = getTimeAgo(complaint.createdAt);
+
+                row.innerHTML = `
+                    <td>${complaint.complaintId}</td>
+                    <td>${complaint.userEmail}</td>
+                    <td>${complaint.issueType}</td>
+                    <td><span class="tag ${statusClass}">${complaint.status}</span></td>
+                    <td>${timeAgo}</td>
+                    <td><a href="admin-complaint-details.html?id=${complaint.complaintId}" class="view-link">View</a></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'yellow';
+                case 'IN_PROGRESS': return 'blue';
+                case 'RESOLVED': return 'green';
+                default: return 'gray';
+            }
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
+        }
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
+        
+        async function createBackup() {
+            if (!confirm('Create a system backup? This may take a few minutes.')) return;
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/backup', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert(`Backup created successfully! Backup ID: ${data.backupId}`);
+                } else {
+                    alert('Failed to create backup: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Failed to create backup');
+            }
+        }
+    </script>
 </body>
 </html>

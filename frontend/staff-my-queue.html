@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Queue – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
+                <span id="userGreeting">Hi, Staff</span>
+            </div>
+            <div class="nav-right">
+                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <section class="page-header">
+            <h1>My Assigned Complaints</h1>
+            <p>Complaints assigned to you</p>
+        </section>
+
+        <section class="complaints-section">
+            <div class="complaints-card">
+                <div class="table-container">
+                    <table class="complaints-table">
+                        <thead>
+                            <tr>
+                                <th>Complaint ID</th>
+                                <th>Customer Email</th>
+                                <th>Issue Type</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myQueueTableBody">
+                            <!-- My queue will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMyQueue();
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || !staff.email) {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            
+            // Set default name immediately
+            let displayName = 'Staff';
+            if (staff.email === 'staff@gmail.com') {
+                displayName = 'Support';
+            } else if (staff.email === 'admin@gmail.com') {
+                displayName = 'Admin';
+            }
+            
+            document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+            document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+            
+            // Load updated name from backend
+            try {
+                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.firstName) {
+                        document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                        document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading staff profile:', error);
+            }
+        }
+
+        async function loadMyQueue() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                const response = await fetch(`http://localhost:9090/api/staff/my-queue/${staff.email}`);
+                const complaints = await response.json();
+
+                if (response.ok) {
+                    updateMyQueueTable(complaints);
+                } else {
+                    console.error('Failed to load my queue');
+                }
+            } catch (error) {
+                console.error('Error loading my queue:', error);
+            }
+        }
+
+        function updateMyQueueTable(complaints) {
+            const tbody = document.getElementById('myQueueTableBody');
+            tbody.innerHTML = '';
+
+            if (!complaints || complaints.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No complaints assigned to you</td></tr>';
+                return;
+            }
+
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusClass(complaint.status);
+                const timeAgo = getTimeAgo(complaint.createdAt);
+
+                row.innerHTML = `
+                    <td>${complaint.complaintId}</td>
+                    <td>${complaint.userEmail}</td>
+                    <td><span class="tag orange">${complaint.issueType}</span></td>
+                    <td><span class="tag ${statusClass}">${complaint.status}</span></td>
+                    <td>${timeAgo}</td>
+                    <td>
+                        <a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'yellow';
+                case 'IN_PROGRESS': return 'blue';
+                case 'RESOLVED': return 'green';
+                default: return 'gray';
+            }
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
+        }
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
+    </script>
+</body>
+</html>

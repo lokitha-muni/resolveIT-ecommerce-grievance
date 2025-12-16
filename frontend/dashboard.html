@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard – ResolveIT Delivery Grievance System</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="search-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
@@ -19,10 +20,11 @@
         <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='edit-profile.html'">AK</div>
-                <span>Hi, Aisha Khan</span>
+                <div class="profile-photo" onclick="window.location.href='edit-profile.html'" id="profilePhoto">U</div>
+                <span id="userGreeting">Hi, User</span>
             </div>
             <div class="nav-right">
+                <button onclick="loadDashboardData()" class="nav-btn" style="background: #f8f9fa; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-right: 1rem;">🔄 Refresh</button>
                 <div class="bell-icon" onclick="toggleNotifications()">🔔<span class="notification-badge">3</span></div>
                 <a href="index.html" class="logout-btn">Logout</a>
             </div>
@@ -33,28 +35,51 @@
             <div class="stat-card">
                 <div class="stat-icon">📊</div>
                 <div class="stat-label">Total Complaints</div>
-                <div class="stat-number">45</div>
+                <div class="stat-number" id="totalComplaints">0</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">⏳</div>
                 <div class="stat-label">Pending</div>
-                <div class="stat-number">3</div>
+                <div class="stat-number" id="pendingComplaints">0</div>
             </div>
             <div class="stat-card progress-card">
                 <div class="stat-icon">🔄</div>
                 <div class="stat-label">In Progress</div>
-                <div class="stat-number">7</div>
+                <div class="stat-number" id="inProgressComplaints">0</div>
             </div>
             <div class="stat-card resolved-card">
                 <div class="stat-icon">✅</div>
                 <div class="stat-label">Resolved</div>
-                <div class="stat-number">35</div>
+                <div class="stat-number" id="resolvedComplaints">0</div>
             </div>
         </section>
 
         <!-- Primary Action Button -->
         <div class="action-button-container">
             <button class="primary-action-btn" onclick="window.location.href='submit-complaint.html'">Submit New Order Issue</button>
+            <button class="secondary-action-btn" onclick="toggleSearchFilter()">🔍 Search & Filter</button>
+            <button class="secondary-action-btn" onclick="exportData()">📥 Export Data</button>
+        </div>
+        
+        <!-- Search & Filter Panel -->
+        <div id="searchPanel" class="search-panel" style="display: none;">
+            <div class="search-form">
+                <div class="search-row">
+                    <input type="text" id="searchComplaintId" placeholder="Search by Complaint ID">
+                    <select id="filterStatus">
+                        <option value="">All Status</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                    </select>
+                </div>
+                <div class="search-row">
+                    <input type="date" id="fromDate" placeholder="From Date">
+                    <input type="date" id="toDate" placeholder="To Date">
+                    <button onclick="searchComplaints()" class="search-btn">Search</button>
+                    <button onclick="clearSearch()" class="clear-btn">Clear</button>
+                </div>
+            </div>
         </div>
 
         <!-- Recent Complaints Section -->
@@ -72,35 +97,8 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>CMP-001</td>
-                                <td>ORD-12345</td>
-                                <td><span class="tag orange">Wrong Product</span></td>
-                                <td>1 day ago</td>
-                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr>
-                                <td>CMP-002</td>
-                                <td>ORD-67890</td>
-                                <td><span class="tag yellow">Restoring</span></td>
-                                <td>2 days ago</td>
-                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr>
-                                <td>CMP-003</td>
-                                <td>ORD-67890</td>
-                                <td><span class="tag blue">Late Delivery</span> <span class="tag green">Resolved</span></td>
-                                <td>5 mins ago</td>
-                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr>
-                                <td>CMP-004</td>
-                                <td>ORD-11223</td>
-                                <td><span class="tag orange">Damaged Product</span></td>
-                                <td>5 mins ago</td>
-                                <td><a href="complaint-details.html" class="view-link">View Details</a></td>
-                            </tr>
+                        <tbody id="complaintsTableBody">
+                            <!-- Complaints will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -114,39 +112,8 @@
             <h3>Notifications</h3>
             <button class="close-btn" onclick="toggleNotifications()">×</button>
         </div>
-        <div class="notifications-list">
-            <div class="notification-item unread">
-                <div class="notification-icon">✅</div>
-                <div class="notification-content">
-                    <div class="notification-title">Complaint Resolved</div>
-                    <div class="notification-text">Your complaint CMP-001 has been resolved successfully.</div>
-                    <div class="notification-time">2 hours ago</div>
-                </div>
-            </div>
-            <div class="notification-item unread">
-                <div class="notification-icon">🔄</div>
-                <div class="notification-content">
-                    <div class="notification-title">Status Update</div>
-                    <div class="notification-text">Your complaint CMP-002 is now in progress.</div>
-                    <div class="notification-time">1 day ago</div>
-                </div>
-            </div>
-            <div class="notification-item unread">
-                <div class="notification-icon">📧</div>
-                <div class="notification-content">
-                    <div class="notification-title">New Message</div>
-                    <div class="notification-text">Support team has replied to your complaint CMP-003.</div>
-                    <div class="notification-time">2 days ago</div>
-                </div>
-            </div>
-            <div class="notification-item read">
-                <div class="notification-icon">📝</div>
-                <div class="notification-content">
-                    <div class="notification-title">Complaint Received</div>
-                    <div class="notification-text">We have received your complaint CMP-004 and will review it shortly.</div>
-                    <div class="notification-time">3 days ago</div>
-                </div>
-            </div>
+        <div class="notifications-list" id="notificationsList">
+            <!-- Notifications will be loaded dynamically -->
         </div>
         <div class="notifications-footer">
             <button class="mark-all-read-btn" onclick="markAllAsRead()">Mark All as Read</button>
@@ -154,26 +121,253 @@
     </div>
 
     <script>
+        // Load dashboard data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+        });
+        
+        // Refresh data when window gains focus (returning from other pages)
+        window.addEventListener('focus', function() {
+            loadDashboardData();
+        });
+        
+        async function loadDashboardData() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.email) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:9090/api/dashboard/${user.email}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Update user info
+                    document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                    document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
+                    
+                    // Update stats
+                    document.getElementById('totalComplaints').textContent = data.totalComplaints;
+                    document.getElementById('pendingComplaints').textContent = data.pendingComplaints;
+                    document.getElementById('inProgressComplaints').textContent = data.inProgressComplaints;
+                    document.getElementById('resolvedComplaints').textContent = data.resolvedComplaints;
+                    
+                    // Update complaints table
+                    updateComplaintsTable(data.recentComplaints);
+                    
+                    // Update notifications
+                    updateNotifications(data.notifications, data.unreadNotifications);
+                } else {
+                    console.error('Failed to load dashboard data');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        function updateComplaintsTable(complaints) {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+            
+            if (complaints.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No complaints found</td></tr>';
+                return;
+            }
+            
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusClass(complaint.status);
+                const timeAgo = getTimeAgo(complaint.updatedAt);
+                
+                row.innerHTML = `
+                    <td>${complaint.complaintId}</td>
+                    <td>${complaint.orderId}</td>
+                    <td><span class="tag ${statusClass}">${complaint.issueType}</span></td>
+                    <td>${timeAgo}</td>
+                    <td><a href="complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'orange';
+                case 'IN_PROGRESS': return 'yellow';
+                case 'RESOLVED': return 'green';
+                default: return 'blue';
+            }
+        }
+        
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffMins < 60) return `${diffMins} mins ago`;
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            return `${diffDays} days ago`;
+        }
+
         function toggleNotifications() {
             const popup = document.getElementById('notificationsPopup');
             popup.classList.toggle('show');
         }
 
-        function markAllAsRead() {
-            const unreadItems = document.querySelectorAll('.notification-item.unread');
-            unreadItems.forEach(item => {
-                item.classList.remove('unread');
-                item.classList.add('read');
-            });
-            
-            // Update badge
-            const badge = document.querySelector('.notification-badge');
-            badge.textContent = '0';
-            badge.style.display = 'none';
-            
-            alert('All notifications marked as read!');
+        async function markAllAsRead() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.email) {
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:9090/api/notifications/mark-all-read/${user.email}`, {
+                    method: 'PUT'
+                });
+                
+                if (response.ok) {
+                    const unreadItems = document.querySelectorAll('.notification-item.unread');
+                    unreadItems.forEach(item => {
+                        item.classList.remove('unread');
+                        item.classList.add('read');
+                    });
+                    
+                    updateNotificationBadge(0);
+                    alert('All notifications marked as read!');
+                } else {
+                    alert('Failed to mark notifications as read');
+                }
+            } catch (error) {
+                console.error('Error marking notifications as read:', error);
+                alert('Error marking notifications as read');
+            }
         }
 
+        function updateNotifications(notifications, unreadCount) {
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = '';
+            
+            updateNotificationBadge(unreadCount);
+            
+            if (!notifications || notifications.length === 0) {
+                notificationsList.innerHTML = '<div class="no-notifications">No notifications</div>';
+                return;
+            }
+            
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+                
+                const icon = getNotificationIcon(notification.type);
+                const timeAgo = getTimeAgo(notification.createdAt);
+                
+                notificationItem.innerHTML = `
+                    <div class="notification-icon">${icon}</div>
+                    <div class="notification-content">
+                        <div class="notification-title">${notification.title}</div>
+                        <div class="notification-text">${notification.message}</div>
+                        <div class="notification-time">${timeAgo}</div>
+                    </div>
+                `;
+                
+                notificationsList.appendChild(notificationItem);
+            });
+        }
+        
+        function getNotificationIcon(type) {
+            switch(type) {
+                case 'SUCCESS': return '✅';
+                case 'INFO': return '📧';
+                case 'WARNING': return '⚠️';
+                case 'ERROR': return '❌';
+                default: return '📝';
+            }
+        }
+        
+        function updateNotificationBadge(count) {
+            const badge = document.querySelector('.notification-badge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function toggleSearchFilter() {
+            const panel = document.getElementById('searchPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        async function searchComplaints() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.email) return;
+                
+                const params = new URLSearchParams();
+                const complaintId = document.getElementById('searchComplaintId').value;
+                const status = document.getElementById('filterStatus').value;
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+                
+                if (complaintId) params.append('complaintId', complaintId);
+                if (status) params.append('status', status);
+                if (fromDate) params.append('fromDate', fromDate);
+                if (toDate) params.append('toDate', toDate);
+                
+                const response = await fetch(`http://localhost:9090/api/dashboard/search/${user.email}?${params}`);
+                const complaints = await response.json();
+                
+                if (response.ok) {
+                    updateComplaintsTable(complaints);
+                } else {
+                    alert('Search failed');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                alert('Search failed');
+            }
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchComplaintId').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            loadDashboardData();
+        }
+        
+        async function exportData() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.email) return;
+                
+                const response = await fetch(`http://localhost:9090/api/dashboard/export/${user.email}?format=csv`);
+                
+                if (response.ok) {
+                    const csvData = await response.text();
+                    const blob = new Blob([csvData], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'complaints.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Export failed');
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Export failed');
+            }
+        }
+        
         // Close popup when clicking outside
         document.addEventListener('click', function(event) {
             const popup = document.getElementById('notificationsPopup');

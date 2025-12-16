@@ -14,7 +14,7 @@
                 <div class="logo-icon">R</div>
                 <h1>ResolveIT</h1>
             </div>
-            <h2>Staff Portal</h2>
+            <h2 id="portalTitle">Staff Portal</h2>
             <p class="subtitle">Access your work dashboard</p>
             
             <!-- Staff/Admin Toggle -->
@@ -22,19 +22,19 @@
                 <label class="toggle-label">
                     <input type="checkbox" id="staffToggle">
                     <span class="toggle-slider"></span>
-                    <span class="toggle-text">Admin Login</span>
+                    <span class="toggle-text" id="toggleText">Admin Login</span>
                 </label>
             </div>
             
-            <form id="staffLoginForm" action="staff-dashboard.html" method="get">
+            <form id="staffLoginForm">
                 <div class="input-group">
                     <label>Staff ID / Email</label>
-                    <input type="text" placeholder="Enter your staff ID or email" required>
+                    <input type="email" id="staffEmail" placeholder="Enter your staff ID or email" required>
                 </div>
                 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" placeholder="Enter your password" required>
+                    <input type="password" id="staffPassword" placeholder="Enter your password" required>
                 </div>
                 
                 <button type="submit" class="submit-btn">Sign In</button>
@@ -50,14 +50,60 @@
         const staffToggle = document.getElementById('staffToggle');
         const staffLoginForm = document.getElementById('staffLoginForm');
         const subtitle = document.querySelector('.subtitle');
+        const portalTitle = document.getElementById('portalTitle');
+        const toggleText = document.getElementById('toggleText');
         
         staffToggle.addEventListener('change', function() {
             if (this.checked) {
-                staffLoginForm.action = 'admin-dashboard.html';
+                portalTitle.textContent = 'Admin Portal';
                 subtitle.textContent = 'Admin access portal';
+                toggleText.textContent = 'Staff Login';
             } else {
-                staffLoginForm.action = 'staff-dashboard.html';
+                portalTitle.textContent = 'Staff Portal';
                 subtitle.textContent = 'Access your work dashboard';
+                toggleText.textContent = 'Admin Login';
+            }
+        });
+        
+        staffLoginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('staffEmail').value;
+            const password = document.getElementById('staffPassword').value;
+            
+            try {
+                // First initialize staff accounts
+                await fetch('http://localhost:9090/api/staff/init', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const response = await fetch('http://localhost:9090/api/staff/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    localStorage.setItem('staff', JSON.stringify(data.staff));
+                    
+                    if (data.staff.role === 'ADMIN') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'staff-dashboard.html';
+                    }
+                } else {
+                    alert(data.message || 'Invalid credentials');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please try again.');
             }
         });
     </script>

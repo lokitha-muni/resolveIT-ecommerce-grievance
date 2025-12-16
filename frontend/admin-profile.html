@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" id="profilePhoto">A</div>
+                <span id="userGreeting">Hi, Admin</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <section class="page-header">
+            <h1>Admin Profile</h1>
+            <p>Manage your admin profile information</p>
+        </section>
+
+        <section class="form-section">
+            <div class="form-card">
+                <form id="profileForm" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" readonly>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <input type="text" id="role" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <input type="text" id="department">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Enter phone number">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="window.location.href='admin-dashboard.html'">Cancel</button>
+                        <button type="submit" class="submit-btn">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminProfile();
+        });
+
+        async function loadAdminProfile() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (!staff || !staff.email || staff.role !== 'ADMIN') {
+                    window.location.href = 'staff-login.html';
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:9090/api/admin/profile/${staff.email}`);
+                
+                if (response.ok) {
+                    const profileData = await response.json();
+                    
+                    document.getElementById('firstName').value = profileData.firstName || '';
+                    document.getElementById('lastName').value = profileData.lastName || '';
+                    document.getElementById('email').value = profileData.email || '';
+                    document.getElementById('role').value = profileData.role || '';
+                    document.getElementById('department').value = profileData.department || '';
+                    document.getElementById('phone').value = profileData.phone || '';
+                    
+                    document.getElementById('userGreeting').textContent = `Hi, ${profileData.firstName}`;
+                    document.getElementById('profilePhoto').textContent = profileData.firstName.charAt(0).toUpperCase();
+                } else {
+                    alert('Failed to load profile data');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Error loading profile data');
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || !staff.email) {
+                alert('Please login first');
+                return;
+            }
+
+            const profileData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                department: document.getElementById('department').value,
+                phone: document.getElementById('phone').value
+            };
+
+            try {
+                const response = await fetch(`http://localhost:9090/api/admin/profile/${staff.email}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert('Profile updated successfully!');
+                    
+                    // Update localStorage
+                    staff.firstName = profileData.firstName;
+                    staff.lastName = profileData.lastName;
+                    localStorage.setItem('staff', JSON.stringify(staff));
+                    
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    alert('Failed to update profile: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Error updating profile');
+            }
+        });
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
+    </script>
+</body>
+</html>

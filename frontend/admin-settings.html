@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Settings – ResolveIT Admin</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
@@ -16,157 +17,183 @@
     <div class="dashboard-main">
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo">AD</div>
-                <span>Admin - System Settings</span>
+                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
+                <span id="userGreeting">Hi, Admin</span>
             </div>
             <div class="nav-right">
-                <a href="admin-dashboard.html" class="nav-btn">← Back to Dashboard</a>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <a href="admin-dashboard.html" class="nav-btn">Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </nav>
 
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>SLA Configuration</h2>
-                <div class="settings-form">
-                    <div class="form-group">
-                        <label>High Priority Response Time (hours):</label>
-                        <input type="number" value="2" id="highPriority">
-                    </div>
-                    <div class="form-group">
-                        <label>Medium Priority Response Time (hours):</label>
-                        <input type="number" value="4" id="mediumPriority">
-                    </div>
-                    <div class="form-group">
-                        <label>Low Priority Response Time (hours):</label>
-                        <input type="number" value="8" id="lowPriority">
-                    </div>
-                    <button class="admin-action-btn status" onclick="saveSLA()">Save SLA Settings</button>
-                </div>
-            </div>
+        <section class="page-header">
+            <h1>System Settings</h1>
+            <p>Configure system parameters</p>
         </section>
 
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>Auto-Assignment Rules</h2>
-                <div class="settings-form">
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" checked>
-                            <span class="checkmark"></span>
-                            Enable automatic complaint assignment
-                        </label>
+        <section class="settings-section">
+            <div class="settings-card">
+                <h3>Complaint Categories</h3>
+                <div class="settings-list" id="categoriesList">
+                    <div class="setting-item">
+                        <input type="text" value="Late Delivery" class="setting-input">
+                        <button class="remove-btn">Remove</button>
                     </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" checked>
-                            <span class="checkmark"></span>
-                            Balance workload across agents
-                        </label>
+                    <div class="setting-item">
+                        <input type="text" value="Wrong Product" class="setting-input">
+                        <button class="remove-btn">Remove</button>
                     </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox">
-                            <span class="checkmark"></span>
-                            Assign based on agent expertise
-                        </label>
+                    <div class="setting-item">
+                        <input type="text" value="Damaged Product" class="setting-input">
+                        <button class="remove-btn">Remove</button>
                     </div>
-                    <button class="admin-action-btn assign" onclick="saveAssignment()">Save Assignment Rules</button>
+                </div>
+                <button onclick="addCategory()" class="add-btn">Add Category</button>
+            </div>
+
+            <div class="settings-card">
+                <h3>Priority Levels</h3>
+                <div class="settings-list" id="prioritiesList">
+                    <div class="setting-item">
+                        <input type="text" value="Low" class="setting-input">
+                        <input type="number" value="1" class="priority-level">
+                        <button class="remove-btn">Remove</button>
+                    </div>
+                    <div class="setting-item">
+                        <input type="text" value="Medium" class="setting-input">
+                        <input type="number" value="2" class="priority-level">
+                        <button class="remove-btn">Remove</button>
+                    </div>
+                    <div class="setting-item">
+                        <input type="text" value="High" class="setting-input">
+                        <input type="number" value="3" class="priority-level">
+                        <button class="remove-btn">Remove</button>
+                    </div>
+                </div>
+                <button onclick="addPriority()" class="add-btn">Add Priority</button>
+            </div>
+
+            <div class="settings-card">
+                <h3>General Settings</h3>
+                <div class="setting-row">
+                    <label>Default Resolution Time (hours)</label>
+                    <input type="number" id="resolutionTime" value="48">
+                </div>
+                <div class="setting-row">
+                    <label>Auto-assign Complaints</label>
+                    <input type="checkbox" id="autoAssign" checked>
+                </div>
+                <div class="setting-row">
+                    <label>Email Notifications</label>
+                    <input type="checkbox" id="emailNotifications" checked>
                 </div>
             </div>
-        </section>
 
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>Priority Rules</h2>
-                <div class="table-container">
-                    <table class="complaints-table">
-                        <thead>
-                            <tr>
-                                <th>Condition</th>
-                                <th>Priority Level</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Premium Customer + Order Value > $200</td>
-                                <td><span class="priority high">High</span></td>
-                                <td><button class="action-btn update" onclick="editRule(1)">Edit</button></td>
-                            </tr>
-                            <tr>
-                                <td>Damaged Product + Order Value > $100</td>
-                                <td><span class="priority high">High</span></td>
-                                <td><button class="action-btn update" onclick="editRule(2)">Edit</button></td>
-                            </tr>
-                            <tr>
-                                <td>Late Delivery + Standard Customer</td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td><button class="action-btn update" onclick="editRule(3)">Edit</button></td>
-                            </tr>
-                            <tr>
-                                <td>Refund Request + Order Value < $50</td>
-                                <td><span class="priority low">Low</span></td>
-                                <td><button class="action-btn update" onclick="editRule(4)">Edit</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button class="admin-action-btn priority" onclick="addRule()">Add New Rule</button>
-            </div>
-        </section>
-
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>Email Templates</h2>
-                <div class="settings-form">
-                    <div class="form-group">
-                        <label>Welcome Message Template:</label>
-                        <textarea id="welcomeTemplate">Thank you for contacting ResolveIT. We have received your complaint and will respond within our SLA timeframe.</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Status Update Template:</label>
-                        <textarea id="statusTemplate">Your complaint status has been updated. Current status: [STATUS]. We will keep you informed of any further updates.</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Resolution Template:</label>
-                        <textarea id="resolutionTemplate">We are pleased to inform you that your complaint has been resolved. Thank you for your patience.</textarea>
-                    </div>
-                    <button class="admin-action-btn success" onclick="saveTemplates()">Save Templates</button>
-                </div>
+            <div class="settings-actions">
+                <button onclick="saveSettings()" class="save-settings-btn">Save All Settings</button>
             </div>
         </section>
     </div>
 
     <script>
-        function saveSLA() {
-            const high = document.getElementById('highPriority').value;
-            const medium = document.getElementById('mediumPriority').value;
-            const low = document.getElementById('lowPriority').value;
-            alert(`SLA settings saved:\nHigh: ${high}h, Medium: ${medium}h, Low: ${low}h`);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || staff.role !== 'ADMIN') {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            document.getElementById('userGreeting').textContent = `Hi, ${staff.firstName}`;
+            document.getElementById('profilePhoto').textContent = staff.firstName.charAt(0).toUpperCase();
         }
 
-        function saveAssignment() {
-            alert('Auto-assignment rules saved successfully!');
-        }
-
-        function editRule(id) {
-            const newRule = prompt(`Edit priority rule ${id}:\nEnter new condition:`);
-            if (newRule) {
-                alert(`Priority rule ${id} updated!`);
+        async function loadSettings() {
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/settings');
+                if (response.ok) {
+                    const settings = await response.json();
+                    // Process settings if they exist
+                    console.log('Settings loaded:', settings);
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
             }
         }
 
-        function addRule() {
-            const condition = prompt('Enter new priority rule condition:');
-            const priority = prompt('Enter priority level (High/Medium/Low):');
-            if (condition && priority) {
-                alert(`New priority rule added: ${condition} -> ${priority}`);
+        function addCategory() {
+            const list = document.getElementById('categoriesList');
+            const item = document.createElement('div');
+            item.className = 'setting-item';
+            item.innerHTML = `
+                <input type="text" placeholder="New category" class="setting-input">
+                <button onclick="removeItem(this)" class="remove-btn">Remove</button>
+            `;
+            list.appendChild(item);
+        }
+
+        function addPriority() {
+            const list = document.getElementById('prioritiesList');
+            const item = document.createElement('div');
+            item.className = 'setting-item';
+            item.innerHTML = `
+                <input type="text" placeholder="Priority name" class="setting-input">
+                <input type="number" placeholder="Level" class="priority-level">
+                <button onclick="removeItem(this)" class="remove-btn">Remove</button>
+            `;
+            list.appendChild(item);
+        }
+
+        function removeItem(button) {
+            button.parentElement.remove();
+        }
+
+        async function saveSettings() {
+            try {
+                const categories = Array.from(document.querySelectorAll('#categoriesList .setting-input'))
+                    .map(input => input.value).filter(val => val.trim());
+                
+                const priorities = Array.from(document.querySelectorAll('#prioritiesList .setting-item'))
+                    .map(item => ({
+                        name: item.querySelector('.setting-input').value,
+                        level: item.querySelector('.priority-level').value
+                    })).filter(p => p.name.trim());
+
+                const settings = [
+                    { key: 'complaint_categories', value: JSON.stringify(categories), category: 'COMPLAINT_CATEGORIES', description: 'Available complaint categories' },
+                    { key: 'priority_levels', value: JSON.stringify(priorities), category: 'PRIORITIES', description: 'Priority levels configuration' },
+                    { key: 'default_resolution_time', value: document.getElementById('resolutionTime').value, category: 'GENERAL', description: 'Default resolution time in hours' },
+                    { key: 'auto_assign', value: document.getElementById('autoAssign').checked.toString(), category: 'GENERAL', description: 'Auto-assign complaints to staff' },
+                    { key: 'email_notifications', value: document.getElementById('emailNotifications').checked.toString(), category: 'GENERAL', description: 'Enable email notifications' }
+                ];
+
+                const response = await fetch('http://localhost:9090/api/admin/settings', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert('Settings saved successfully!');
+                } else {
+                    alert('Failed to save settings: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Failed to save settings');
             }
         }
 
-        function saveTemplates() {
-            alert('Email templates saved successfully!');
+        async function logout() {
+            localStorage.removeItem('staff');
+            window.location.href = 'index.html';
         }
     </script>
 </body>

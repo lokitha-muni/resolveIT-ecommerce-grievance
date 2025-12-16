@@ -3,214 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Queue – ResolveIT Support</title>
+    <title>Staff Queue – ResolveIT</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
-    <!-- Background -->
     <div class="split-background">
         <div class="bg-left"></div>
         <div class="bg-right"></div>
     </div>
 
-    <!-- Main Container -->
     <div class="dashboard-main">
-        <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo">ST</div>
-                <span>My Queue</span>
+                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
+                <span id="userGreeting">Hi, Staff</span>
             </div>
             <div class="nav-right">
-                <a href="staff-dashboard.html" class="nav-btn">← Back to Dashboard</a>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </nav>
 
-        <!-- Queue Stats -->
-        <section class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon">📋</div>
-                <div class="stat-label">Total Assigned</div>
-                <div class="stat-number">12</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🔥</div>
-                <div class="stat-label">High Priority</div>
-                <div class="stat-number">4</div>
-            </div>
-            <div class="stat-card progress-card">
-                <div class="stat-icon">⏰</div>
-                <div class="stat-label">Due Today</div>
-                <div class="stat-number">6</div>
-            </div>
-            <div class="stat-card resolved-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Completed</div>
-                <div class="stat-number">8</div>
+        <section class="page-header">
+            <h1>All Complaints</h1>
+            <p>Manage and assign all complaints in the system</p>
+            <div class="queue-actions">
+                <a href="staff-my-queue.html" class="nav-btn">My Queue</a>
+                <button onclick="toggleBulkMode()" class="action-btn">Bulk Actions</button>
             </div>
         </section>
-
-        <!-- Filter Controls -->
-        <div class="filter-section">
-            <div class="filter-controls">
-                <select class="filter-select">
-                    <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="progress">In Progress</option>
-                    <option value="resolved">Resolved</option>
+        
+        <!-- Bulk Actions Panel -->
+        <div id="bulkPanel" class="bulk-panel" style="display: none;">
+            <div class="bulk-form">
+                <select id="bulkStatus">
+                    <option value="">Change Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="RESOLVED">Resolved</option>
                 </select>
-                <select class="filter-select">
-                    <option value="all">All Priority</option>
-                    <option value="high">High Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="low">Low Priority</option>
+                <select id="bulkAssign">
+                    <option value="">Assign To</option>
                 </select>
-                <button class="filter-btn">Apply Filters</button>
+                <button onclick="applyBulkActions()" class="apply-btn">Apply</button>
+                <button onclick="cancelBulkMode()" class="cancel-btn">Cancel</button>
             </div>
         </div>
 
-        <!-- Queue Table -->
         <section class="complaints-section">
             <div class="complaints-card">
-                <h2>My Complaint Queue</h2>
                 <div class="table-container">
                     <table class="complaints-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Customer</th>
+                                <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                <th>Complaint ID</th>
+                                <th>Customer Email</th>
                                 <th>Issue Type</th>
-                                <th>Priority</th>
                                 <th>Status</th>
-                                <th>Assigned</th>
-                                <th>Due Time</th>
+                                <th>Assigned To</th>
+                                <th>Created</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="urgent-row">
-                                <td>CMP-001</td>
-                                <td>John Doe</td>
-                                <td><span class="tag orange">Wrong Product</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="tag yellow">Pending</span></td>
-                                <td>2h ago</td>
-                                <td class="due-soon">2h 30m</td>
-                                <td>
-                                    <a href="staff-complaint-details.html?id=CMP-001" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CMP-005</td>
-                                <td>Alice Johnson</td>
-                                <td><span class="tag blue">Late Delivery</span></td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td><span class="tag blue">In Progress</span></td>
-                                <td>4h ago</td>
-                                <td>4h 15m</td>
-                                <td>
-                                    <a href="staff-complaint-details.html?id=CMP-005" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                            <tr class="urgent-row">
-                                <td>CMP-007</td>
-                                <td>Bob Wilson</td>
-                                <td><span class="tag orange">Damaged Item</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="tag yellow">Pending</span></td>
-                                <td>1h ago</td>
-                                <td class="due-soon">1h 45m</td>
-                                <td>
-                                    <a href="staff-complaint-details.html?id=CMP-007" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CMP-012</td>
-                                <td>Sarah Brown</td>
-                                <td><span class="tag blue">Missing Item</span></td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td><span class="tag blue">In Progress</span></td>
-                                <td>6h ago</td>
-                                <td>6h 20m</td>
-                                <td>
-                                    <a href="staff-complaint-details.html?id=CMP-012" class="view-link">View Details</a>
-                                </td>
-                            </tr>
-
+                        <tbody id="queueTableBody">
+                            <!-- Queue will be loaded dynamically -->
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Actions Panel -->
-        <section class="quick-actions-panel">
-            <div class="dashboard-container">
-                <h2>Quick Actions</h2>
-                <div class="tools-grid">
-                    <div class="tool-card" onclick="bulkUpdate()">
-                        <div class="tool-icon">📝</div>
-                        <h3>Bulk Update</h3>
-                        <p>Update multiple complaints at once</p>
-                    </div>
-                    <div class="tool-card" onclick="exportQueue()">
-                        <div class="tool-icon">📊</div>
-                        <h3>Export Queue</h3>
-                        <p>Download queue as CSV/Excel</p>
-                    </div>
-                    <div class="tool-card" onclick="refreshQueue()">
-                        <div class="tool-icon">🔄</div>
-                        <h3>Refresh Queue</h3>
-                        <p>Get latest complaint updates</p>
-                    </div>
-                    <div class="tool-card" onclick="viewMetrics()">
-                        <div class="tool-icon">📈</div>
-                        <h3>My Metrics</h3>
-                        <p>View performance statistics</p>
-                    </div>
                 </div>
             </div>
         </section>
     </div>
 
     <script>
-        function updateComplaint(id) {
-            alert(`Opening update form for complaint ${id}`);
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStaffQueue();
+            loadUserData();
+        });
 
-        function resolveComplaint(id) {
-            if (confirm(`Mark complaint ${id} as resolved?`)) {
-                alert(`Complaint ${id} marked as resolved!`);
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || !staff.email) {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            
+            // Set default name immediately
+            let displayName = 'Staff';
+            if (staff.email === 'staff@gmail.com') {
+                displayName = 'Support';
+            } else if (staff.email === 'admin@gmail.com') {
+                displayName = 'Admin';
+            }
+            
+            document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+            document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+            
+            // Load updated name from backend
+            try {
+                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.firstName) {
+                        document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                        document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading staff profile:', error);
             }
         }
 
-        function contactCustomer(id) {
-            alert(`Opening contact options for complaint ${id}`);
-        }
+        async function loadStaffQueue() {
+            try {
+                const response = await fetch('http://localhost:9090/api/staff/queue');
+                const complaints = await response.json();
 
-        function escalateComplaint(id) {
-            if (confirm(`Escalate complaint ${id} to supervisor?`)) {
-                alert(`Complaint ${id} escalated to supervisor!`);
+                if (response.ok) {
+                    updateQueueTable(complaints);
+                } else {
+                    console.error('Failed to load queue');
+                }
+            } catch (error) {
+                console.error('Error loading queue:', error);
             }
         }
 
-        function bulkUpdate() {
-            alert('Opening bulk update tool...');
+        function updateQueueTable(complaints) {
+            const tbody = document.getElementById('queueTableBody');
+            tbody.innerHTML = '';
+
+            if (!complaints || complaints.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No complaints in queue</td></tr>';
+                return;
+            }
+
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusClass(complaint.status);
+                const timeAgo = getTimeAgo(complaint.createdAt);
+
+                row.innerHTML = `
+                    <td><input type="checkbox" class="complaint-checkbox" value="${complaint.complaintId}"></td>
+                    <td>${complaint.complaintId}</td>
+                    <td>${complaint.userEmail}</td>
+                    <td><span class="tag orange">${complaint.issueType}</span></td>
+                    <td><span class="tag ${statusClass}">${complaint.status}</span></td>
+                    <td>${complaint.assignedTo || 'Unassigned'}</td>
+                    <td>${timeAgo}</td>
+                    <td>
+                        <a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">View</a>
+                        <button onclick="assignComplaint('${complaint.complaintId}')" class="assign-btn">Assign</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
 
-        function exportQueue() {
-            alert('Exporting queue data...');
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'yellow';
+                case 'IN_PROGRESS': return 'blue';
+                case 'RESOLVED': return 'green';
+                default: return 'gray';
+            }
         }
 
-        function refreshQueue() {
-            alert('Refreshing queue...');
-            location.reload();
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
         }
 
-        function viewMetrics() {
-            alert('Opening performance metrics...');
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
+        
+        let bulkMode = false;
+        
+        async function loadStaffOptions() {
+            try {
+                const response = await fetch('http://localhost:9090/api/staff/all');
+                const staff = await response.json();
+                
+                const select = document.getElementById('bulkAssign');
+                select.innerHTML = '<option value="">Assign To</option>';
+                staff.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.email;
+                    option.textContent = `${s.firstName} ${s.lastName}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading staff:', error);
+            }
+        }
+        
+        function toggleBulkMode() {
+            bulkMode = !bulkMode;
+            document.getElementById('bulkPanel').style.display = bulkMode ? 'block' : 'none';
+            if (bulkMode) loadStaffOptions();
+        }
+        
+        function cancelBulkMode() {
+            bulkMode = false;
+            document.getElementById('bulkPanel').style.display = 'none';
+            document.getElementById('selectAll').checked = false;
+            document.querySelectorAll('.complaint-checkbox').forEach(cb => cb.checked = false);
+        }
+        
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.complaint-checkbox').forEach(cb => cb.checked = selectAll);
+        }
+        
+        async function applyBulkActions() {
+            const selectedIds = Array.from(document.querySelectorAll('.complaint-checkbox:checked'))
+                .map(cb => cb.value);
+                
+            if (selectedIds.length === 0) {
+                alert('Please select complaints to update');
+                return;
+            }
+            
+            const status = document.getElementById('bulkStatus').value;
+            const assignTo = document.getElementById('bulkAssign').value;
+            
+            if (!status && !assignTo) {
+                alert('Please select an action to apply');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/staff/bulk-update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        complaintIds: selectedIds,
+                        status: status,
+                        assignTo: assignTo
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert(data.message);
+                    loadStaffQueue();
+                    cancelBulkMode();
+                } else {
+                    alert('Failed to update complaints: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating complaints:', error);
+                alert('Failed to update complaints');
+            }
+        }
+        
+        async function assignComplaint(complaintId) {
+            const staffEmail = prompt('Enter staff email to assign:');
+            if (!staffEmail) return;
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/staff/assign', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        complaintId: complaintId,
+                        staffEmail: staffEmail
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert('Complaint assigned successfully!');
+                    loadStaffQueue();
+                } else {
+                    alert('Failed to assign complaint: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error assigning complaint:', error);
+                alert('Failed to assign complaint');
+            }
         }
     </script>
 </body>

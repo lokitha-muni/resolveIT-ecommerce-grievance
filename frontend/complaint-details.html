@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complaint Details – ResolveIT</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="search-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="complaint-details-body">
@@ -19,13 +20,13 @@
         <!-- Top Navigation -->
         <nav class="complaint-nav">
             <div class="nav-left">
-                <div class="profile-photo">AK</div>
-                <span>Hi, Aisha Khan</span>
+                <div class="profile-photo" id="profilePhoto">U</div>
+                <span id="userGreeting">Hi, User</span>
             </div>
             <div class="nav-right">
                 <a href="dashboard.html" class="nav-btn">Dashboard</a>
                 <a href="about.html" class="nav-btn">About</a>
-                <button class="logout-btn">Logout</button>
+                <a href="index.html" class="logout-btn">Logout</a>
             </div>
         </nav>
 
@@ -42,86 +43,377 @@
                 <div class="complaint-header-card">
                     <div class="detail-row">
                         <span class="label">Complaint ID:</span>
-                        <span class="value">CMP-001</span>
+                        <span class="value" id="complaintId">Loading...</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Order ID:</span>
-                        <span class="value">ORD-12345</span>
+                        <span class="value" id="orderId">Loading...</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Category:</span>
-                        <span class="value">Wrong Product</span>
+                        <span class="value" id="issueType">Loading...</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Date Submitted:</span>
-                        <span class="value">May 8, 2024</span>
+                        <span class="value" id="dateSubmitted">Loading...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Status:</span>
+                        <span class="value" id="currentStatus">Loading...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Description:</span>
+                        <span class="value" id="description">Loading...</span>
                     </div>
                 </div>
 
                 <!-- Status Tracker -->
                 <div class="status-tracker-card">
                     <h3>Complaint Status</h3>
-                    <div class="progress-tracker">
-                        <div class="step completed">
-                            <div class="step-circle">✓</div>
-                            <span class="step-label">Submitted</span>
-                        </div>
-                        <div class="progress-line completed"></div>
-                        <div class="step completed">
-                            <div class="step-circle">✓</div>
-                            <span class="step-label">Under Review</span>
-                        </div>
-                        <div class="progress-line completed"></div>
-                        <div class="step current">
-                            <div class="step-circle">3</div>
-                            <span class="step-label">Assigned</span>
-                        </div>
-                        <div class="progress-line"></div>
-                        <div class="step">
-                            <div class="step-circle">4</div>
-                            <span class="step-label">In Progress</span>
-                        </div>
-                        <div class="progress-line"></div>
-                        <div class="step">
-                            <div class="step-circle">5</div>
-                            <span class="step-label">Resolved</span>
-                        </div>
+                    <div class="progress-tracker" id="statusTracker">
+                        <!-- Status will be loaded dynamically -->
                     </div>
                 </div>
 
                 <!-- Admin Notes Timeline -->
                 <div class="timeline-card">
-                    <h3>Admin Notes / Updates</h3>
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-date">May 10, 2024</div>
-                            <div class="timeline-content">We are reviewing your issue</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">May 9, 2024</div>
-                            <div class="timeline-content">Case assigned to support agent</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">May 8, 2024</div>
-                            <div class="timeline-content">Complaint submitted successfully</div>
-                        </div>
+                    <h3>Updates & Timeline</h3>
+                    <div class="timeline" id="timeline">
+                        <!-- Timeline will be loaded dynamically -->
                     </div>
                 </div>
             </div>
 
             <!-- Right Column -->
             <div class="right-column">
-                <!-- User View Card -->
+                <!-- Comments Section -->
                 <div class="user-view-card">
-                    <h3>User View</h3>
-                    <p class="resolution-time">Estimated resolution time: 2-3 business days</p>
-                    <div class="messaging-box">
-                        <input type="text" placeholder="Type a message..." class="message-input">
-                        <button class="send-btn">Send</button>
+                    <h3>Comments</h3>
+                    <div class="comments-list" id="commentsList">
+                        <!-- Comments loaded dynamically -->
+                    </div>
+                    <div class="add-comment">
+                        <textarea id="newComment" placeholder="Add a comment..." rows="3"></textarea>
+                        <button onclick="addComment()" class="action-btn">Add Comment</button>
+                    </div>
+                </div>
+                
+                <!-- Rating Section -->
+                <div class="user-view-card" id="ratingSection" style="display: none;">
+                    <h3>Rate This Resolution</h3>
+                    <div class="rating-stars">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <textarea id="ratingFeedback" placeholder="Share your feedback..." rows="3"></textarea>
+                    <button onclick="submitRating()" class="action-btn">Submit Rating</button>
+                </div>
+                
+                <!-- Actions -->
+                <div class="user-view-card">
+                    <h3>Actions</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+                        <button class="action-btn secondary" onclick="window.print()">Print Details</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComplaintDetails();
+            loadUserData();
+        });
+        
+        async function loadUserData() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.email) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:9090/api/dashboard/${user.email}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                    document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+        
+        async function loadComplaintDetails() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const complaintId = urlParams.get('id');
+                
+                console.log('URL params:', window.location.search);
+                console.log('Complaint ID from URL:', complaintId);
+                
+                if (!complaintId) {
+                    alert('No complaint ID provided');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+                
+                const url = `http://localhost:9090/api/dashboard/complaint/${complaintId}`;
+                console.log('Fetching from URL:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    console.error('Response not OK:', response.status, response.statusText);
+                    throw new Error(`Complaint not found: ${response.status}`);
+                }
+                
+                const complaint = await response.json();
+                console.log('Complaint data received:', complaint);
+                displayComplaintDetails(complaint);
+                
+            } catch (error) {
+                console.error('Error loading complaint details:', error);
+                alert('Failed to load complaint details: ' + error.message);
+                window.location.href = 'dashboard.html';
+            }
+        }
+        
+        function displayComplaintDetails(complaint) {
+            document.getElementById('complaintId').textContent = complaint.complaintId;
+            document.getElementById('orderId').textContent = complaint.orderId;
+            document.getElementById('issueType').textContent = complaint.issueType;
+            document.getElementById('currentStatus').textContent = complaint.status;
+            document.getElementById('description').textContent = complaint.description;
+            
+            const createdDate = new Date(complaint.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('dateSubmitted').textContent = createdDate;
+            
+            updateStatusTracker(complaint.status);
+            updateTimeline(complaint);
+        }
+        
+        function updateStatusTracker(status) {
+            const tracker = document.getElementById('statusTracker');
+            const steps = [
+                { key: 'PENDING', label: 'Submitted' },
+                { key: 'IN_PROGRESS', label: 'In Progress' },
+                { key: 'RESOLVED', label: 'Resolved' }
+            ];
+            
+            let html = '';
+            steps.forEach((step, index) => {
+                const isCompleted = getStatusOrder(status) > getStatusOrder(step.key);
+                const isCurrent = status === step.key;
+                const stepClass = isCompleted ? 'completed' : (isCurrent ? 'current' : '');
+                
+                html += `
+                    <div class="step ${stepClass}">
+                        <div class="step-circle">${isCompleted ? '✓' : (index + 1)}</div>
+                        <span class="step-label">${step.label}</span>
+                    </div>
+                `;
+                
+                if (index < steps.length - 1) {
+                    const lineClass = isCompleted ? 'completed' : '';
+                    html += `<div class="progress-line ${lineClass}"></div>`;
+                }
+            });
+            
+            tracker.innerHTML = html;
+        }
+        
+        function getStatusOrder(status) {
+            const order = { 'PENDING': 1, 'IN_PROGRESS': 2, 'RESOLVED': 3 };
+            return order[status] || 0;
+        }
+        
+        function updateTimeline(complaint) {
+            const timeline = document.getElementById('timeline');
+            const createdDate = new Date(complaint.createdAt).toLocaleDateString();
+            const updatedDate = new Date(complaint.updatedAt).toLocaleDateString();
+            
+            let timelineItems = [
+                {
+                    date: createdDate,
+                    content: 'Complaint submitted successfully'
+                }
+            ];
+            
+            if (complaint.status === 'IN_PROGRESS') {
+                timelineItems.unshift({
+                    date: updatedDate,
+                    content: 'Complaint is now being processed'
+                });
+            } else if (complaint.status === 'RESOLVED') {
+                timelineItems.unshift({
+                    date: updatedDate,
+                    content: 'Complaint has been resolved'
+                });
+                // Show rating section for resolved complaints
+                document.getElementById('ratingSection').style.display = 'block';
+                loadRating(complaint.complaintId);
+            }
+            
+            let html = '';
+            timelineItems.forEach(item => {
+                html += `
+                    <div class="timeline-item">
+                        <div class="timeline-date">${item.date}</div>
+                        <div class="timeline-content">${item.content}</div>
+                    </div>
+                `;
+            });
+            
+            timeline.innerHTML = html;
+            
+            // Load comments
+            loadComments(complaint.complaintId);
+        }
+        
+        async function loadComments(complaintId) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/comments/complaint/${complaintId}`);
+                const comments = await response.json();
+                
+                const commentsList = document.getElementById('commentsList');
+                commentsList.innerHTML = '';
+                
+                comments.forEach(comment => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'comment-item';
+                    commentDiv.innerHTML = `
+                        <div class="comment-author">${comment.authorType}: ${comment.authorEmail}</div>
+                        <div class="comment-message">${comment.message}</div>
+                        <div class="comment-time">${new Date(comment.createdAt).toLocaleString()}</div>
+                    `;
+                    commentsList.appendChild(commentDiv);
+                });
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
+        }
+        
+        async function addComment() {
+            const message = document.getElementById('newComment').value.trim();
+            if (!message) return;
+            
+            const user = JSON.parse(localStorage.getItem('user'));
+            const urlParams = new URLSearchParams(window.location.search);
+            const complaintId = urlParams.get('id');
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/comments/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        complaintId: complaintId,
+                        authorEmail: user.email,
+                        authorType: 'USER',
+                        message: message
+                    })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('newComment').value = '';
+                    loadComments(complaintId);
+                } else {
+                    alert('Failed to add comment');
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Failed to add comment');
+            }
+        }
+        
+        let selectedRating = 0;
+        
+        // Rating stars functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.rating);
+                    updateStars();
+                });
+            });
+        });
+        
+        function updateStars() {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.style.color = '#ffd700';
+                } else {
+                    star.style.color = '#ddd';
+                }
+            });
+        }
+        
+        async function submitRating() {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+            
+            const feedback = document.getElementById('ratingFeedback').value;
+            const user = JSON.parse(localStorage.getItem('user'));
+            const urlParams = new URLSearchParams(window.location.search);
+            const complaintId = urlParams.get('id');
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/ratings/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        complaintId: complaintId,
+                        userEmail: user.email,
+                        rating: selectedRating,
+                        feedback: feedback
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert('Thank you for your feedback!');
+                    document.getElementById('ratingSection').style.display = 'none';
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error submitting rating:', error);
+                alert('Failed to submit rating');
+            }
+        }
+        
+        async function loadRating(complaintId) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/ratings/complaint/${complaintId}`);
+                
+                if (response.ok) {
+                    // Rating already exists, hide rating section
+                    document.getElementById('ratingSection').style.display = 'none';
+                }
+            } catch (error) {
+                // Rating doesn't exist, keep section visible
+            }
+        }
+    </script>
 </body>
 </html>

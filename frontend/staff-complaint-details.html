@@ -5,189 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Complaint Details – ResolveIT</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="complaint-details-body">
-    <!-- Split Background -->
-    <div class="complaint-split-bg"></div>
+    <div class="complaint-split-bg">
+        <div class="complaint-bg-left"></div>
+        <div class="complaint-bg-right"></div>
+    </div>
 
-    <!-- Main Container -->
     <div class="complaint-main">
-        <!-- Top Navigation -->
         <nav class="complaint-nav">
             <div class="nav-left">
-                <div class="profile-photo">ST</div>
-                <span>Staff View - Complaint Details</span>
+                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
+                <span id="userGreeting">Hi, Staff</span>
             </div>
             <div class="nav-right">
-                <a href="staff-dashboard.html" class="nav-btn">← Back to Dashboard</a>
-                <a href="staff-queue.html" class="nav-btn">Queue</a>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
+                <a href="staff-my-queue.html" class="nav-btn">My Queue</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </nav>
 
-        <!-- Page Title -->
         <div class="page-title">
-            <h1 id="complaintTitle">Complaint CMP-001 Details</h1>
+            <h1>Complaint Details</h1>
         </div>
 
-        <!-- Main Content Grid -->
         <div class="complaint-content">
-            <!-- Left Column -->
             <div class="left-column">
-                <!-- Complaint Header Card -->
                 <div class="complaint-header-card">
                     <div class="detail-row">
                         <span class="label">Complaint ID:</span>
-                        <span class="value" id="complaintId">CMP-001</span>
+                        <span class="value" id="complaintId">Loading...</span>
                     </div>
                     <div class="detail-row">
-                        <span class="label">Customer:</span>
-                        <span class="value" id="customerName">John Doe</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Email:</span>
-                        <span class="value" id="customerEmail">john.doe@email.com</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Phone:</span>
-                        <span class="value" id="customerPhone">+1 (555) 123-4567</span>
+                        <span class="label">Customer Email:</span>
+                        <span class="value" id="userEmail">Loading...</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Order ID:</span>
-                        <span class="value" id="orderId">ORD-12345</span>
+                        <span class="value" id="orderId">Loading...</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Issue Type:</span>
-                        <span class="value" id="issueType">Wrong Product</span>
+                        <span class="value" id="issueType">Loading...</span>
                     </div>
                     <div class="detail-row">
-                        <span class="label">Priority:</span>
-                        <span class="value" id="priority">🔥 High</span>
+                        <span class="label">Current Status:</span>
+                        <span class="value" id="currentStatus">Loading...</span>
                     </div>
                     <div class="detail-row">
                         <span class="label">Date Submitted:</span>
-                        <span class="value" id="dateSubmitted">May 8, 2024</span>
+                        <span class="value" id="dateSubmitted">Loading...</span>
                     </div>
                     <div class="detail-row">
-                        <span class="label">Assigned Agent:</span>
-                        <span class="value">Support Agent (You)</span>
+                        <span class="label">Description:</span>
+                        <span class="value" id="description">Loading...</span>
                     </div>
                 </div>
 
-                <!-- Customer Description -->
-                <div class="complaint-header-card">
-                    <h3>Customer Description</h3>
-                    <div class="customer-description" id="customerDescription">
-                        I ordered a blue wireless headphone (Model: WH-1000XM4) but received a red wired headphone instead. The package was sealed properly but contained the wrong item. I need the correct product delivered as soon as possible as this was a gift for my daughter's birthday.
-                    </div>
-                </div>
-
-                <!-- Status Tracker -->
-                <div class="status-tracker-card">
-                    <h3>Complaint Status</h3>
-                    <div class="progress-tracker" id="statusTracker">
-                        <div class="step completed">
-                            <div class="step-circle">✓</div>
-                            <span class="step-label">Submitted</span>
-                        </div>
-                        <div class="progress-line completed"></div>
-                        <div class="step completed">
-                            <div class="step-circle">✓</div>
-                            <span class="step-label">Under Review</span>
-                        </div>
-                        <div class="progress-line completed"></div>
-                        <div class="step current">
-                            <div class="step-circle">3</div>
-                            <span class="step-label">Assigned</span>
-                        </div>
-                        <div class="progress-line"></div>
-                        <div class="step">
-                            <div class="step-circle">4</div>
-                            <span class="step-label">In Progress</span>
-                        </div>
-                        <div class="progress-line"></div>
-                        <div class="step">
-                            <div class="step-circle">5</div>
-                            <span class="step-label">Resolved</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Staff Notes Timeline -->
                 <div class="timeline-card">
-                    <h3>Staff Notes & Updates</h3>
+                    <h3>Status History</h3>
                     <div class="timeline" id="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-date">May 10, 2024 - 2:30 PM</div>
-                            <div class="timeline-content">Complaint assigned to support agent. Investigating with warehouse team.</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">May 9, 2024 - 10:15 AM</div>
-                            <div class="timeline-content">Initial review completed. Issue confirmed - wrong product shipped.</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-date">May 8, 2024 - 4:45 PM</div>
-                            <div class="timeline-content">Complaint submitted by customer via online portal.</div>
-                        </div>
+                        <!-- Timeline will be loaded dynamically -->
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column -->
             <div class="right-column">
-                <!-- Staff Actions Card -->
+                <!-- Staff Notes -->
                 <div class="user-view-card">
-                    <h3>Staff Actions</h3>
-                    <div class="staff-actions">
-                        <button class="staff-action-btn primary" onclick="updateStatus()">Update Status</button>
-                        <button class="staff-action-btn secondary" onclick="contactCustomer()">Contact Customer</button>
-                        <button class="staff-action-btn success" onclick="resolveComplaint()">Mark Resolved</button>
-                        <button class="staff-action-btn warning" onclick="escalateComplaint()">Escalate</button>
+                    <h3>Staff Notes</h3>
+                    <div class="notes-list" id="notesList">
+                        <!-- Notes loaded dynamically -->
+                    </div>
+                    <div class="add-note">
+                        <textarea id="newNote" placeholder="Add internal note..." rows="3"></textarea>
+                        <label><input type="checkbox" id="isInternal" checked> Internal Note</label>
+                        <button onclick="addStaffNote()" class="action-btn">Add Note</button>
                     </div>
                 </div>
-
+                
                 <!-- Customer Communication -->
                 <div class="user-view-card">
                     <h3>Customer Communication</h3>
-                    <div class="communication-history">
-                        <div class="message customer-message">
-                            <div class="message-header">
-                                <strong>John Doe</strong>
-                                <span class="message-time">May 8, 4:45 PM</span>
-                            </div>
-                            <div class="message-content">I received the wrong product. Please help me get the correct item.</div>
-                        </div>
-                        <div class="message staff-message">
-                            <div class="message-header">
-                                <strong>Support Agent</strong>
-                                <span class="message-time">May 9, 10:30 AM</span>
-                            </div>
-                            <div class="message-content">Thank you for contacting us. We're investigating your issue and will update you soon.</div>
-                        </div>
+                    <div class="messages-list" id="messagesList">
+                        <!-- Messages loaded dynamically -->
                     </div>
-                    <div class="messaging-box">
-                        <textarea placeholder="Type your message to customer..." class="message-input" id="staffMessage"></textarea>
-                        <button class="send-btn" onclick="sendMessage()">Send Message</button>
+                    <div class="send-message">
+                        <textarea id="newMessage" placeholder="Send message to customer..." rows="3"></textarea>
+                        <button onclick="sendMessage()" class="action-btn">Send Message</button>
                     </div>
                 </div>
-
-                <!-- Quick Info -->
+                
+                <!-- Staff Actions -->
                 <div class="user-view-card">
-                    <h3>Quick Info</h3>
-                    <div class="quick-info">
-                        <div class="info-item">
-                            <span class="info-label">Time Since Assignment:</span>
-                            <span class="info-value">2 hours 30 minutes</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">SLA Deadline:</span>
-                            <span class="info-value due-soon">4 hours remaining</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Customer Tier:</span>
-                            <span class="info-value">Premium</span>
-                        </div>
+                    <h3>Staff Actions</h3>
+                    
+                    <div class="status-update-section">
+                        <label for="statusSelect">Update Status:</label>
+                        <select id="statusSelect">
+                            <option value="PENDING">Pending</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="RESOLVED">Resolved</option>
+                        </select>
+                        <button onclick="updateStatus()" class="action-btn">Update Status</button>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="window.location.href='staff-my-queue.html'">Back to My Queue</button>
+                        <button class="action-btn secondary" onclick="window.print()">Print Details</button>
                     </div>
                 </div>
             </div>
@@ -195,143 +122,289 @@
     </div>
 
     <script>
-        // Get complaint ID from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const complaintId = urlParams.get('id') || 'CMP-001';
+        let currentComplaintId = null;
 
-        // Sample complaint data
-        const complaintData = {
-            'CMP-001': {
-                customer: 'John Doe',
-                email: 'john.doe@email.com',
-                phone: '+1 (555) 123-4567',
-                orderId: 'ORD-12345',
-                issueType: 'Wrong Product',
-                priority: 'High',
-                description: 'I ordered a blue wireless headphone (Model: WH-1000XM4) but received a red wired headphone instead. The package was sealed properly but contained the wrong item. I need the correct product delivered as soon as possible as this was a gift for my daughter\'s birthday.'
-            },
-            'CMP-005': {
-                customer: 'Alice Johnson',
-                email: 'alice.j@email.com',
-                phone: '+1 (555) 987-6543',
-                orderId: 'ORD-67890',
-                issueType: 'Late Delivery',
-                priority: 'Medium',
-                description: 'My order was supposed to be delivered 3 days ago but I still haven\'t received it. The tracking shows it\'s been stuck at the local facility. I need this urgently for a business presentation.'
-            },
-            'CMP-007': {
-                customer: 'Bob Wilson',
-                email: 'bob.wilson@email.com',
-                phone: '+1 (555) 456-7890',
-                orderId: 'ORD-11223',
-                issueType: 'Damaged Item',
-                priority: 'High',
-                description: 'The laptop I received has a cracked screen and damaged keyboard. The packaging was also damaged when it arrived. I need a replacement immediately as I need it for work.'
-            },
-            'CMP-012': {
-                customer: 'Sarah Brown',
-                email: 'sarah.b@email.com',
-                phone: '+1 (555) 321-9876',
-                orderId: 'ORD-33445',
-                issueType: 'Missing Item',
-                priority: 'Medium',
-                description: 'One item from my order is missing. I ordered 3 books but only received 2. The missing book is "JavaScript Guide" which I need for my course.'
-            },
-            'CMP-015': {
-                customer: 'Mike Davis',
-                email: 'mike.d@email.com',
-                phone: '+1 (555) 654-3210',
-                orderId: 'ORD-55667',
-                issueType: 'Refund Request',
-                priority: 'Low',
-                description: 'I want to return this item as it doesn\'t fit properly. The size chart was incorrect. Please process my refund.'
-            },
-            'CMP-018': {
-                customer: 'Emma Wilson',
-                email: 'emma.w@email.com',
-                phone: '+1 (555) 789-0123',
-                orderId: 'ORD-77889',
-                issueType: 'Late Delivery',
-                priority: 'Medium',
-                description: 'My package is 2 days late. I need it for an event this weekend. Please expedite the delivery.'
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComplaintDetails();
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || !staff.email) {
+                window.location.href = 'staff-login.html';
+                return;
             }
-        };
-
-        // Load complaint data
-        function loadComplaintData() {
-            const data = complaintData[complaintId];
-            if (data) {
-                document.getElementById('complaintTitle').textContent = `Complaint ${complaintId} Details`;
-                document.getElementById('complaintId').textContent = complaintId;
-                document.getElementById('customerName').textContent = data.customer;
-                document.getElementById('customerEmail').textContent = data.email;
-                document.getElementById('customerPhone').textContent = data.phone;
-                document.getElementById('orderId').textContent = data.orderId;
-                document.getElementById('issueType').textContent = data.issueType;
-                document.getElementById('priority').textContent = data.priority;
-                document.getElementById('customerDescription').textContent = data.description;
+            
+            try {
+                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const displayName = data.firstName || staff.email.split('@')[0];
+                    document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                    document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+                } else {
+                    const username = staff.email.split('@')[0];
+                    document.getElementById('userGreeting').textContent = `Hi, ${username}`;
+                    document.getElementById('profilePhoto').textContent = username.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                const username = staff.email.split('@')[0];
+                document.getElementById('userGreeting').textContent = `Hi, ${username}`;
+                document.getElementById('profilePhoto').textContent = username.charAt(0).toUpperCase();
             }
         }
 
-        function updateStatus() {
-            const newStatus = prompt('Enter new status (Pending, In Progress, Resolved, Escalated):');
-            if (newStatus) {
-                alert(`Status updated to: ${newStatus}`);
-                // Add to timeline
-                addTimelineItem(`Status updated to: ${newStatus}`);
+        async function loadComplaintDetails() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const complaintId = urlParams.get('id');
+                currentComplaintId = complaintId;
+
+                if (!complaintId) {
+                    alert('No complaint ID provided');
+                    window.location.href = 'staff-queue.html';
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:9090/api/staff/complaint/${complaintId}`);
+
+                if (!response.ok) {
+                    throw new Error('Complaint not found');
+                }
+
+                const complaint = await response.json();
+                displayComplaintDetails(complaint);
+                loadStaffNotes(complaintId);
+                loadMessages(complaintId);
+
+            } catch (error) {
+                console.error('Error loading complaint details:', error);
+                alert('Failed to load complaint details');
+                window.location.href = 'staff-queue.html';
             }
         }
 
-        function contactCustomer() {
-            const method = prompt('Contact method (Email, Phone, SMS):');
-            if (method) {
-                alert(`Initiating ${method} contact with customer`);
-                addTimelineItem(`Contacted customer via ${method}`);
-            }
+        function displayComplaintDetails(complaint) {
+            document.getElementById('complaintId').textContent = complaint.complaintId;
+            document.getElementById('userEmail').textContent = complaint.userEmail;
+            document.getElementById('orderId').textContent = complaint.orderId;
+            document.getElementById('issueType').textContent = complaint.issueType;
+            document.getElementById('currentStatus').textContent = complaint.status;
+            document.getElementById('description').textContent = complaint.description;
+
+            const createdDate = new Date(complaint.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('dateSubmitted').textContent = createdDate;
+
+            // Set current status in dropdown
+            document.getElementById('statusSelect').value = complaint.status;
+
+            updateTimeline(complaint);
         }
 
-        function resolveComplaint() {
-            if (confirm(`Mark complaint ${complaintId} as resolved?`)) {
-                alert(`Complaint ${complaintId} marked as resolved!`);
-                addTimelineItem('Complaint marked as resolved');
-            }
-        }
-
-        function escalateComplaint() {
-            if (confirm(`Escalate complaint ${complaintId} to supervisor?`)) {
-                alert(`Complaint ${complaintId} escalated to supervisor!`);
-                addTimelineItem('Complaint escalated to supervisor');
-            }
-        }
-
-        function sendMessage() {
-            const message = document.getElementById('staffMessage').value;
-            if (message.trim()) {
-                alert('Message sent to customer!');
-                document.getElementById('staffMessage').value = '';
-                addTimelineItem('Message sent to customer');
-            } else {
-                alert('Please enter a message');
-            }
-        }
-
-        function addTimelineItem(content) {
+        function updateTimeline(complaint) {
             const timeline = document.getElementById('timeline');
-            const now = new Date();
-            const timeString = now.toLocaleDateString() + ' - ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const createdDate = new Date(complaint.createdAt).toLocaleDateString();
+            const updatedDate = new Date(complaint.updatedAt).toLocaleDateString();
+
+            let timelineItems = [
+                {
+                    date: createdDate,
+                    content: 'Complaint submitted by customer'
+                }
+            ];
+
+            if (complaint.status === 'IN_PROGRESS') {
+                timelineItems.unshift({
+                    date: updatedDate,
+                    content: 'Status updated to In Progress'
+                });
+            } else if (complaint.status === 'RESOLVED') {
+                timelineItems.unshift({
+                    date: updatedDate,
+                    content: 'Complaint resolved by staff'
+                });
+            }
+
+            let html = '';
+            timelineItems.forEach(item => {
+                html += `
+                    <div class="timeline-item">
+                        <div class="timeline-date">${item.date}</div>
+                        <div class="timeline-content">${item.content}</div>
+                    </div>
+                `;
+            });
+
+            timeline.innerHTML = html;
+        }
+        
+        async function loadStaffNotes(complaintId) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/staff/notes/${complaintId}`);
+                const notes = await response.json();
+                
+                const notesList = document.getElementById('notesList');
+                notesList.innerHTML = '';
+                
+                notes.forEach(note => {
+                    const noteDiv = document.createElement('div');
+                    noteDiv.className = 'note-item';
+                    noteDiv.innerHTML = `
+                        <div class="note-author">${note.staffEmail} ${note.internal ? '(Internal)' : ''}</div>
+                        <div class="note-content">${note.note}</div>
+                        <div class="note-time">${new Date(note.createdAt).toLocaleString()}</div>
+                    `;
+                    notesList.appendChild(noteDiv);
+                });
+            } catch (error) {
+                console.error('Error loading notes:', error);
+            }
+        }
+        
+        async function addStaffNote() {
+            const noteText = document.getElementById('newNote').value.trim();
+            const isInternal = document.getElementById('isInternal').checked;
             
-            const newItem = document.createElement('div');
-            newItem.className = 'timeline-item';
-            newItem.innerHTML = `
-                <div class="timeline-date">${timeString}</div>
-                <div class="timeline-content">${content}</div>
-            `;
+            if (!noteText) return;
             
-            timeline.insertBefore(newItem, timeline.firstChild);
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/staff/note', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        complaintId: currentComplaintId,
+                        staffEmail: staff.email,
+                        note: noteText,
+                        internal: isInternal
+                    })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('newNote').value = '';
+                    loadStaffNotes(currentComplaintId);
+                } else {
+                    alert('Failed to add note');
+                }
+            } catch (error) {
+                console.error('Error adding note:', error);
+                alert('Failed to add note');
+            }
+        }
+        
+        async function loadMessages(complaintId) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/comments/complaint/${complaintId}`);
+                const messages = await response.json();
+                
+                const messagesList = document.getElementById('messagesList');
+                messagesList.innerHTML = '';
+                
+                messages.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message-item';
+                    messageDiv.innerHTML = `
+                        <div class="message-author">${message.authorType}: ${message.authorEmail}</div>
+                        <div class="message-content">${message.message}</div>
+                        <div class="message-time">${new Date(message.createdAt).toLocaleString()}</div>
+                    `;
+                    messagesList.appendChild(messageDiv);
+                });
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+        
+        async function sendMessage() {
+            const messageText = document.getElementById('newMessage').value.trim();
+            if (!messageText) return;
+            
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/comments/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        complaintId: currentComplaintId,
+                        authorEmail: staff.email,
+                        authorType: 'STAFF',
+                        message: messageText
+                    })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('newMessage').value = '';
+                    loadMessages(currentComplaintId);
+                } else {
+                    alert('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
+            }
         }
 
-        // Load data when page loads
-        loadComplaintData();
+        async function updateStatus() {
+            const newStatus = document.getElementById('statusSelect').value;
+            
+            if (!currentComplaintId) {
+                alert('No complaint selected');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:9090/api/staff/complaint/${currentComplaintId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert('Status updated successfully!');
+                    loadComplaintDetails(); // Reload to show updated data
+                } else {
+                    alert('Failed to update status: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Error updating status');
+            }
+        }
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
     </script>
 </body>
 </html>

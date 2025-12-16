@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics – ResolveIT Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
+                <span id="userGreeting">Hi, Admin</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <section class="page-header">
+            <h1>Reports & Analytics</h1>
+            <p>Detailed system reports and insights</p>
+        </section>
+
+        <section class="reports-section">
+            <div class="report-card">
+                <h3>System Overview</h3>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-label">Total Users</div>
+                        <div class="metric-value" id="totalUsers">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Total Staff</div>
+                        <div class="metric-value" id="totalStaff">0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Total Complaints</div>
+                        <div class="metric-value" id="totalComplaints">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <h3>Complaint Statistics</h3>
+                <div class="stats-chart">
+                    <div class="chart-item">
+                        <div class="chart-bar pending" id="pendingBar"></div>
+                        <div class="chart-label">Pending (<span id="pendingCount">0</span>)</div>
+                    </div>
+                    <div class="chart-item">
+                        <div class="chart-bar progress" id="progressBar"></div>
+                        <div class="chart-label">In Progress (<span id="progressCount">0</span>)</div>
+                    </div>
+                    <div class="chart-item">
+                        <div class="chart-bar resolved" id="resolvedBar"></div>
+                        <div class="chart-label">Resolved (<span id="resolvedCount">0</span>)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <h3>Recent System Activity</h3>
+                <div class="activity-log" id="activityLog">
+                    <!-- Activity loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="report-actions">
+                <button onclick="exportReport()" class="export-btn">Export Report</button>
+                <button onclick="refreshReports()" class="refresh-btn">Refresh Data</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReports();
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || staff.email !== 'admin@gmail.com') {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:9090/api/admin/profile/${staff.email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const displayName = data.firstName || 'Admin';
+                    document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                    document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Error loading admin profile:', error);
+            }
+        }
+
+        async function loadReports() {
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/reports');
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Update metrics
+                    document.getElementById('totalUsers').textContent = data.totalUsers;
+                    document.getElementById('totalStaff').textContent = data.totalStaff;
+                    document.getElementById('totalComplaints').textContent = data.totalComplaints;
+
+                    // Update complaint statistics
+                    document.getElementById('pendingCount').textContent = data.pendingComplaints;
+                    document.getElementById('progressCount').textContent = data.inProgressComplaints;
+                    document.getElementById('resolvedCount').textContent = data.resolvedComplaints;
+
+                    // Update chart bars
+                    const total = data.totalComplaints;
+                    if (total > 0) {
+                        document.getElementById('pendingBar').style.height = (data.pendingComplaints / total * 100) + '%';
+                        document.getElementById('progressBar').style.height = (data.inProgressComplaints / total * 100) + '%';
+                        document.getElementById('resolvedBar').style.height = (data.resolvedComplaints / total * 100) + '%';
+                    }
+
+                    // Update activity log
+                    updateActivityLog(data.recentActivity || []);
+                } else {
+                    console.error('Failed to load reports');
+                }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        function updateActivityLog(activities) {
+            const activityLog = document.getElementById('activityLog');
+            activityLog.innerHTML = '';
+
+            if (activities.length === 0) {
+                activityLog.innerHTML = '<div class="no-activity">No recent activity</div>';
+                return;
+            }
+
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-user">${activity.userEmail}</div>
+                    <div class="activity-action">${activity.action} ${activity.entityType}</div>
+                    <div class="activity-time">${new Date(activity.timestamp).toLocaleString()}</div>
+                `;
+                activityLog.appendChild(item);
+            });
+        }
+
+        function refreshReports() {
+            loadReports();
+        }
+
+        function exportReport() {
+            // Generate CSV report
+            const reportData = [
+                ['Metric', 'Value'],
+                ['Total Users', document.getElementById('totalUsers').textContent],
+                ['Total Staff', document.getElementById('totalStaff').textContent],
+                ['Total Complaints', document.getElementById('totalComplaints').textContent],
+                ['Pending Complaints', document.getElementById('pendingCount').textContent],
+                ['In Progress Complaints', document.getElementById('progressCount').textContent],
+                ['Resolved Complaints', document.getElementById('resolvedCount').textContent]
+            ];
+
+            const csvContent = reportData.map(row => row.join(',')).join('\\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'system_report.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
+    </script>
+</body>
+</html>

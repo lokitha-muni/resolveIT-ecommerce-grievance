@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Performance – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="staff-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
+                <span id="userGreeting">Hi, Staff</span>
+            </div>
+            <div class="nav-right">
+                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
+                <a href="staff-my-queue.html" class="nav-btn">My Queue</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <section class="page-header">
+            <h1>My Performance</h1>
+            <p>Analytics and KPI dashboard</p>
+        </section>
+
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-label">Total Assigned</div>
+                <div class="stat-number" id="totalAssigned">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Pending</div>
+                <div class="stat-number" id="pending">0</div>
+            </div>
+            <div class="stat-card progress-card">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-label">In Progress</div>
+                <div class="stat-number" id="inProgress">0</div>
+            </div>
+            <div class="stat-card resolved-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Resolved</div>
+                <div class="stat-number" id="resolved">0</div>
+            </div>
+        </section>
+
+        <section class="performance-metrics">
+            <div class="metric-card">
+                <h3>Resolution Rate</h3>
+                <div class="metric-value" id="resolutionRate">0%</div>
+                <div class="metric-description">Percentage of resolved complaints</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPerformanceData();
+        });
+
+        async function loadPerformanceData() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (!staff || !staff.email) {
+                    window.location.href = 'staff-login.html';
+                    return;
+                }
+
+                // Set default name immediately
+                let displayName = 'Staff';
+                if (staff.email === 'staff@gmail.com') {
+                    displayName = 'Support';
+                } else if (staff.email === 'admin@gmail.com') {
+                    displayName = 'Admin';
+                }
+                
+                document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+                
+                // Load updated name from backend
+                try {
+                    const profileResponse = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                    if (profileResponse.ok) {
+                        const profileData = await profileResponse.json();
+                        if (profileData.firstName) {
+                            document.getElementById('userGreeting').textContent = `Hi, ${profileData.firstName}`;
+                            document.getElementById('profilePhoto').textContent = profileData.firstName.charAt(0).toUpperCase();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading staff profile:', error);
+                }
+
+                const response = await fetch(`http://localhost:9090/api/staff/performance/${staff.email}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('totalAssigned').textContent = data.totalAssigned;
+                    document.getElementById('pending').textContent = data.pending;
+                    document.getElementById('inProgress').textContent = data.inProgress;
+                    document.getElementById('resolved').textContent = data.resolved;
+                    document.getElementById('resolutionRate').textContent = data.resolutionRate + '%';
+                } else {
+                    console.error('Failed to load performance data');
+                }
+            } catch (error) {
+                console.error('Error loading performance data:', error);
+            }
+        }
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch('http://localhost:9090/api/staff/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.removeItem('staff');
+                window.location.href = 'staff-login.html';
+            }
+        }
+    </script>
+</body>
+</html>

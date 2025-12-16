@@ -1,22 +1,8 @@
-package com.example.test_spring.model;
+package com.example.test_spring.dto;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.Indexed;
-
-@Document(collection = "users")
-public class User {
-    
-    @Id
-    private String id;
-    
+public class ProfileUpdateRequest {
     private String fullName;
-    
-    @Indexed(unique = true)
     private String email;
-    
-    private String password;
-    
     private String phoneNumber;
     private String dateOfBirth;
     private String address;
@@ -24,31 +10,16 @@ public class User {
     private String state;
     private String zipCode;
     private String country;
-    private boolean emailNotifications = true;
-    private boolean smsNotifications = false;
-    private boolean marketingEmails = false;
-    private boolean emailVerified = false;
+    private boolean emailNotifications;
+    private boolean smsNotifications;
+    private boolean marketingEmails;
+    private String currentPassword;
+    private String newPassword;
     
     // Default constructor
-    public User() {}
-    
-    // Constructor with parameters
-    public User(String fullName, String email, String password, String phoneNumber) {
-        this.fullName = fullName;
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-    }
+    public ProfileUpdateRequest() {}
     
     // Getters and Setters
-    public String getId() {
-        return id;
-    }
-    
-    public void setId(String id) {
-        this.id = id;
-    }
-    
     public String getFullName() {
         return fullName;
     }
@@ -63,14 +34,6 @@ public class User {
     
     public void setEmail(String email) {
         this.email = email;
-    }
-    
-    public String getPassword() {
-        return password;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
     }
     
     public String getPhoneNumber() {
@@ -153,11 +116,19 @@ public class User {
         this.marketingEmails = marketingEmails;
     }
     
-    public boolean isEmailVerified() {
-        return emailVerified;
+    public String getCurrentPassword() {
+        return currentPassword;
     }
     
-    public void setEmailVerified(boolean emailVerified) {
-        this.emailVerified = emailVerified;
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+    
+    public String getNewPassword() {
+        return newPassword;
+    }
+    
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

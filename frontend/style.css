@@ -1303,6 +1303,66 @@ input::placeholder {
     font-weight: 500;
 }
 
+/* Partner Logos */
+.partner-logos {
+    margin-top: 3rem;
+}
+
+.partner-logos h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 2rem;
+}
+
+.logos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+    align-items: center;
+    justify-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    min-height: 80px;
+}
+
+.logo-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.partner-logo {
+    max-width: 120px;
+    max-height: 50px;
+    object-fit: contain;
+    filter: grayscale(0.3);
+    transition: all 0.3s ease;
+}
+
+.partner-logo:hover {
+    filter: grayscale(0);
+}
+
+.logo-placeholder {
+    font-weight: 600;
+    color: #2d3436;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+}
+
 /* Admin Toggle Styles */
 .admin-toggle {
     margin-bottom: 2rem;
@@ -2761,3 +2821,5 @@ input::placeholder {
         width: 100%;
     }
 }
+/* Partner Logos Styles */
+.partner-logos {\n    margin-top: 3rem;\n    text-align: center;\n}\n\n.partner-logos h3 {\n    font-size: 1.5rem;\n    font-weight: 600;\n    color: #2d3436;\n    margin-bottom: 2rem;\n}\n\n.logos-grid {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));\n    gap: 2rem;\n    align-items: center;\n    justify-items: center;\n    max-width: 800px;\n    margin: 0 auto;\n}\n\n.logo-item {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    padding: 1rem;\n    background: rgba(255, 255, 255, 0.8);\n    border-radius: 12px;\n    transition: all 0.3s ease;\n    min-height: 80px;\n    width: 100%;\n}\n\n.logo-item:hover {\n    transform: translateY(-3px);\n    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);\n}\n\n.partner-logo {\n    max-width: 120px;\n    max-height: 50px;\n    object-fit: contain;\n    filter: grayscale(0.3);\n    transition: all 0.3s ease;\n}\n\n.partner-logo:hover {\n    filter: grayscale(0);\n}\n\n.logo-placeholder {\n    font-weight: 600;\n    color: #2d3436;\n    font-size: 1.1rem;\n    padding: 0.5rem 1rem;\n    background: linear-gradient(135deg, #f8f9fa, #e9ecef);\n    border-radius: 8px;\n    border: 2px solid #dee2e6;\n}\n\n@media (max-width: 768px) {\n    .logos-grid {\n        grid-template-columns: repeat(2, 1fr);\n        gap: 1rem;\n    }\n    \n    .partner-logo {\n        max-width: 100px;\n        max-height: 40px;\n    }\n    \n    .logo-placeholder {\n        font-size: 0.9rem;\n    }\n}\n

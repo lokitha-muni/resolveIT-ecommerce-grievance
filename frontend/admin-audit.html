@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs – ResolveIT Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <div class="dashboard-main">
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
+                <span id="userGreeting">Hi, Admin</span>
+            </div>
+            <div class="nav-right">
+                <a href="admin-dashboard.html" class="nav-btn">Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <section class="page-header">
+            <h1>Audit Logs</h1>
+            <p>Track all system activities</p>
+            <button onclick="createBackup()" class="backup-btn">Create Backup</button>
+        </section>
+
+        <section class="audit-section">
+            <div class="table-container">
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Entity Type</th>
+                            <th>Entity ID</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody">
+                        <!-- Audit logs loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAuditLogs();
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || staff.role !== 'ADMIN') {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            document.getElementById('userGreeting').textContent = `Hi, ${staff.firstName}`;
+            document.getElementById('profilePhoto').textContent = staff.firstName.charAt(0).toUpperCase();
+        }
+
+        async function loadAuditLogs() {
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/audit-logs');
+                const logs = await response.json();
+
+                const tbody = document.getElementById('auditTableBody');
+                tbody.innerHTML = '';
+
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No audit logs found</td></tr>';
+                    return;
+                }
+
+                logs.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.userEmail}</td>
+                        <td><span class="action-badge ${log.action.toLowerCase()}">${log.action}</span></td>
+                        <td>${log.entityType}</td>
+                        <td>${log.entityId}</td>
+                        <td>${log.details}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading audit logs:', error);
+            }
+        }
+
+        async function createBackup() {
+            if (!confirm('Create a system backup? This may take a few minutes.')) return;
+
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/backup', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert(`Backup created successfully! Backup ID: ${data.backupId}`);
+                    loadAuditLogs(); // Refresh to show backup log
+                } else {
+                    alert('Failed to create backup: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Failed to create backup');
+            }
+        }
+
+        async function logout() {
+            localStorage.removeItem('staff');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

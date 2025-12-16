@@ -19,8 +19,8 @@
         <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo">AK</div>
-                <span>Hi, Aisha Khan</span>
+                <div class="profile-photo" id="profilePhoto">U</div>
+                <span id="userGreeting">Hi, User</span>
             </div>
             <div class="nav-right">
                 <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
@@ -42,7 +42,7 @@
                 <!-- Profile Picture Section -->
                 <div class="profile-pic-inline">
                     <div class="profile-pic-container">
-                        <div class="large-profile-photo">AK</div>
+                        <div class="large-profile-photo" id="largeProfilePhoto">U</div>
                         <div class="upload-overlay" onclick="document.getElementById('profilePicture').click()">
                             <span>📷</span>
                         </div>
@@ -67,18 +67,14 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="firstName">First Name *</label>
-                                <input type="text" id="firstName" value="Aisha" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name *</label>
-                                <input type="text" id="lastName" value="Khan" required>
+                                <label for="fullName">Full Name *</label>
+                                <input type="text" id="fullName" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email Address *</label>
-                            <input type="email" id="email" value="aisha.khan@example.com" required>
+                            <input type="email" id="email" required readonly>
                         </div>
 
                         <div class="form-row">
@@ -212,6 +208,57 @@
     </div>
 
     <script>
+        let currentUser = null;
+        
+        // Load user data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+        });
+        
+        async function loadUserProfile() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.email) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:9090/api/auth/profile/${user.email}`);
+                const userData = await response.json();
+                
+                if (response.ok) {
+                    currentUser = userData;
+                    populateForm(userData);
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        function populateForm(user) {
+            // Update navigation
+            const firstName = user.fullName ? user.fullName.split(' ')[0] : 'User';
+            document.getElementById('userGreeting').textContent = `Hi, ${firstName}`;
+            document.getElementById('profilePhoto').textContent = firstName.charAt(0).toUpperCase();
+            document.getElementById('largeProfilePhoto').textContent = firstName.charAt(0).toUpperCase();
+            
+            // Populate form fields
+            document.getElementById('fullName').value = user.fullName || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phoneNumber || '';
+            document.getElementById('dateOfBirth').value = user.dateOfBirth || '';
+            document.getElementById('address').value = user.address || '';
+            document.getElementById('city').value = user.city || '';
+            document.getElementById('state').value = user.state || '';
+            document.getElementById('zipCode').value = user.zipCode || '';
+            document.getElementById('country').value = user.country || 'US';
+            
+            // Set notification preferences
+            document.getElementById('emailNotifications').checked = user.emailNotifications !== false;
+            document.getElementById('smsNotifications').checked = user.smsNotifications === true;
+            document.getElementById('marketingEmails').checked = user.marketingEmails === true;
+        }
+
         // Profile picture change handler
         document.getElementById('profilePicture').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -229,15 +276,18 @@
         });
 
         // Form submission handler
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            if (!currentUser) {
+                alert('User data not loaded. Please refresh the page.');
+                return;
+            }
             
             // Collect form data
             const profileData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
+                fullName: document.getElementById('fullName').value,
+                phoneNumber: document.getElementById('phone').value,
                 dateOfBirth: document.getElementById('dateOfBirth').value,
                 address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
@@ -267,23 +317,37 @@
                     alert('New password must be at least 6 characters long.');
                     return;
                 }
+                profileData.currentPassword = currentPassword;
                 profileData.newPassword = newPassword;
             }
 
             // Validate required fields
-            if (!profileData.firstName || !profileData.lastName || !profileData.email) {
+            if (!profileData.fullName) {
                 alert('Please fill in all required fields.');
                 return;
             }
 
-            // Simulate saving (in real app, this would call backend API)
-            console.log('Profile updated:', profileData);
-            
-            // Show success message
-            alert('Profile updated successfully!');
-            
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
+            try {
+                const response = await fetch(`http://localhost:9090/api/auth/profile/${currentUser.email}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(profileData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert('Profile updated successfully!');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Failed to update profile: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error updating profile. Please try again.');
+                console.error('Error:', error);
+            }
         });
     </script>
 </body>

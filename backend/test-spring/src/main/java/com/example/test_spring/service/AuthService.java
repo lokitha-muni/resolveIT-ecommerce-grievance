@@ -2,6 +2,7 @@ package com.example.test_spring.service;
 
 import com.example.test_spring.dto.LoginRequest;
 import com.example.test_spring.dto.RegisterRequest;
+import com.example.test_spring.dto.ProfileUpdateRequest;
 import com.example.test_spring.model.User;
 import com.example.test_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,5 +93,73 @@ public class AuthService {
     // Test method to get all users
     public java.util.List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+    
+    // Get user by email
+    public User getUserByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        return userOptional.orElse(null);
+    }
+    
+    // Update user profile
+    public String updateUserProfile(String email, ProfileUpdateRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        
+        if (userOptional.isEmpty()) {
+            return "User not found";
+        }
+        
+        User user = userOptional.get();
+        
+        // Update profile fields
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getPhoneNumber() != null) {
+            user.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getDateOfBirth() != null) {
+            user.setDateOfBirth(request.getDateOfBirth());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
+        if (request.getCity() != null) {
+            user.setCity(request.getCity());
+        }
+        if (request.getState() != null) {
+            user.setState(request.getState());
+        }
+        if (request.getZipCode() != null) {
+            user.setZipCode(request.getZipCode());
+        }
+        if (request.getCountry() != null) {
+            user.setCountry(request.getCountry());
+        }
+        
+        // Update notification preferences
+        user.setEmailNotifications(request.isEmailNotifications());
+        user.setSmsNotifications(request.isSmsNotifications());
+        user.setMarketingEmails(request.isMarketingEmails());
+        
+        // Update password if provided
+        if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
+            if (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty()) {
+                return "Current password is required to change password";
+            }
+            
+            // Verify current password
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                return "Current password is incorrect";
+            }
+            
+            // Update password
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        }
+        
+        // Save updated user
+        userRepository.save(user);
+        
+        return "Profile updated successfully";
     }
 }

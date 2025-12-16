@@ -14,9 +14,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for API endpoints
-            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())) // Allow H2 console frames
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/h2-console/**").permitAll() // Allow H2 console
+                .requestMatchers("/api/test/**").permitAll() // Allow MongoDB test endpoints
                 .anyRequest().permitAll() // Allow all requests without authentication
             );
         

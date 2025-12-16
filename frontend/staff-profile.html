@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Profile – ResolveIT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <!-- Split Background -->
+    <div class="split-background">
+        <div class="bg-left"></div>
+        <div class="bg-right"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="dashboard-main">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <div class="profile-photo" id="profilePhoto">S</div>
+                <span id="userGreeting">Hi, Staff</span>
+            </div>
+            <div class="nav-right">
+                <a href="staff-dashboard.html" class="back-btn">← Back to Dashboard</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <section class="page-header">
+            <h1>Staff Profile</h1>
+            <p>Update your staff information and preferences</p>
+        </section>
+
+        <!-- Profile Form -->
+        <section class="profile-form-section">
+            <div class="form-container">
+                <!-- Profile Picture Section -->
+                <div class="profile-pic-inline">
+                    <div class="profile-pic-container">
+                        <div class="large-profile-photo" id="largeProfilePhoto">S</div>
+                        <div class="upload-overlay">
+                            <span>👤</span>
+                        </div>
+                    </div>
+                    <div class="profile-pic-info">
+                        <h3>Staff Profile</h3>
+                        <p>Your staff account information</p>
+                    </div>
+                </div>
+                
+                <div class="form-card modern-form">
+                    <form id="profileForm" class="profile-form">
+                        <!-- Personal Information -->
+                        <div class="form-section-title">
+                            <div class="section-icon">👤</div>
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Update your basic details</p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" required readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone">
+                        </div>
+
+                        <!-- Work Information -->
+                        <div class="form-section-title">
+                            <div class="section-icon">💼</div>
+                            <div>
+                                <h3>Work Information</h3>
+                                <p>Your role and department details</p>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="role">Role</label>
+                                <input type="text" id="role" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <input type="text" id="department">
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions modern-actions">
+                            <button type="button" class="cancel-btn modern-cancel" onclick="window.location.href='staff-dashboard.html'">
+                                <span class="btn-icon">←</span>
+                                Cancel
+                            </button>
+                            <button type="submit" class="submit-btn modern-submit">
+                                <span class="btn-icon">✓</span>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (!staff || !staff.email) {
+                    window.location.href = 'staff-login.html';
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const displayName = data.firstName || staff.email.split('@')[0];
+                    document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                    document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+                    document.getElementById('largeProfilePhoto').textContent = displayName.charAt(0).toUpperCase();
+
+                    document.getElementById('firstName').value = data.firstName;
+                    document.getElementById('lastName').value = data.lastName;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('phone').value = data.phone || '';
+                    document.getElementById('role').value = data.role;
+                    document.getElementById('department').value = data.department;
+                } else {
+                    alert('Failed to load profile');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Error loading profile');
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                phone: document.getElementById('phone').value,
+                department: document.getElementById('department').value
+            };
+
+            try {
+                console.log('Updating profile for:', staff.email);
+                console.log('Form data:', formData);
+                
+                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                console.log('Update response status:', response.status);
+                const data = await response.json();
+                console.log('Profile update response:', data);
+
+                if (data.status === 'success') {
+                    alert('Profile updated successfully');
+                    // Redirect to dashboard
+                    window.location.href = 'staff-dashboard.html';
+                } else {
+                    alert(data.message || 'Failed to update profile');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Error updating profile');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('staff');
+            window.location.href = 'staff-login.html';
+        }
+    </script>
+</body>
+</html>
