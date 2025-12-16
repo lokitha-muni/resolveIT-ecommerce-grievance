@@ -6,6 +6,7 @@
     <title>Dashboard – ResolveIT Delivery Grievance System</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="search-styles.css">
+    <link rel="stylesheet" href="css/ui-enhancements.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
@@ -20,13 +21,25 @@
         <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='edit-profile.html'" id="profilePhoto">U</div>
-                <span id="userGreeting">Hi, User</span>
+                <button class="mobile-nav-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+                <div class="profile-photo" onclick="window.location.href='edit-profile.html'" id="profilePhoto" tabindex="0" role="button" aria-label="View profile">U</div>
+                <span id="userGreeting" data-translate="hi_user">Hi, User</span>
             </div>
             <div class="nav-right">
+                <div class="nav-controls">
+                    <label class="theme-toggle" aria-label="Toggle dark mode">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="theme-slider"></span>
+                    </label>
+                    <select id="languageSelect" aria-label="Select language" onchange="changeLanguage(this.value)">
+                        <option value="en">EN</option>
+                        <option value="es">ES</option>
+                        <option value="fr">FR</option>
+                    </select>
+                </div>
                 <button onclick="loadDashboardData()" class="nav-btn" style="background: #f8f9fa; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-right: 1rem;">🔄 Refresh</button>
                 <div class="bell-icon" onclick="toggleNotifications()">🔔<span class="notification-badge">3</span></div>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <button onclick="logout()" class="logout-btn" data-translate="logout">Logout</button>
             </div>
         </nav>
 
@@ -120,10 +133,16 @@
         </div>
     </div>
 
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/security.js"></script>
     <script>
         // Load dashboard data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboardData();
+            
+            // Set initial language
+            const savedLang = localStorage.getItem('language') || 'en';
+            document.getElementById('languageSelect').value = savedLang;
         });
         
         // Refresh data when window gains focus (returning from other pages)
@@ -132,6 +151,7 @@
         });
         
         async function loadDashboardData() {
+            showLoading('Loading dashboard...');
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
                 if (!user || !user.email) {
@@ -139,31 +159,54 @@
                     return;
                 }
                 
-                const response = await fetch(`http://localhost:9090/api/dashboard/${user.email}`);
-                const data = await response.json();
+                const data = await uiManager.apiCall(`http://localhost:9090/api/dashboard/${user.email}`, {}, 'Loading dashboard data...');
                 
-                if (response.ok) {
+                if (data) {
                     // Update user info
                     document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
                     document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                     
-                    // Update stats
-                    document.getElementById('totalComplaints').textContent = data.totalComplaints;
-                    document.getElementById('pendingComplaints').textContent = data.pendingComplaints;
-                    document.getElementById('inProgressComplaints').textContent = data.inProgressComplaints;
-                    document.getElementById('resolvedComplaints').textContent = data.resolvedComplaints;
+                    // Update stats with animation
+                    animateCounter('totalComplaints', data.totalComplaints);
+                    animateCounter('pendingComplaints', data.pendingComplaints);
+                    animateCounter('inProgressComplaints', data.inProgressComplaints);
+                    animateCounter('resolvedComplaints', data.resolvedComplaints);
                     
                     // Update complaints table
                     updateComplaintsTable(data.recentComplaints);
                     
                     // Update notifications
                     updateNotifications(data.notifications, data.unreadNotifications);
-                } else {
-                    console.error('Failed to load dashboard data');
+                    
+                    showToast('Dashboard loaded successfully', 'success');
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
+                showToast('Failed to load dashboard', 'error');
+            } finally {
+                hideLoading();
             }
+        }
+        
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = parseInt(element.textContent) || 0;
+            const duration = 1000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
         }
         
         function updateComplaintsTable(complaints) {

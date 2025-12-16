@@ -248,7 +248,18 @@ class UIManager {
                 resolved: 'Resolved',
                 welcome_back: 'Welcome Back',
                 sign_in_account: 'Sign in to your account',
-                hi_staff: 'Hi, Staff'
+                hi_staff: 'Hi, Staff',
+                hi_user: 'Hi, User',
+                welcome: 'Welcome',
+                recent_complaints: 'Recent Complaints',
+                complaint_id: 'Complaint ID',
+                issue_type: 'Issue Type',
+                status: 'Status',
+                date: 'Date',
+                actions: 'Actions',
+                no_complaints: 'No complaints found',
+                submit_complaint: 'Submit New Complaint',
+                view_complaints: 'View My Complaints'
             },
             es: {
                 loading: 'Cargando...',
@@ -269,7 +280,18 @@ class UIManager {
                 resolved: 'Resuelto',
                 welcome_back: 'Bienvenido de nuevo',
                 sign_in_account: 'Inicia sesión en tu cuenta',
-                hi_staff: 'Hola, Personal'
+                hi_staff: 'Hola, Personal',
+                hi_user: 'Hola, Usuario',
+                welcome: 'Bienvenido',
+                recent_complaints: 'Quejas Recientes',
+                complaint_id: 'ID de Queja',
+                issue_type: 'Tipo de Problema',
+                status: 'Estado',
+                date: 'Fecha',
+                actions: 'Acciones',
+                no_complaints: 'No se encontraron quejas',
+                submit_complaint: 'Enviar Nueva Queja',
+                view_complaints: 'Ver Mis Quejas'
             },
             fr: {
                 loading: 'Chargement...',
@@ -290,7 +312,18 @@ class UIManager {
                 resolved: 'Résolu',
                 welcome_back: 'Bon retour',
                 sign_in_account: 'Connectez-vous à votre compte',
-                hi_staff: 'Salut, Personnel'
+                hi_staff: 'Salut, Personnel',
+                hi_user: 'Salut, Utilisateur',
+                welcome: 'Bienvenue',
+                recent_complaints: 'Plaintes Récentes',
+                complaint_id: 'ID de Plainte',
+                issue_type: 'Type de Problème',
+                status: 'Statut',
+                date: 'Date',
+                actions: 'Actions',
+                no_complaints: 'Aucune plainte trouvée',
+                submit_complaint: 'Soumettre Nouvelle Plainte',
+                view_complaints: 'Voir Mes Plaintes'
             }
         };
         

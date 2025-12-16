@@ -219,6 +219,66 @@
                     <td><span class="priority medium">Medium</span></td>
                     <td><span class="tag ${statusClass}">${complaint.status || 'PENDING'}</span></td>
                     <td>${timeAgo}</td>
+                    <td><a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-btn">View</a></td>
+                `;
+                row.classList.add('fade-in');
+                tbody.appendChild(row);
+            });
+        }
+        
+        function getStatusClass(status) {
+            const classes = {
+                'PENDING': 'warning',
+                'IN_PROGRESS': 'info', 
+                'RESOLVED': 'success',
+                'CLOSED': 'secondary'
+            };
+            return classes[status] || 'secondary';
+        }
+        
+        function getTimeAgo(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffMins < 60) return `${diffMins} mins ago`;
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            return `${diffDays} days ago`;
+        }ed successfully', 'success');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showToast('Failed to load dashboard data', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateComplaintsTable(complaints) {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+
+            if (!complaints || complaints.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No complaints found</td></tr>';
+                return;
+            }
+
+            complaints.forEach(complaint => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusClass(complaint.status);
+                const timeAgo = getTimeAgo(complaint.createdAt);
+
+                row.innerHTML = `
+                    <td>${complaint.complaintId || 'N/A'}</td>
+                    <td>${complaint.userEmail || 'N/A'}</td>
+                    <td><span class="tag orange">${complaint.issueType || 'General'}</span></td>
+                    <td><span class="priority medium">Medium</span></td>
+                    <td><span class="tag ${statusClass}">${complaint.status || 'PENDING'}</span></td>
+                    <td>${timeAgo}</td>
                     <td><a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a></td>
                 `;
                 row.classList.add('fade-in');
@@ -303,6 +363,9 @@
             const savedLang = localStorage.getItem('language') || 'en';
             document.getElementById('languageSelect').value = savedLang;
         });
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>

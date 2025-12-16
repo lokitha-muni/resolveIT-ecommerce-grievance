@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend/test-spring
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    environment:
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_CLUSTER=${MONGODB_CLUSTER}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./backend/test-spring/.env:/app/.env
+    networks:
+      - resolveit-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - resolveit-network
+
+networks:
+  resolveit-network:
+    driver: bridge
