@@ -1,7 +1,7 @@
 package com.example.test_spring.security;
 
 import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class RateLimitingFilter implements Filter {
 
-    private final ConcurrentHashMap<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, io.github.bucket4j.Bucket> buckets = new ConcurrentHashMap<>();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -35,13 +35,13 @@ public class RateLimitingFilter implements Filter {
         }
     }
 
-    private Bucket getBucket(String clientIp) {
+    private io.github.bucket4j.Bucket getBucket(String clientIp) {
         return buckets.computeIfAbsent(clientIp, this::createNewBucket);
     }
 
-    private Bucket createNewBucket(String clientIp) {
+    private io.github.bucket4j.Bucket createNewBucket(String clientIp) {
         Bandwidth limit = Bandwidth.classic(100, Refill.intervally(100, Duration.ofMinutes(1)));
-        return Bucket.builder()
+        return Bucket4j.builder()
                 .addLimit(limit)
                 .build();
     }
