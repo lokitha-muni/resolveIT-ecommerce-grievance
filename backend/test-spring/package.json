@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "ResolveIT Backend - Spring Boot REST API",
   "scripts": {
-    "start": "./mvnw spring-boot:run",
-    "start:windows": "mvnw.cmd spring-boot:run",
-    "build": "./mvnw clean package",
-    "test": "./mvnw test",
-    "clean": "./mvnw clean"
+    "start": "mvnw.cmd spring-boot:run",
+    "start:unix": "./mvnw spring-boot:run",
+    "build": "mvnw.cmd clean package",
+    "test": "mvnw.cmd test",
+    "clean": "mvnw.cmd clean"
   },
   "keywords": ["spring-boot", "java", "rest-api", "mongodb"],
   "author": "ResolveIT Team",
