@@ -12,15 +12,11 @@
     <div class="auth-container">
         <div class="auth-form-box">
             <div class="auth-header">
-                <div class="auth-logo">
+                <div class="auth-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
                     <div class="logo-icon">R</div>
                     <h1>ResolveIT</h1>
                 </div>
                 <div class="auth-controls">
-                    <label class="theme-toggle" aria-label="Toggle dark mode">
-                        <input type="checkbox" id="themeToggle">
-                        <span class="theme-slider"></span>
-                    </label>
                     <select id="languageSelect" aria-label="Select language" onchange="changeLanguage(this.value)">
                         <option value="en">EN</option>
                         <option value="es">ES</option>
@@ -83,24 +79,35 @@
             }
             
             try {
-                const data = await uiManager.apiCall('http://localhost:9090/api/auth/login', {
-                    method: 'POST',
-                    body: JSON.stringify({ email, password })
-                }, 'Signing in...');
+                showLoading('Signing in...');
                 
-                if (data && data.status === 'success') {
+                const response = await fetch('http://localhost:9090/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'success') {
+                    console.log('Login successful, token received:', data.token);
                     securityManager.setToken(data.token);
-                    localStorage.setItem('user', JSON.stringify({email: email}));
-                    showToast('Login successful!', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1000);
+                    const userData = {email: email};
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    console.log('User data stored:', userData);
+                    console.log('Redirecting to dashboard...');
+                    window.location.href = 'dashboard.html';
                 } else {
-                    showToast(data?.message || 'Login failed', 'error');
+                    console.error('Login failed:', data.message);
+                    alert(data?.message || 'Login failed');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                showToast('Login failed. Please try again.', 'error');
+                alert('Login failed. Please try again.');
+            } finally {
+                hideLoading();
             }
         });
         

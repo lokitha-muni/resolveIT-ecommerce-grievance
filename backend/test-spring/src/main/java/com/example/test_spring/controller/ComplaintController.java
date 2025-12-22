@@ -8,6 +8,7 @@ import com.example.test_spring.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -167,5 +168,60 @@ public class ComplaintController {
         }
         
         return filePaths;
+    }
+
+    @GetMapping("/user/{userEmail}")
+    public ResponseEntity<List<Complaint>> getUserComplaints(@PathVariable String userEmail) {
+        try {
+            List<Complaint> complaints = complaintRepository.findByUserEmailOrderByUpdatedAtDesc(userEmail);
+            System.out.println("Found " + complaints.size() + " complaints for user: " + userEmail);
+            return ResponseEntity.ok(complaints);
+        } catch (Exception e) {
+            System.err.println("Error fetching user complaints: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/init-sample-data")
+    public ResponseEntity<Map<String, String>> initSampleData() {
+        try {
+            return ResponseEntity.ok(Map.of("status", "success", "message", "Sample data endpoint is working"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("status", "error", "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/create-sample")
+    public ResponseEntity<Map<String, String>> createSample() {
+        try {
+            for (int i = 1; i <= 3; i++) {
+                Complaint complaint = new Complaint();
+                complaint.setComplaintId("CMP-" + String.format("%04d", i));
+                complaint.setUserEmail("test@gmail.com");
+                complaint.setOrderId("ORD-10000" + i);
+                complaint.setIssueType(i == 1 ? "Late Delivery" : i == 2 ? "Wrong Product" : "Damaged Product");
+                complaint.setDescription("Sample complaint #" + i);
+                complaint.setStatus(i == 1 ? "PENDING" : i == 2 ? "IN_PROGRESS" : "RESOLVED");
+                complaint.setPriority("Medium");
+                complaintRepository.save(complaint);
+            }
+            return ResponseEntity.ok(Map.of("status", "success", "message", "Created 3 sample complaints"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("status", "error", "message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{complaintId}")
+    public ResponseEntity<Complaint> getComplaint(@PathVariable String complaintId) {
+        try {
+            Optional<Complaint> complaint = complaintRepository.findByComplaintId(complaintId);
+            if (complaint.isPresent()) {
+                return ResponseEntity.ok(complaint.get());
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("Error fetching complaint: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

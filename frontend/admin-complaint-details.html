@@ -117,11 +117,10 @@
                 <div class="user-view-card">
                     <h3>Admin Actions</h3>
                     <div class="admin-actions">
-                        <button class="admin-action-btn priority" onclick="changePriority()">Change Priority</button>
-                        <button class="admin-action-btn assign" onclick="reassignAgent()">Reassign Agent</button>
-                        <button class="admin-action-btn status" onclick="updateStatus()">Update Status</button>
-                        <button class="admin-action-btn escalate" onclick="escalateToManager()">Escalate to Manager</button>
-                        <button class="admin-action-btn close" onclick="forceClose()">Force Close</button>
+                        <button class="admin-action-btn priority" onclick="showPriorityModal()">Change Priority</button>
+                        <button class="admin-action-btn assign" onclick="showAssignModal()">Assign Agent</button>
+                        <button class="admin-action-btn status" onclick="showStatusModal()">Update Status</button>
+                        <button class="admin-action-btn close" onclick="showForceCloseModal()">Force Close</button>
                     </div>
                 </div>
 
@@ -186,6 +185,305 @@
             </div>
         </div>
     </div>
+
+    <!-- Admin Action Modals -->
+    <div id="priorityModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Priority</h3>
+                <button class="modal-close" onclick="closeModal('priorityModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Select new priority level:</p>
+                <div class="priority-options">
+                    <button class="priority-btn high" onclick="setPriority('High')">High</button>
+                    <button class="priority-btn medium" onclick="setPriority('Medium')">Medium</button>
+                    <button class="priority-btn low" onclick="setPriority('Low')">Low</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="statusModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Status</h3>
+                <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Select new status:</p>
+                <div class="status-options">
+                    <button class="status-btn pending" onclick="setStatus('Pending')">Pending</button>
+                    <button class="status-btn progress" onclick="setStatus('In Progress')">In Progress</button>
+                    <button class="status-btn resolved" onclick="setStatus('Resolved')">Resolved</button>
+                    <button class="status-btn escalated" onclick="setStatus('Escalated')">Escalated</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="assignModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Agent</h3>
+                <button class="modal-close" onclick="closeModal('assignModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Select agent to assign:</p>
+                <div class="agent-list" id="agentList">
+                    <!-- Agent list will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="forceCloseModal" class="admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Force Close Complaint</h3>
+                <button class="modal-close" onclick="closeModal('forceCloseModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to force close this complaint?</p>
+                <p class="warning-text">This action cannot be undone.</p>
+                <div class="confirm-actions">
+                    <button class="cancel-btn" onclick="closeModal('forceCloseModal')">Cancel</button>
+                    <button class="confirm-btn" onclick="confirmForceClose()">Force Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .admin-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+        }
+
+        .modal-body p {
+            margin: 0 0 16px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .priority-options, .status-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .priority-btn, .status-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .priority-btn.high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-btn.high:hover {
+            background: #fecaca;
+        }
+
+        .priority-btn.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-btn.medium:hover {
+            background: #fde68a;
+        }
+
+        .priority-btn.low {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .priority-btn.low:hover {
+            background: #bbf7d0;
+        }
+
+        .status-btn.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-btn.progress {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-btn.resolved {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-btn.escalated {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-btn:hover {
+            opacity: 0.8;
+        }
+
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .agent-item {
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .agent-item:hover {
+            background: #f9fafb;
+            border-color: #3b82f6;
+        }
+
+        .agent-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .agent-info {
+            flex: 1;
+        }
+
+        .agent-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .agent-workload {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .cancel-btn, .confirm-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .cancel-btn {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .cancel-btn:hover {
+            background: #e5e5e5;
+        }
+
+        .confirm-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #b91c1c;
+        }
+
+        .warning-text {
+            color: #dc2626 !important;
+            font-weight: 500 !important;
+        }
+    </style>
 
     <script>
         // Get complaint ID from URL parameters
@@ -262,64 +560,269 @@
             }
         };
 
-        // Load complaint data
-        function loadAdminComplaintData() {
-            const data = adminComplaintData[complaintId];
-            if (data) {
-                document.getElementById('adminComplaintTitle').textContent = `Admin View - Complaint ${complaintId}`;
-                document.getElementById('adminComplaintId').textContent = complaintId;
-                document.getElementById('adminCustomerName').textContent = data.customer;
-                document.getElementById('adminCustomerEmail').textContent = data.email;
-                document.getElementById('adminCustomerPhone').textContent = data.phone;
-                document.getElementById('adminOrderId').textContent = data.orderId;
-                document.getElementById('adminIssueType').textContent = data.issueType;
-                document.getElementById('adminPriority').textContent = data.priority;
-                document.getElementById('adminStatus').textContent = data.status;
-                document.getElementById('adminAssignedAgent').textContent = data.assignedAgent;
-                document.getElementById('adminCustomerDescription').textContent = data.description;
+        // Load complaint data from backend
+        async function loadAdminComplaintData() {
+            try {
+                // First create test complaints if they don't exist
+                await fetch('http://localhost:9090/api/admin/create-test-complaint', { method: 'POST' });
+                
+                let response = await fetch(`http://localhost:9090/api/admin/complaints/${complaintId}`);
+                
+                // If complaint not found, create it and try again
+                if (!response.ok) {
+                    console.log('Complaint not found, creating sample data...');
+                    await createSpecificComplaint(complaintId);
+                    response = await fetch(`http://localhost:9090/api/admin/complaints/${complaintId}`);
+                }
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayComplaintData(data);
+                } else {
+                    // Use fallback static data
+                    console.log('Using fallback data for complaint:', complaintId);
+                    const fallbackData = adminComplaintData[complaintId] || adminComplaintData['CMP-001'];
+                    displayFallbackData(fallbackData, complaintId);
+                }
+            } catch (error) {
+                console.error('Error loading complaint:', error);
+                // Use fallback static data
+                const fallbackData = adminComplaintData[complaintId] || adminComplaintData['CMP-001'];
+                displayFallbackData(fallbackData, complaintId);
+            }
+        }
+        
+        async function createSpecificComplaint(id) {
+            try {
+                const complaintData = {
+                    complaintId: id,
+                    userEmail: 'test@gmail.com',
+                    orderId: `ORD-${Math.floor(Math.random() * 90000) + 10000}`,
+                    issueType: 'Sample Issue',
+                    description: `Sample complaint description for ${id}`,
+                    status: 'PENDING',
+                    priority: 'Medium'
+                };
+                
+                await fetch('http://localhost:9090/api/complaints', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(complaintData)
+                });
+            } catch (error) {
+                console.error('Error creating complaint:', error);
+            }
+        }
+        
+        function displayFallbackData(data, id) {
+            document.getElementById('adminComplaintTitle').textContent = `Admin View - Complaint ${id}`;
+            document.getElementById('adminComplaintId').textContent = id;
+            document.getElementById('adminCustomerName').textContent = data.customer;
+            document.getElementById('adminCustomerEmail').textContent = data.email;
+            document.getElementById('adminCustomerPhone').textContent = data.phone;
+            document.getElementById('adminOrderId').textContent = data.orderId;
+            document.getElementById('adminIssueType').textContent = data.issueType;
+            document.getElementById('adminPriority').textContent = data.priority;
+            document.getElementById('adminStatus').textContent = data.status;
+            document.getElementById('adminAssignedAgent').textContent = data.assignedAgent;
+            document.getElementById('adminCustomerDescription').textContent = data.description;
+            document.getElementById('adminDateCreated').textContent = new Date().toLocaleDateString();
+        }
+        
+        function displayComplaintData(data) {
+            document.getElementById('adminComplaintTitle').textContent = `Admin View - Complaint ${data.complaintId}`;
+            document.getElementById('adminComplaintId').textContent = data.complaintId;
+            document.getElementById('adminCustomerName').textContent = data.customerName || extractCustomerName(data.userEmail);
+            document.getElementById('adminCustomerEmail').textContent = data.userEmail;
+            document.getElementById('adminCustomerPhone').textContent = data.customerPhone || data.contactPhone || 'N/A';
+            document.getElementById('adminOrderId').textContent = data.orderId;
+            document.getElementById('adminIssueType').textContent = data.issueType;
+            document.getElementById('adminPriority').textContent = data.priority || 'Medium';
+            document.getElementById('adminStatus').textContent = formatStatus(data.status);
+            document.getElementById('adminAssignedAgent').textContent = data.assignedAgent || 'Not Assigned';
+            document.getElementById('adminCustomerDescription').textContent = data.description;
+            document.getElementById('adminDateCreated').textContent = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : new Date().toLocaleDateString();
+        }
+        
+        function extractCustomerName(email) {
+            if (email === 'test@gmail.com') return 'Test User';
+            const name = email.split('@')[0].replace(/\./g, ' ');
+            return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+        
+        function formatStatus(status) {
+            const statusMap = {
+                'PENDING': 'Pending',
+                'IN_PROGRESS': 'In Progress',
+                'RESOLVED': 'Resolved',
+                'FORCE_CLOSED': 'Force Closed'
+            };
+            return statusMap[status] || status;
+        }
+
+        function showPriorityModal() {
+            document.getElementById('priorityModal').style.display = 'block';
+        }
+
+        function showStatusModal() {
+            document.getElementById('statusModal').style.display = 'block';
+        }
+
+        async function showAssignModal() {
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/available-agents');
+                let staffMembers = [];
+                
+                if (response.ok) {
+                    staffMembers = await response.json();
+                }
+                
+                // If no staff from backend, use default staff
+                if (!staffMembers || staffMembers.length === 0) {
+                    staffMembers = [
+                        { email: 'agent1@resolveit.com', name: 'Alex Garcia', workload: 4, department: 'Customer Support' },
+                        { email: 'agent2@resolveit.com', name: 'Emma Davis', workload: 2, department: 'Customer Support' },
+                        { email: 'agent3@resolveit.com', name: 'Ryan Miller', workload: 6, department: 'Technical Support' },
+                        { email: 'agent4@resolveit.com', name: 'Lisa Anderson', workload: 3, department: 'Quality Assurance' },
+                        { email: 'agent5@resolveit.com', name: 'Mark Taylor', workload: 1, department: 'Customer Support' }
+                    ];
+                }
+                
+                const agentList = document.getElementById('agentList');
+                agentList.innerHTML = '';
+                
+                staffMembers.forEach(agent => {
+                    const agentItem = document.createElement('div');
+                    agentItem.className = 'agent-item';
+                    agentItem.onclick = () => assignAgent(agent.email, agent.name);
+                    agentItem.innerHTML = `
+                        <div class="agent-avatar">${agent.name.charAt(0).toUpperCase()}</div>
+                        <div class="agent-info">
+                            <div class="agent-name">${agent.name}</div>
+                            <div class="agent-workload">${agent.department} - ${agent.workload || '0'} complaints</div>
+                        </div>
+                    `;
+                    agentList.appendChild(agentItem);
+                });
+                
+                document.getElementById('assignModal').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading staff:', error);
+                // Use default staff on error
+                showAssignModal();
             }
         }
 
-        function changePriority() {
-            const newPriority = prompt('Set new priority (High, Medium, Low):');
-            if (newPriority) {
-                document.getElementById('adminPriority').textContent = newPriority;
-                alert(`Priority changed to: ${newPriority}`);
-                addAdminTimelineItem(`Priority changed to ${newPriority} by Admin`);
+        function showForceCloseModal() {
+            document.getElementById('forceCloseModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        async function setPriority(priority) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/admin/complaints/${complaintId}/priority`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ priority: priority })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('adminPriority').textContent = priority;
+                    addAdminTimelineItem(`Priority changed to ${priority} by Admin`);
+                    closeModal('priorityModal');
+                } else {
+                    alert('Failed to update priority');
+                }
+            } catch (error) {
+                console.error('Error updating priority:', error);
+                alert('Failed to update priority');
             }
         }
 
-        function reassignAgent() {
-            const newAgent = prompt('Assign to agent:');
-            if (newAgent) {
-                document.getElementById('adminAssignedAgent').textContent = newAgent;
-                alert(`Complaint reassigned to: ${newAgent}`);
-                addAdminTimelineItem(`Complaint reassigned to ${newAgent} by Admin`);
+        async function setStatus(status) {
+            try {
+                const apiStatus = status === 'In Progress' ? 'IN_PROGRESS' : status.toUpperCase();
+                const response = await fetch(`http://localhost:9090/api/admin/complaints/${complaintId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: apiStatus })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('adminStatus').textContent = status;
+                    addAdminTimelineItem(`Status updated to ${status} by Admin`);
+                    closeModal('statusModal');
+                } else {
+                    alert('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Failed to update status');
             }
         }
 
-        function updateStatus() {
-            const newStatus = prompt('Set new status (Pending, In Progress, Resolved, Escalated):');
-            if (newStatus) {
-                document.getElementById('adminStatus').textContent = newStatus;
-                alert(`Status updated to: ${newStatus}`);
-                addAdminTimelineItem(`Status updated to ${newStatus} by Admin`);
+        async function assignAgent(agentEmail, agentName) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/admin/complaints/${complaintId}/assign`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ agentEmail: agentEmail })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('adminAssignedAgent').textContent = agentName;
+                    addAdminTimelineItem(`Complaint assigned to ${agentName} by Admin`);
+                    closeModal('assignModal');
+                } else {
+                    alert('Failed to assign agent');
+                }
+            } catch (error) {
+                console.error('Error assigning agent:', error);
+                alert('Failed to assign agent');
             }
         }
 
-        function escalateToManager() {
-            if (confirm(`Escalate complaint ${complaintId} to management?`)) {
-                alert(`Complaint ${complaintId} escalated to management!`);
-                addAdminTimelineItem('Complaint escalated to management by Admin');
+        async function confirmForceClose() {
+            try {
+                const response = await fetch(`http://localhost:9090/api/admin/complaints/${complaintId}/force-close`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    document.getElementById('adminStatus').textContent = 'Force Closed';
+                    addAdminTimelineItem('Complaint force closed by Admin');
+                    closeModal('forceCloseModal');
+                } else {
+                    alert('Failed to force close complaint');
+                }
+            } catch (error) {
+                console.error('Error force closing complaint:', error);
+                alert('Failed to force close complaint');
             }
         }
 
-        function forceClose() {
-            if (confirm(`Force close complaint ${complaintId}? This action cannot be undone.`)) {
-                document.getElementById('adminStatus').textContent = 'Force Closed';
-                alert(`Complaint ${complaintId} force closed by Admin!`);
-                addAdminTimelineItem('Complaint force closed by Admin');
-            }
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.admin-modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
         }
 
         function saveAdminNote() {

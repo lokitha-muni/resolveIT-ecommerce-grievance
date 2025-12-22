@@ -117,13 +117,136 @@ class SecurityManager {
             alert(reason);
         }
         
-        // Redirect to appropriate login page
-        const currentPath = window.location.pathname;
-        if (currentPath.includes('staff') || currentPath.includes('admin')) {
-            window.location.href = 'staff-login.html';
-        } else {
-            window.location.href = 'login.html';
-        }
+        // Always redirect to index page
+        window.location.href = 'index.html';
+    }
+
+    // Show logout confirmation modal
+    showLogoutConfirmation() {
+        return new Promise((resolve) => {
+            // Create modal HTML
+            const modal = document.createElement('div');
+            modal.className = 'logout-modal-overlay';
+            modal.innerHTML = `
+                <div class="logout-modal">
+                    <div class="logout-modal-header">
+                        <h3>Confirm Logout</h3>
+                    </div>
+                    <div class="logout-modal-body">
+                        <p>Are you sure you want to logout?</p>
+                    </div>
+                    <div class="logout-modal-actions">
+                        <button class="logout-cancel-btn" onclick="this.closest('.logout-modal-overlay').remove(); resolve(false)">Cancel</button>
+                        <button class="logout-confirm-btn" onclick="this.closest('.logout-modal-overlay').remove(); resolve(true)">Logout</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .logout-modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                }
+                .logout-modal {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 0;
+                    min-width: 320px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    animation: slideIn 0.3s ease;
+                }
+                .logout-modal-header {
+                    padding: 20px 24px 16px;
+                    border-bottom: 1px solid #eee;
+                }
+                .logout-modal-header h3 {
+                    margin: 0;
+                    color: #333;
+                    font-size: 18px;
+                }
+                .logout-modal-body {
+                    padding: 20px 24px;
+                }
+                .logout-modal-body p {
+                    margin: 0;
+                    color: #666;
+                    line-height: 1.5;
+                }
+                .logout-modal-actions {
+                    padding: 16px 24px 20px;
+                    display: flex;
+                    gap: 12px;
+                    justify-content: flex-end;
+                }
+                .logout-cancel-btn, .logout-confirm-btn {
+                    padding: 8px 20px;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                }
+                .logout-cancel-btn {
+                    background: #f5f5f5;
+                    color: #666;
+                }
+                .logout-cancel-btn:hover {
+                    background: #e5e5e5;
+                }
+                .logout-confirm-btn {
+                    background: #dc3545;
+                    color: white;
+                }
+                .logout-confirm-btn:hover {
+                    background: #c82333;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes slideIn {
+                    from { transform: translateY(-20px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+            `;
+            
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+            
+            // Handle button clicks
+            modal.querySelector('.logout-cancel-btn').onclick = () => {
+                modal.remove();
+                style.remove();
+                resolve(false);
+            };
+            
+            modal.querySelector('.logout-confirm-btn').onclick = () => {
+                modal.remove();
+                style.remove();
+                resolve(true);
+            };
+            
+            // Close on overlay click
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                    style.remove();
+                    resolve(false);
+                }
+            };
+        });
     }
 
     // Validate current session
@@ -176,7 +299,11 @@ const securityManager = new SecurityManager();
 
 // Global logout function
 function logout() {
-    securityManager.logout();
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+    }
 }
 
 // Secure form submission helper

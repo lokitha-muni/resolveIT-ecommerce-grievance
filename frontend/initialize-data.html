@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initialize Sample Data - ResolveIT</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px 0; }
+        .btn:hover { background: #0056b3; }
+        .success { color: green; margin: 10px 0; }
+        .error { color: red; margin: 10px 0; }
+        .info { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Initialize Sample Data</h1>
+        
+        <div class="info">
+            <h3>This will create:</h3>
+            <ul>
+                <li><strong>5 Sample Users:</strong>
+                    <ul>
+                        <li>john.doe@gmail.com / password123</li>
+                        <li>jane.smith@gmail.com / password123</li>
+                        <li>mike.johnson@gmail.com / password123</li>
+                        <li>sarah.wilson@gmail.com / password123</li>
+                        <li>david.brown@gmail.com / password123</li>
+                    </ul>
+                </li>
+                <li><strong>5 Sample Staff:</strong>
+                    <ul>
+                        <li>agent1@resolveit.com / staff123</li>
+                        <li>agent2@resolveit.com / staff123</li>
+                        <li>agent3@resolveit.com / staff123</li>
+                        <li>supervisor@resolveit.com / staff123</li>
+                        <li>manager@resolveit.com / staff123</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <button class="btn" onclick="testEndpoint()">Test Endpoint</button>
+        <button class="btn" onclick="initializeData()">Initialize Users & Staff</button>
+        
+        <div id="result"></div>
+        
+        <div style="margin-top: 30px;">
+            <a href="admin-dashboard.html">← Back to Admin Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        async function testEndpoint() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing endpoint...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/test-init');
+                const data = await response.text();
+                resultDiv.innerHTML = `<p class="success">✅ ${data}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Test Error: ${error.message}</p>`;
+            }
+        }
+
+        async function initializeData() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Initializing data...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:9090/api/admin/init-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `<p class="success">✅ ${data.message || 'Users and staff created successfully'}</p>`;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<p class="error">❌ Error: ${response.status} - ${errorText}</p>`;
+                }
+            } catch (error) {
+                console.error('Initialization error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ Network Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

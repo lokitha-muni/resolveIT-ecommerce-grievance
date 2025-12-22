@@ -8,6 +8,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
     <!-- Background -->
     <div class="split-background">
         <div class="bg-left"></div>
@@ -23,8 +32,9 @@
                 <span>Admin - All Complaints</span>
             </div>
             <div class="nav-right">
+                <button onclick="refreshData()" class="nav-btn" style="background: #f8f9fa; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-right: 1rem;">🔄 Refresh</button>
                 <a href="admin-dashboard.html" class="nav-btn">← Back to Dashboard</a>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </nav>
 
@@ -32,46 +42,43 @@
         <section class="stats-section">
             <div class="stat-card">
                 <div class="stat-label">Total Complaints</div>
-                <div class="stat-number">45</div>
+                <div class="stat-number" id="totalComplaints">0</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Unassigned</div>
-                <div class="stat-number">8</div>
+                <div class="stat-number" id="unassignedComplaints">0</div>
             </div>
             <div class="stat-card progress-card">
                 <div class="stat-label">Active Agents</div>
-                <div class="stat-number">12</div>
+                <div class="stat-number" id="activeAgents">0</div>
             </div>
             <div class="stat-card resolved-card">
                 <div class="stat-label">Avg Resolution</div>
-                <div class="stat-number">2.3h</div>
+                <div class="stat-number" id="avgResolution">0h</div>
             </div>
         </section>
 
         <!-- Admin Controls -->
         <div class="admin-controls">
             <div class="control-group">
-                <select class="admin-select">
+                <select class="admin-select" id="statusFilter">
                     <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="progress">In Progress</option>
-                    <option value="resolved">Resolved</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="RESOLVED">Resolved</option>
+                    <option value="FORCE_CLOSED">Force Closed</option>
                 </select>
-                <select class="admin-select">
+                <select class="admin-select" id="priorityFilter">
                     <option value="all">All Priority</option>
-                    <option value="high">High Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="low">Low Priority</option>
+                    <option value="High">High Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="Low">Low Priority</option>
                 </select>
-                <select class="admin-select">
+                <select class="admin-select" id="agentFilter">
                     <option value="all">All Agents</option>
                     <option value="unassigned">Unassigned</option>
-                    <option value="agent1">Agent Smith</option>
-                    <option value="agent2">Agent Johnson</option>
-                    <option value="agent3">Agent Davis</option>
                 </select>
-                <button class="admin-filter-btn">Apply Filters</button>
+                <button class="admin-filter-btn" onclick="applyFilters()">Apply Filters</button>
             </div>
             <div class="bulk-admin-actions">
                 <button class="admin-bulk-btn" onclick="bulkAssign()">Bulk Assign</button>
@@ -107,85 +114,8 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="urgent-row" data-id="CMP-001">
-                                <td><input type="checkbox" class="admin-row-select"></td>
-                                <td><strong>CMP-001</strong></td>
-                                <td>John Doe</td>
-                                <td>ORD-12345</td>
-                                <td><span class="tag orange">Wrong Product</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="status-badge pending">Pending</span></td>
-                                <td>Agent Smith</td>
-                                <td>2h ago</td>
-                                <td><span class="sla-warning">2h left</span></td>
-                                <td><a href="admin-complaint-details.html?id=CMP-001" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr data-id="CMP-002">
-                                <td><input type="checkbox" class="admin-row-select"></td>
-                                <td><strong>CMP-002</strong></td>
-                                <td>Jane Smith</td>
-                                <td>ORD-67890</td>
-                                <td><span class="tag blue">Late Delivery</span></td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td><span class="status-badge progress">In Progress</span></td>
-                                <td>Agent Johnson</td>
-                                <td>4h ago</td>
-                                <td><span class="sla-ok">On Track</span></td>
-                                <td><a href="admin-complaint-details.html?id=CMP-002" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr data-id="CMP-003">
-                                <td><input type="checkbox" class="admin-row-select"></td>
-                                <td><strong>CMP-003</strong></td>
-                                <td>Mike Wilson</td>
-                                <td>ORD-11223</td>
-                                <td><span class="tag orange">Damaged Product</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="status-badge resolved">Resolved</span></td>
-                                <td>Agent Davis</td>
-                                <td>1 day ago</td>
-                                <td><span class="sla-ok">Completed</span></td>
-                                <td><a href="admin-complaint-details.html?id=CMP-003" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr class="unassigned-row" data-id="CMP-004">
-                                <td><input type="checkbox" class="admin-row-select"></td>
-                                <td><strong>CMP-004</strong></td>
-                                <td>Sarah Brown</td>
-                                <td>ORD-44556</td>
-                                <td><span class="tag yellow">Missing Item</span></td>
-                                <td><span class="priority low">Low</span></td>
-                                <td><span class="status-badge unassigned">Unassigned</span></td>
-                                <td><em>Not Assigned</em></td>
-                                <td>6h ago</td>
-                                <td><span class="sla-warning">Needs Assignment</span></td>
-                                <td><a href="admin-complaint-details.html?id=CMP-004" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr data-id="CMP-005">
-                                <td><input type="checkbox" class="admin-row-select"></td>
-                                <td><strong>CMP-005</strong></td>
-                                <td>Alice Johnson</td>
-                                <td>ORD-77889</td>
-                                <td><span class="tag blue">Late Delivery</span></td>
-                                <td><span class="priority medium">Medium</span></td>
-                                <td><span class="status-badge progress">In Progress</span></td>
-                                <td>Agent Smith</td>
-                                <td>3h ago</td>
-                                <td><span class="sla-ok">On Track</span></td>
-                                <td><a href="admin-complaint-details.html?id=CMP-005" class="view-link">View Details</a></td>
-                            </tr>
-                            <tr data-id="CMP-007">
-                                <td><input type="checkbox" class="admin-row-select"></td>
-                                <td><strong>CMP-007</strong></td>
-                                <td>Bob Wilson</td>
-                                <td>ORD-99001</td>
-                                <td><span class="tag orange">Damaged Item</span></td>
-                                <td><span class="priority high">High</span></td>
-                                <td><span class="status-badge pending">Pending</span></td>
-                                <td>Agent Johnson</td>
-                                <td>1h ago</td>
-                                <td><span class="sla-critical">Critical</span></td>
-                                <td><a href="admin-complaint-details.html?id=CMP-007" class="view-link">View Details</a></td>
-                            </tr>
+                        <tbody id="complaintsTableBody">
+                            <!-- Complaints will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -199,12 +129,12 @@
                 <div class="analytics-grid">
                     <div class="analytics-card">
                         <h3>Resolution Rate</h3>
-                        <div class="metric-value">87%</div>
+                        <div class="metric-value" id="resolutionRate">0%</div>
                         <div class="metric-trend">+5% this week</div>
                     </div>
                     <div class="analytics-card">
                         <h3>Avg Response Time</h3>
-                        <div class="metric-value">1.2h</div>
+                        <div class="metric-value" id="responseTime">0h</div>
                         <div class="metric-trend">-15min improved</div>
                     </div>
                     <div class="analytics-card">
@@ -214,7 +144,7 @@
                     </div>
                     <div class="analytics-card">
                         <h3>Agent Workload</h3>
-                        <div class="metric-value">3.8</div>
+                        <div class="metric-value" id="agentWorkload">0</div>
                         <div class="metric-trend">Balanced</div>
                     </div>
                 </div>
@@ -223,6 +153,211 @@
     </div>
 
     <script>
+        let allComplaints = [];
+        let allStaff = [];
+        let filteredComplaints = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminData();
+        });
+        
+        async function loadAdminData() {
+            try {
+                // Load complaints and stats
+                const [complaintsResponse, statsResponse, staffResponse] = await Promise.all([
+                    fetch('http://localhost:9090/api/admin/complaints'),
+                    fetch('http://localhost:9090/api/admin/stats'),
+                    fetch('http://localhost:9090/api/admin/staff')
+                ]);
+                
+                if (complaintsResponse.ok) {
+                    allComplaints = await complaintsResponse.json();
+                    filteredComplaints = [...allComplaints];
+                    renderComplaints();
+                }
+                
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    updateStats(stats);
+                }
+                
+                if (staffResponse.ok) {
+                    allStaff = await staffResponse.json();
+                    populateAgentFilter();
+                }
+                
+                calculateAnalytics();
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+            }
+        }
+        
+        function updateStats(stats) {
+            document.getElementById('totalComplaints').textContent = stats.totalComplaints || 0;
+            document.getElementById('unassignedComplaints').textContent = stats.unassigned || 0;
+            document.getElementById('activeAgents').textContent = stats.activeAgents || 0;
+            document.getElementById('avgResolution').textContent = stats.avgResolution || '0h';
+        }
+        
+        function populateAgentFilter() {
+            const agentFilter = document.getElementById('agentFilter');
+            // Clear existing options except first two
+            while (agentFilter.children.length > 2) {
+                agentFilter.removeChild(agentFilter.lastChild);
+            }
+            
+            allStaff.forEach(staff => {
+                const option = document.createElement('option');
+                option.value = staff.name;
+                option.textContent = staff.name;
+                agentFilter.appendChild(option);
+            });
+        }
+        
+        function renderComplaints() {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+            
+            filteredComplaints.forEach(complaint => {
+                const row = createComplaintRow(complaint);
+                tbody.appendChild(row);
+            });
+            
+            // Re-attach event listeners
+            document.querySelectorAll('.admin-row-select').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedCount);
+            });
+        }
+        
+        function createComplaintRow(complaint) {
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', complaint.complaintId);
+            
+            // Add special classes based on status/priority
+            if (complaint.priority === 'High' && complaint.status === 'PENDING') {
+                row.classList.add('urgent-row');
+            }
+            if (!complaint.assignedAgent) {
+                row.classList.add('unassigned-row');
+            }
+            
+            const customerName = extractCustomerName(complaint.userEmail);
+            const timeAgo = getTimeAgo(complaint.createdAt);
+            const slaStatus = getSLAStatus(complaint);
+            
+            row.innerHTML = `
+                <td><input type="checkbox" class="admin-row-select"></td>
+                <td><strong>${complaint.complaintId}</strong></td>
+                <td>${customerName}</td>
+                <td>${complaint.orderId}</td>
+                <td><span class="tag ${getIssueTypeClass(complaint.issueType)}">${complaint.issueType}</span></td>
+                <td><span class="priority ${complaint.priority.toLowerCase()}">${complaint.priority}</span></td>
+                <td><span class="status-badge ${getStatusClass(complaint.status)}">${formatStatus(complaint.status)}</span></td>
+                <td>${complaint.assignedAgent || '<em>Not Assigned</em>'}</td>
+                <td>${timeAgo}</td>
+                <td><span class="${slaStatus.class}">${slaStatus.text}</span></td>
+                <td><a href="admin-complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a></td>
+            `;
+            
+            return row;
+        }
+        
+        function extractCustomerName(email) {
+            if (email === 'test@gmail.com') return 'Test User';
+            const name = email.split('@')[0].replace(/\./g, ' ');
+            return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+        
+        function getTimeAgo(createdAt) {
+            if (!createdAt) return 'Recently';
+            const now = new Date();
+            const created = new Date(createdAt);
+            const diffMs = now - created;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffDays > 0) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            if (diffHours > 0) return `${diffHours}h ago`;
+            return 'Recently';
+        }
+        
+        function getSLAStatus(complaint) {
+            if (complaint.status === 'RESOLVED' || complaint.status === 'FORCE_CLOSED') {
+                return { class: 'sla-ok', text: 'Completed' };
+            }
+            if (!complaint.assignedAgent) {
+                return { class: 'sla-warning', text: 'Needs Assignment' };
+            }
+            if (complaint.priority === 'High') {
+                return { class: 'sla-critical', text: 'Critical' };
+            }
+            return { class: 'sla-ok', text: 'On Track' };
+        }
+        
+        function getIssueTypeClass(issueType) {
+            const typeMap = {
+                'Wrong Product': 'orange',
+                'Late Delivery': 'blue',
+                'Damaged Product': 'orange',
+                'Missing Item': 'yellow',
+                'Quality Issue': 'red',
+                'Billing Issue': 'purple'
+            };
+            return typeMap[issueType] || 'gray';
+        }
+        
+        function getStatusClass(status) {
+            const statusMap = {
+                'PENDING': 'pending',
+                'IN_PROGRESS': 'progress',
+                'RESOLVED': 'resolved',
+                'FORCE_CLOSED': 'closed'
+            };
+            return statusMap[status] || 'pending';
+        }
+        
+        function formatStatus(status) {
+            const statusMap = {
+                'PENDING': 'Pending',
+                'IN_PROGRESS': 'In Progress',
+                'RESOLVED': 'Resolved',
+                'FORCE_CLOSED': 'Force Closed'
+            };
+            return statusMap[status] || status;
+        }
+        
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const agentFilter = document.getElementById('agentFilter').value;
+            
+            filteredComplaints = allComplaints.filter(complaint => {
+                const statusMatch = statusFilter === 'all' || complaint.status === statusFilter;
+                const priorityMatch = priorityFilter === 'all' || complaint.priority === priorityFilter;
+                const agentMatch = agentFilter === 'all' || 
+                    (agentFilter === 'unassigned' && !complaint.assignedAgent) ||
+                    complaint.assignedAgent === agentFilter;
+                
+                return statusMatch && priorityMatch && agentMatch;
+            });
+            
+            renderComplaints();
+        }
+        
+        function calculateAnalytics() {
+            if (allComplaints.length === 0) return;
+            
+            const resolved = allComplaints.filter(c => c.status === 'RESOLVED').length;
+            const resolutionRate = Math.round((resolved / allComplaints.length) * 100);
+            
+            const avgWorkload = allStaff.length > 0 ? 
+                (allStaff.reduce((sum, staff) => sum + (staff.workload || 0), 0) / allStaff.length).toFixed(1) : 0;
+            
+            document.getElementById('resolutionRate').textContent = resolutionRate + '%';
+            document.getElementById('responseTime').textContent = '1.2h';
+            document.getElementById('agentWorkload').textContent = avgWorkload;
+        }
+        
         function toggleSelectAllAdmin() {
             const selectAll = document.getElementById('selectAllAdmin');
             const checkboxes = document.querySelectorAll('.admin-row-select');
@@ -241,37 +376,81 @@
         function bulkAssign() {
             const selected = document.querySelectorAll('.admin-row-select:checked');
             if (selected.length === 0) {
-                alert('Please select complaints to assign');
+                alert('Please select complaints to assign first');
                 return;
             }
             
             const agent = prompt('Enter agent name to assign selected complaints:');
-            if (agent) {
-                alert(`${selected.length} complaints assigned to ${agent}`);
+            if (agent && confirm(`Assign ${selected.length} complaints to ${agent}?`)) {
+                console.log(`Assigning ${selected.length} complaints to ${agent}`);
+                loadAdminData();
             }
         }
 
         function bulkExport() {
-            alert('Exporting all complaints data...');
+            if (confirm('Export all complaints data as CSV?')) {
+                try {
+                    const csvData = generateCSV(allComplaints);
+                    const blob = new Blob([csvData], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'admin_complaints_export.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } catch (error) {
+                    console.error('Export error:', error);
+                    alert('Export failed. Please try again.');
+                }
+            }
+        }
+        
+        function generateCSV(complaints) {
+            let csv = 'Complaint ID,Customer,Order ID,Issue Type,Priority,Status,Assigned Agent,Created\n';
+            complaints.forEach(complaint => {
+                csv += `"${complaint.complaintId}","${extractCustomerName(complaint.userEmail)}","${complaint.orderId}","${complaint.issueType}","${complaint.priority}","${complaint.status}","${complaint.assignedAgent || 'Unassigned'}","${getTimeAgo(complaint.createdAt)}"\n`;
+            });
+            return csv;
         }
 
         function generateReport() {
-            alert('Generating comprehensive system report...');
+            if (confirm('Generate comprehensive system report?')) {
+                const reportData = {
+                    totalComplaints: allComplaints.length,
+                    pendingComplaints: allComplaints.filter(c => c.status === 'PENDING').length,
+                    inProgressComplaints: allComplaints.filter(c => c.status === 'IN_PROGRESS').length,
+                    resolvedComplaints: allComplaints.filter(c => c.status === 'RESOLVED').length,
+                    unassignedComplaints: allComplaints.filter(c => !c.assignedAgent).length,
+                    highPriorityComplaints: allComplaints.filter(c => c.priority === 'High').length,
+                    activeAgents: allStaff.length,
+                    generatedAt: new Date().toISOString()
+                };
+                
+                const reportText = `RESOLVEIT SYSTEM REPORT\n\nGenerated: ${new Date().toLocaleString()}\n\nSUMMARY:\nTotal Complaints: ${reportData.totalComplaints}\nPending: ${reportData.pendingComplaints}\nIn Progress: ${reportData.inProgressComplaints}\nResolved: ${reportData.resolvedComplaints}\nUnassigned: ${reportData.unassignedComplaints}\nHigh Priority: ${reportData.highPriorityComplaints}\nActive Agents: ${reportData.activeAgents}\n\nResolution Rate: ${Math.round((reportData.resolvedComplaints / reportData.totalComplaints) * 100)}%`;
+                
+                const blob = new Blob([reportText], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ResolveIT_Report_${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }
         }
 
         function refreshData() {
-            alert('Refreshing complaint data...');
-            location.reload();
+            loadAdminData();
         }
 
         function addComplaint() {
-            alert('Opening new complaint form...');
+            if (confirm('Open new complaint form?')) {
+                window.location.href = 'submit-complaint.html';
+            }
         }
-
-        // Add event listeners for row selection
-        document.querySelectorAll('.admin-row-select').forEach(checkbox => {
-            checkbox.addEventListener('change', updateSelectedCount);
-        });
     </script>
 </body>
 </html>

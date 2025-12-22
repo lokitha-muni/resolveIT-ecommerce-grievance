@@ -10,24 +10,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
+    <!-- Split Background -->
     <div class="split-background">
         <div class="bg-left"></div>
         <div class="bg-right"></div>
     </div>
 
+    <!-- Main Dashboard Container -->
     <div class="dashboard-main">
+        <!-- Top Navigation -->
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='edit-profile.html'" id="profilePhoto">U</div>
-                <span id="userGreeting">Hi, User</span>
+                <div class="profile-photo" onclick="window.location.href='edit-profile.html'" id="profilePhoto" tabindex="0" role="button" aria-label="View profile">U</div>
+                <span id="userGreeting" data-translate="hi_user">Hi, User</span>
             </div>
             <div class="nav-right">
                 <button onclick="loadDashboardData()" class="nav-btn" style="background: #f8f9fa; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-right: 1rem;">🔄 Refresh</button>
                 <div class="bell-icon" onclick="toggleNotifications()">🔔<span class="notification-badge">0</span></div>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+                <button onclick="logout()" class="logout-btn" data-translate="logout">Logout</button>
             </div>
         </nav>
 
+        <!-- Stats Section -->
         <section class="stats-section">
             <div class="stat-card">
                 <div class="stat-icon">📊</div>
@@ -51,12 +55,14 @@
             </div>
         </section>
 
+        <!-- Primary Action Button -->
         <div class="action-button-container">
             <button class="primary-action-btn" onclick="window.location.href='submit-complaint.html'">Submit New Order Issue</button>
             <button class="secondary-action-btn" onclick="toggleSearchFilter()">🔍 Search & Filter</button>
             <button class="secondary-action-btn" onclick="exportData()">📥 Export Data</button>
         </div>
         
+        <!-- Recent Complaints Section -->
         <section class="complaints-section">
             <div class="complaints-card">
                 <h2>Recent Complaints</h2>
@@ -108,15 +114,20 @@
                     return;
                 }
 
+                // Update user greeting
                 const displayName = user.email.split('@')[0];
                 document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
                 document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
 
+                // Fetch user complaints
                 const response = await fetch(`http://localhost:9090/api/complaints/user/${user.email}`);
+                console.log('Complaints response:', response.status);
                 
                 if (response.ok) {
                     const complaints = await response.json();
+                    console.log('Complaints data:', complaints);
                     
+                    // Update stats
                     const totalComplaints = complaints.length;
                     const pendingComplaints = complaints.filter(c => c.status === 'PENDING').length;
                     const inProgressComplaints = complaints.filter(c => c.status === 'IN_PROGRESS').length;
@@ -127,8 +138,10 @@
                     document.getElementById('inProgressComplaints').textContent = inProgressComplaints;
                     document.getElementById('resolvedComplaints').textContent = resolvedComplaints;
                     
+                    // Update complaints table
                     updateComplaintsTable(complaints);
                 } else {
+                    console.error('Failed to fetch complaints');
                     updateComplaintsTable([]);
                 }
             } catch (error) {
@@ -189,15 +202,15 @@
         }
 
         function toggleNotifications() {
-            console.log('Notifications clicked');
+            // Placeholder for notifications
         }
 
         function toggleSearchFilter() {
-            console.log('Search filter clicked');
+            // Placeholder for search
         }
 
         function exportData() {
-            console.log('Export data clicked');
+            // Placeholder for export
         }
     </script>
 </body>

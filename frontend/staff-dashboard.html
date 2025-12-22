@@ -14,22 +14,10 @@
     <div class="dashboard-main">
         <nav class="dashboard-nav">
             <div class="nav-left">
-                <button class="mobile-nav-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
                 <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" tabindex="0" role="button" aria-label="View profile">ST</div>
                 <span id="userGreeting" data-translate="hi_staff">Hi, Staff</span>
             </div>
             <div class="nav-right">
-                <div class="nav-controls">
-                    <label class="theme-toggle" aria-label="Toggle dark mode">
-                        <input type="checkbox" id="themeToggle">
-                        <span class="theme-slider"></span>
-                    </label>
-                    <select id="languageSelect" aria-label="Select language" onchange="changeLanguage(this.value)">
-                        <option value="en">EN</option>
-                        <option value="es">ES</option>
-                        <option value="fr">FR</option>
-                    </select>
-                </div>
                 <button onclick="logout()" class="logout-btn" data-translate="logout">Logout</button>
             </div>
         </nav>
@@ -138,7 +126,6 @@
     <script src="js/security.js"></script>
     <script>
         async function loadStaffDashboard() {
-            showLoading('Loading dashboard...');
             const staff = JSON.parse(localStorage.getItem('staff'));
             if (!staff || !staff.email) {
                 window.location.href = 'staff-login.html';
@@ -159,7 +146,7 @@
             document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
 
             try {
-                const data = await uiManager.apiCall(`http://localhost:9090/api/staff/dashboard/${staff.email}`, {}, 'Loading dashboard data...');
+                const data = await uiManager.apiCall(`http://localhost:9090/api/staff/dashboard/${staff.email}`);
                 
                 if (data) {
                     if (data.firstName) {
@@ -167,19 +154,15 @@
                         document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                     }
                     
-                    animateCounter('totalComplaints', data.totalComplaints || 0);
-                    animateCounter('pendingComplaints', data.pendingComplaints || 0);
-                    animateCounter('inProgressComplaints', data.inProgressComplaints || 0);
-                    animateCounter('resolvedComplaints', data.resolvedComplaints || 0);
+                    document.getElementById('totalComplaints').textContent = data.totalComplaints || 0;
+                    document.getElementById('pendingComplaints').textContent = data.pendingComplaints || 0;
+                    document.getElementById('inProgressComplaints').textContent = data.inProgressComplaints || 0;
+                    document.getElementById('resolvedComplaints').textContent = data.resolvedComplaints || 0;
 
                     updateComplaintsTable(data.recentComplaints || []);
-                    showToast('Dashboard loaded successfully', 'success');
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
-                showToast('Failed to load dashboard data', 'error');
-            } finally {
-                hideLoading();
             }
         }
 
@@ -256,10 +239,16 @@
             requestAnimationFrame(updateCounter);
         }
         
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'staff-login.html';
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
             loadStaffDashboard();
-            const savedLang = localStorage.getItem('language') || 'en';
-            document.getElementById('languageSelect').value = savedLang;
         });
     </script>
 </body>

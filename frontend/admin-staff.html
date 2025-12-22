@@ -32,28 +32,234 @@
             <p>Manage staff accounts and permissions</p>
         </section>
 
-        <section class="users-section">
-            <div class="users-card">
+        <section class="staff-section">
+            <div class="staff-card">
+                <div class="card-header">
+                    <h2>Staff Management</h2>
+                    <div class="header-actions">
+                        <button class="refresh-btn" onclick="loadStaff()">🔄 Refresh</button>
+                        <span class="staff-count" id="staffCount">0 staff</span>
+                    </div>
+                </div>
                 <div class="table-container">
-                    <table class="users-table">
+                    <table class="staff-table">
                         <thead>
                             <tr>
-                                <th>Full Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Department</th>
-                                <th>Phone</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th class="col-name">Full Name</th>
+                                <th class="col-email">Email</th>
+                                <th class="col-role">Role</th>
+                                <th class="col-department">Department</th>
+                                <th class="col-phone">Phone</th>
+                                <th class="col-workload">Workload</th>
+                                <th class="col-date">Created</th>
+                                <th class="col-actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="staffTableBody">
-                            <!-- Staff loaded dynamically -->
+                            <tr><td colspan="8" class="loading-row">Loading staff...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
+
+        <style>
+        .staff-section {
+            margin: 2rem 0;
+        }
+        
+        .staff-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+        
+        .staff-count {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .staff-table th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+        
+        .staff-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        
+        .staff-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .col-name { width: 18%; }
+        .col-email { width: 22%; }
+        .col-role { width: 12%; }
+        .col-department { width: 15%; }
+        .col-phone { width: 12%; }
+        .col-workload { width: 8%; }
+        .col-date { width: 10%; }
+        .col-actions { width: 8%; }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .loading-row {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 2rem;
+        }
+        
+        .staff-email {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .staff-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .staff-phone {
+            color: #6c757d;
+        }
+        
+        .staff-department {
+            color: #6c757d;
+        }
+        
+        .staff-date {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        .workload-badge {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .workload-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .workload-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .workload-low {
+            background: #d1edff;
+            color: #0c5460;
+        }
+        
+        .tag {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .tag.blue {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .tag.green {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .staff-table {
+                font-size: 0.8rem;
+            }
+            
+            .staff-table th,
+            .staff-table td {
+                padding: 0.5rem;
+            }
+        }
+        </style>
     </div>
 
 
@@ -102,7 +308,17 @@
 
         function updateStaffTable(staff) {
             const tbody = document.getElementById('staffTableBody');
+            const staffCount = document.getElementById('staffCount');
             tbody.innerHTML = '';
+            
+            if (staffCount) {
+                staffCount.textContent = `${staff.length} staff member${staff.length !== 1 ? 's' : ''}`;
+            }
+
+            if (staff.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="loading-row">No staff members found</td></tr>';
+                return;
+            }
 
             staff.forEach(member => {
                 const row = document.createElement('tr');
@@ -110,16 +326,19 @@
                 const lastName = member.lastName || '';
                 const fullName = `${firstName} ${lastName}`.trim() || 'N/A';
                 const createdDate = member.createdAt ? new Date(member.createdAt).toLocaleDateString() : 'N/A';
+                const workload = member.workload || 0;
+                const workloadClass = workload > 5 ? 'workload-high' : workload > 2 ? 'workload-medium' : 'workload-low';
                 
                 row.innerHTML = `
-                    <td>${fullName}</td>
-                    <td>${member.email}</td>
+                    <td><span class="staff-name">${fullName}</span></td>
+                    <td><span class="staff-email">${member.email}</span></td>
                     <td><span class="tag ${member.role === 'ADMIN' ? 'blue' : 'green'}">${member.role}</span></td>
-                    <td>${member.department || 'N/A'}</td>
-                    <td>${member.phone || 'N/A'}</td>
-                    <td>${createdDate}</td>
+                    <td><span class="staff-department">${member.department || 'N/A'}</span></td>
+                    <td><span class="staff-phone">${member.phone || 'N/A'}</span></td>
+                    <td><span class="workload-badge ${workloadClass}">${workload}</span></td>
+                    <td><span class="staff-date">${createdDate}</span></td>
                     <td>
-                        <button onclick="deleteStaff('${member.id}')" class="delete-btn">Delete</button>
+                        <button onclick="deleteStaff('${member.id}')" class="delete-btn" title="Delete staff member">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -151,22 +370,25 @@
         }
 
         async function logout() {
-            try {
-                const staff = JSON.parse(localStorage.getItem('staff'));
-                if (staff && staff.email) {
-                    await fetch('http://localhost:9090/api/staff/logout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email: staff.email })
-                    });
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    const staff = JSON.parse(localStorage.getItem('staff'));
+                    if (staff && staff.email) {
+                        await fetch('http://localhost:9090/api/staff/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email: staff.email })
+                        });
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                } finally {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = 'index.html';
                 }
-            } catch (error) {
-                console.error('Logout error:', error);
-            } finally {
-                localStorage.removeItem('staff');
-                window.location.href = 'staff-login.html';
             }
         }
     </script>

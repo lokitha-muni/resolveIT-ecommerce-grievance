@@ -10,7 +10,7 @@
 <body class="auth-page">
     <div class="auth-container">
         <div class="auth-form-box">
-            <div class="auth-logo">
+            <div class="auth-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
                 <div class="logo-icon">R</div>
                 <h1>ResolveIT</h1>
             </div>
@@ -78,34 +78,26 @@
             }
             
             try {
-                const response = await fetch('http://localhost:9090/api/auth/staff/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await response.json();
-                
-                if (data.status === 'otp_required') {
-                    // Redirect to 2FA page
-                    window.location.href = `staff-2fa.html?email=${encodeURIComponent(email)}`;
-                } else if (data.status === 'success') {
-                    // Direct login (fallback)
-                    securityManager.setToken(data.token);
+                // Direct login without 2FA
+                if ((email === 'staff@gmail.com' && password === 'staff@123') ||
+                    (email === 'admin@gmail.com' && password === 'admin@123')) {
+                    
+                    const role = email === 'admin@gmail.com' ? 'ADMIN' : 'STAFF';
+                    const token = 'staff_token_' + Date.now(); // Simple token for demo
+                    
+                    securityManager.setToken(token);
                     localStorage.setItem('staff', JSON.stringify({
                         email: email,
-                        role: data.role
+                        role: role
                     }));
                     
-                    if (data.role === 'ADMIN') {
+                    if (role === 'ADMIN') {
                         window.location.href = 'admin-dashboard.html';
                     } else {
                         window.location.href = 'staff-dashboard.html';
                     }
                 } else {
-                    alert(data.message || 'Invalid credentials');
+                    alert('Invalid credentials');
                 }
             } catch (error) {
                 console.error('Login error:', error);

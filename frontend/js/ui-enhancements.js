@@ -45,26 +45,8 @@ class UIManager {
     }
 
     showToast(message, type = 'info', duration = 4000) {
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.setAttribute('role', 'alert');
-        
-        const icon = this.getToastIcon(type);
-        toast.innerHTML = `
-            <div class="toast-icon">${icon}</div>
-            <div class="toast-message">${message}</div>
-            <button class="toast-close" onclick="this.parentElement.remove()" aria-label="Close notification">×</button>
-        `;
-
-        document.getElementById('toast-container').appendChild(toast);
-        
-        // Auto remove
-        setTimeout(() => {
-            if (toast.parentElement) {
-                toast.classList.add('toast-fade-out');
-                setTimeout(() => toast.remove(), 300);
-            }
-        }, duration);
+        // Disabled toast notifications
+        return;
     }
 
     getToastIcon(type) {
@@ -368,25 +350,27 @@ class UIManager {
 
     // Enhanced API calls with loading states
     async apiCall(url, options = {}, loadingMessage = 'loading') {
-        this.showLoading(loadingMessage);
+        const defaultOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            ...options
+        };
         
         try {
-            const response = await fetch(url, options);
+            const response = await fetch(url, defaultOptions);
             const data = await response.json();
             
             if (response.ok) {
-                this.showToast(this.translate('success'), 'success');
                 return data;
             } else {
-                this.showToast(data.message || this.translate('error'), 'error');
+                console.error('API Error:', data.message);
                 return null;
             }
         } catch (error) {
-            this.showToast(this.translate('error'), 'error');
             console.error('API Error:', error);
             return null;
-        } finally {
-            this.hideLoading();
         }
     }
 }

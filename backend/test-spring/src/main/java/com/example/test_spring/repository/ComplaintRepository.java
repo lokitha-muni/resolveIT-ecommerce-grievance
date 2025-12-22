@@ -31,4 +31,5 @@ public interface ComplaintRepository extends MongoRepository<Complaint, String> 
     long countByAssignedToAndStatus(String assignedTo, String status);
     
     java.util.Optional<Complaint> findByComplaintId(String complaintId);
+    boolean existsByComplaintId(String complaintId);
 }

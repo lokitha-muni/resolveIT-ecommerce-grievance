@@ -267,7 +267,7 @@ public class AuthController {
         }
     }
     
-    // Staff login with 2FA
+    // Staff login without 2FA
     @PostMapping("/staff/login")
     public ResponseEntity<Map<String, String>> staffLogin(@RequestBody LoginRequest request) {
         Map<String, String> response = new HashMap<>();
@@ -279,12 +279,14 @@ public class AuthController {
             if ((email.equals("staff@gmail.com") && request.getPassword().equals("staff@123")) ||
                 (email.equals("admin@gmail.com") && request.getPassword().equals("admin@123"))) {
                 
-                // Generate and send OTP
-                String otp = twoFactorService.generateOTP(email);
+                String role = email.equals("admin@gmail.com") ? "ADMIN" : "STAFF";
+                String token = jwtUtil.generateToken(email, role);
+                sessionManager.createSession(token);
                 
-                response.put("status", "otp_required");
-                response.put("message", "OTP sent to your email");
-                response.put("email", email);
+                response.put("status", "success");
+                response.put("message", "Login successful");
+                response.put("token", token);
+                response.put("role", role);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "error");
@@ -330,6 +332,11 @@ public class AuthController {
         }
     }
     
+    @GetMapping("/init-data")
+    public ResponseEntity<Map<String, String>> initData() {
+        return ResponseEntity.ok(Map.of("status", "success", "message", "Data initialization working"));
+    }
+
     @PostMapping("/validate-token")
     public ResponseEntity<Map<String, String>> validateToken(@RequestHeader("Authorization") String authHeader) {
         Map<String, String> response = new HashMap<>();

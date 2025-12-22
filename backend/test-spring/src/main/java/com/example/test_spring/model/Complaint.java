@@ -24,6 +24,7 @@ public class Complaint {
     private String expectedResolution;
     private List<String> attachments;
     private String assignedTo; // Staff email
+    private String assignedAgent; // Staff name for display
     private int priorityLevel; // 1=Low, 2=Medium, 3=High, 4=Critical
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -163,5 +164,13 @@ public class Complaint {
     
     public void setPriorityLevel(int priorityLevel) {
         this.priorityLevel = priorityLevel;
+    }
+    
+    public String getAssignedAgent() {
+        return assignedAgent;
+    }
+    
+    public void setAssignedAgent(String assignedAgent) {
+        this.assignedAgent = assignedAgent;
     }
 }

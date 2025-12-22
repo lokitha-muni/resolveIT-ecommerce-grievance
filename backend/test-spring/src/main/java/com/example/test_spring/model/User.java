@@ -3,6 +3,7 @@ package com.example.test_spring.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.index.Indexed;
+import java.time.LocalDateTime;
 
 @Document(collection = "users")
 public class User {
@@ -11,11 +12,14 @@ public class User {
     private String id;
     
     private String fullName;
+    private String firstName;
+    private String lastName;
     
     @Indexed(unique = true)
     private String email;
     
     private String password;
+    private String phone;
     
     private String phoneNumber;
     private String dateOfBirth;
@@ -28,9 +32,12 @@ public class User {
     private boolean smsNotifications = false;
     private boolean marketingEmails = false;
     private boolean emailVerified = false;
+    private LocalDateTime createdAt;
     
     // Default constructor
-    public User() {}
+    public User() {
+        this.createdAt = LocalDateTime.now();
+    }
     
     // Constructor with parameters
     public User(String fullName, String email, String password, String phoneNumber) {
@@ -55,6 +62,30 @@ public class User {
     
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
     
     public String getEmail() {
@@ -159,5 +190,13 @@ public class User {
     
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -1,18 +1,12 @@
-# Environment files
+# Environment variables
 .env
-*.env
-backend/test-spring/.env
+.env.local
+.env.production
 
 # IDE files
 .vscode/
 .idea/
 *.iml
-
-# Build files
-target/
-build/
-dist/
-node_modules/
 
 # OS files
 .DS_Store
@@ -21,3 +15,18 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp

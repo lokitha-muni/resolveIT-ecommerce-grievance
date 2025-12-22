@@ -25,8 +25,7 @@
             </div>
             <div class="nav-right">
                 <a href="dashboard.html" class="nav-btn">Dashboard</a>
-                <a href="about.html" class="nav-btn">About</a>
-                <a href="index.html" class="logout-btn">Logout</a>
+                <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </nav>
 
@@ -124,7 +123,15 @@
         </div>
     </div>
     
+    <script src="js/security.js"></script>
     <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             loadComplaintDetails();
             loadUserData();
@@ -191,139 +198,131 @@
             document.getElementById('orderId').textContent = complaint.orderId;
             document.getElementById('issueType').textContent = complaint.issueType;
             document.getElementById('currentStatus').textContent = complaint.status;
+            document.getElementById('dateSubmitted').textContent = new Date(complaint.createdAt).toLocaleDateString();
             document.getElementById('description').textContent = complaint.description;
             
-            const createdDate = new Date(complaint.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            document.getElementById('dateSubmitted').textContent = createdDate;
-            
+            // Update status tracker
             updateStatusTracker(complaint.status);
-            updateTimeline(complaint);
+            
+            // Load comments and timeline
+            loadComments(complaint.complaintId);
+            loadTimeline(complaint.complaintId);
+            
+            // Show rating section if resolved
+            if (complaint.status === 'RESOLVED') {
+                document.getElementById('ratingSection').style.display = 'block';
+            }
         }
         
         function updateStatusTracker(status) {
             const tracker = document.getElementById('statusTracker');
-            const steps = [
-                { key: 'PENDING', label: 'Submitted' },
-                { key: 'IN_PROGRESS', label: 'In Progress' },
-                { key: 'RESOLVED', label: 'Resolved' }
-            ];
+            const statuses = ['PENDING', 'IN_PROGRESS', 'RESOLVED'];
+            const currentIndex = statuses.indexOf(status);
             
             let html = '';
-            steps.forEach((step, index) => {
-                const isCompleted = getStatusOrder(status) > getStatusOrder(step.key);
-                const isCurrent = status === step.key;
-                const stepClass = isCompleted ? 'completed' : (isCurrent ? 'current' : '');
-                
+            statuses.forEach((s, index) => {
+                const isActive = index <= currentIndex;
+                const isCompleted = index < currentIndex;
                 html += `
-                    <div class="step ${stepClass}">
-                        <div class="step-circle">${isCompleted ? '✓' : (index + 1)}</div>
-                        <span class="step-label">${step.label}</span>
+                    <div class="status-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}">
+                        <div class="step-circle">${index + 1}</div>
+                        <div class="step-label">${s.replace('_', ' ')}</div>
                     </div>
                 `;
-                
-                if (index < steps.length - 1) {
-                    const lineClass = isCompleted ? 'completed' : '';
-                    html += `<div class="progress-line ${lineClass}"></div>`;
-                }
             });
-            
             tracker.innerHTML = html;
-        }
-        
-        function getStatusOrder(status) {
-            const order = { 'PENDING': 1, 'IN_PROGRESS': 2, 'RESOLVED': 3 };
-            return order[status] || 0;
-        }
-        
-        function updateTimeline(complaint) {
-            const timeline = document.getElementById('timeline');
-            const createdDate = new Date(complaint.createdAt).toLocaleDateString();
-            const updatedDate = new Date(complaint.updatedAt).toLocaleDateString();
-            
-            let timelineItems = [
-                {
-                    date: createdDate,
-                    content: 'Complaint submitted successfully'
-                }
-            ];
-            
-            if (complaint.status === 'IN_PROGRESS') {
-                timelineItems.unshift({
-                    date: updatedDate,
-                    content: 'Complaint is now being processed'
-                });
-            } else if (complaint.status === 'RESOLVED') {
-                timelineItems.unshift({
-                    date: updatedDate,
-                    content: 'Complaint has been resolved'
-                });
-                // Show rating section for resolved complaints
-                document.getElementById('ratingSection').style.display = 'block';
-                loadRating(complaint.complaintId);
-            }
-            
-            let html = '';
-            timelineItems.forEach(item => {
-                html += `
-                    <div class="timeline-item">
-                        <div class="timeline-date">${item.date}</div>
-                        <div class="timeline-content">${item.content}</div>
-                    </div>
-                `;
-            });
-            
-            timeline.innerHTML = html;
-            
-            // Load comments
-            loadComments(complaint.complaintId);
         }
         
         async function loadComments(complaintId) {
             try {
-                const response = await fetch(`http://localhost:9090/api/comments/complaint/${complaintId}`);
-                const comments = await response.json();
-                
-                const commentsList = document.getElementById('commentsList');
-                commentsList.innerHTML = '';
-                
-                comments.forEach(comment => {
-                    const commentDiv = document.createElement('div');
-                    commentDiv.className = 'comment-item';
-                    commentDiv.innerHTML = `
-                        <div class="comment-author">${comment.authorType}: ${comment.authorEmail}</div>
-                        <div class="comment-message">${comment.message}</div>
-                        <div class="comment-time">${new Date(comment.createdAt).toLocaleString()}</div>
-                    `;
-                    commentsList.appendChild(commentDiv);
-                });
+                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/comments`);
+                if (response.ok) {
+                    const comments = await response.json();
+                    displayComments(comments);
+                }
             } catch (error) {
                 console.error('Error loading comments:', error);
             }
         }
         
-        async function addComment() {
-            const message = document.getElementById('newComment').value.trim();
-            if (!message) return;
+        function displayComments(comments) {
+            const commentsList = document.getElementById('commentsList');
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p class="no-data">No comments yet.</p>';
+                return;
+            }
             
-            const user = JSON.parse(localStorage.getItem('user'));
-            const urlParams = new URLSearchParams(window.location.search);
-            const complaintId = urlParams.get('id');
+            let html = '';
+            comments.forEach(comment => {
+                html += `
+                    <div class="comment">
+                        <div class="comment-header">
+                            <strong>${comment.authorName}</strong>
+                            <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <div class="comment-text">${comment.text}</div>
+                    </div>
+                `;
+            });
+            commentsList.innerHTML = html;
+        }
+        
+        async function loadTimeline(complaintId) {
+            try {
+                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/timeline`);
+                if (response.ok) {
+                    const timeline = await response.json();
+                    displayTimeline(timeline);
+                }
+            } catch (error) {
+                console.error('Error loading timeline:', error);
+                document.getElementById('timeline').innerHTML = '<p class="no-data">No timeline data available.</p>';
+            }
+        }
+        
+        function displayTimeline(timeline) {
+            const timelineEl = document.getElementById('timeline');
+            if (timeline.length === 0) {
+                timelineEl.innerHTML = '<p class="no-data">No updates yet.</p>';
+                return;
+            }
+            
+            let html = '';
+            timeline.forEach(item => {
+                html += `
+                    <div class="timeline-item">
+                        <div class="timeline-date">${new Date(item.timestamp).toLocaleDateString()}</div>
+                        <div class="timeline-content">
+                            <h4>${item.title}</h4>
+                            <p>${item.description}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            timelineEl.innerHTML = html;
+        }
+        
+        async function addComment() {
+            const commentText = document.getElementById('newComment').value.trim();
+            if (!commentText) {
+                alert('Please enter a comment');
+                return;
+            }
             
             try {
-                const response = await fetch('http://localhost:9090/api/comments/add', {
+                const urlParams = new URLSearchParams(window.location.search);
+                const complaintId = urlParams.get('id');
+                const user = JSON.parse(localStorage.getItem('user'));
+                
+                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/comments`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        complaintId: complaintId,
+                        text: commentText,
                         authorEmail: user.email,
-                        authorType: 'USER',
-                        message: message
+                        authorName: user.firstName + ' ' + user.lastName
                     })
                 });
                 
@@ -347,18 +346,27 @@
             stars.forEach(star => {
                 star.addEventListener('click', function() {
                     selectedRating = parseInt(this.dataset.rating);
-                    updateStars();
+                    updateStars(selectedRating);
                 });
+                
+                star.addEventListener('mouseover', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    updateStars(rating);
+                });
+            });
+            
+            document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
+                updateStars(selectedRating);
             });
         });
         
-        function updateStars() {
+        function updateStars(rating) {
             const stars = document.querySelectorAll('.star');
             stars.forEach((star, index) => {
-                if (index < selectedRating) {
-                    star.style.color = '#ffd700';
+                if (index < rating) {
+                    star.classList.add('active');
                 } else {
-                    star.style.color = '#ddd';
+                    star.classList.remove('active');
                 }
             });
         }
@@ -369,49 +377,34 @@
                 return;
             }
             
-            const feedback = document.getElementById('ratingFeedback').value;
-            const user = JSON.parse(localStorage.getItem('user'));
-            const urlParams = new URLSearchParams(window.location.search);
-            const complaintId = urlParams.get('id');
+            const feedback = document.getElementById('ratingFeedback').value.trim();
             
             try {
-                const response = await fetch('http://localhost:9090/api/ratings/submit', {
+                const urlParams = new URLSearchParams(window.location.search);
+                const complaintId = urlParams.get('id');
+                const user = JSON.parse(localStorage.getItem('user'));
+                
+                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/rating`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        complaintId: complaintId,
-                        userEmail: user.email,
                         rating: selectedRating,
-                        feedback: feedback
+                        feedback: feedback,
+                        userEmail: user.email
                     })
                 });
                 
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    alert('Thank you for your feedback!');
+                if (response.ok) {
+                    alert('Thank you for your rating!');
                     document.getElementById('ratingSection').style.display = 'none';
                 } else {
-                    alert(data.message);
+                    alert('Failed to submit rating');
                 }
             } catch (error) {
                 console.error('Error submitting rating:', error);
                 alert('Failed to submit rating');
-            }
-        }
-        
-        async function loadRating(complaintId) {
-            try {
-                const response = await fetch(`http://localhost:9090/api/ratings/complaint/${complaintId}`);
-                
-                if (response.ok) {
-                    // Rating already exists, hide rating section
-                    document.getElementById('ratingSection').style.display = 'none';
-                }
-            } catch (error) {
-                // Rating doesn't exist, keep section visible
             }
         }
     </script>

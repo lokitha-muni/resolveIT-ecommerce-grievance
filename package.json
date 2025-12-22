@@ -4,7 +4,7 @@
   "description": "ResolveIT E-commerce Grievance System - Full Stack Application",
   "scripts": {
     "start": "concurrently \"npm run backend\" \"npm run frontend\"",
-    "backend": "cd backend/test-spring && mvnw.cmd spring-boot:run",
+    "backend": "cd backend/test-spring && .\\mvnw.cmd spring-boot:run",
     "frontend": "cd frontend && python -m http.server 3000",
     "dev": "npm start",
     "install-all": "cd backend/test-spring && npm install && cd ../../frontend && npm install"
