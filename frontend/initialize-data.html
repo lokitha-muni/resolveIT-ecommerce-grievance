@@ -58,7 +58,7 @@
             resultDiv.innerHTML = '<p>Testing endpoint...</p>';
             
             try {
-                const response = await fetch('http://localhost:9090/api/admin/test-init');
+                const response = await fetch(getApiUrl('/api/admin/test-init'));
                 const data = await response.text();
                 resultDiv.innerHTML = `<p class="success">✅ ${data}</p>`;
             } catch (error) {
@@ -71,7 +71,7 @@
             resultDiv.innerHTML = '<p>Initializing data...</p>';
             
             try {
-                const response = await fetch('http://localhost:9090/api/admin/init-data', {
+                const response = await fetch(getApiUrl('/api/admin/init-data'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -91,5 +91,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

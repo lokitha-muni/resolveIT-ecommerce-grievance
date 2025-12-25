@@ -4,41 +4,338 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit New Complaint – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/ui-enhancements.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--accent-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(248, 250, 252, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-menu:hover {
+            background: rgba(248, 250, 252, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .form-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(78, 124, 115, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .file-upload-area {
+            position: relative;
+            border: 2px dashed rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            background: rgba(248, 250, 252, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--accent-primary);
+            background: rgba(248, 250, 252, 0.8);
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-text {
+            pointer-events: none;
+        }
+
+        .file-upload-text span {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .file-upload-text small {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-top: 32px;
+        }
+
+        .cancel-btn {
+            padding: 14px 24px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .cancel-btn:hover {
+            background: rgba(248, 250, 252, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 24px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 24px 32px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .form-card {
+                padding: 24px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
-    <!-- Split Background -->
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="dashboard-main">
-        <!-- Top Navigation -->
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" id="profilePhoto">U</div>
-                <span id="userGreeting">Hi, User</span>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Submit New Complaint</h1>
+                <p>Report an issue with your recent order</p>
             </div>
-            <div class="nav-right">
-                <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+            <div class="header-right">
+                <a href="dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Back to Dashboard
+                </a>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="profilePhoto">U</div>
+                    <span id="userGreeting">User</span>
+                </div>
             </div>
-        </nav>
-
-        <!-- Page Header -->
-        <section class="page-header">
-            <h1>Submit New Complaint</h1>
-            <p>Report an issue with your recent order</p>
-        </section>
-
+        </header>
         <!-- Complaint Form -->
-        <section class="form-section">
-            <div class="form-card">
-                <form id="complaintForm" class="complaint-form">
+        <div class="form-card">
+            <form id="complaintForm" class="complaint-form">
                     <!-- Order Information -->
                     <div class="form-group">
                         <label for="orderDate">Order Date *</label>
@@ -120,17 +417,18 @@
                         <button type="button" class="cancel-btn" onclick="window.location.href='dashboard.html'">Cancel</button>
                         <button type="submit" class="submit-btn">Submit Complaint</button>
                     </div>
-                </form>
-            </div>
-        </section>
+            </form>
+        </div>
     </div>
 
-    <script src="js/ui-enhancements.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/security.js"></script>
     <script>
         // Load user data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadUserData();
+            lucide.createIcons();
         });
         
         async function loadUserData() {
@@ -141,11 +439,11 @@
                     return;
                 }
                 
-                const response = await fetch(`http://localhost:9090/api/dashboard/${user.email}`);
+                const response = await fetch(getApiUrl(`/api/dashboard/${user.email}`));
                 const data = await response.json();
                 
                 if (response.ok) {
-                    document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                    document.getElementById('userGreeting').textContent = data.firstName;
                     document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                 }
             } catch (error) {
@@ -201,7 +499,7 @@
                 
                 // Check if there are files to upload
                 const fileInput = document.getElementById('attachments');
-                const hasFiles = fileInput.files && fileInput.files.length > 0;
+                const hasFiles = fileInput.files && fileInput.files.length > 0 && fileInput.files[0].size > 0;
                 
                 let response;
                 
@@ -223,13 +521,13 @@
                         formData.append('attachments', fileInput.files[i]);
                     }
                     
-                    response = await fetch('http://localhost:9090/api/complaints/submit-with-files', {
+                    response = await fetch(getApiUrl('/api/complaints/submit-with-files'), {
                         method: 'POST',
                         body: formData
                     });
                 } else {
                     // Use JSON for simple submission
-                    const url = `http://localhost:9090/api/complaints/submit?userEmail=${encodeURIComponent(user.email)}`;
+                    const url = getApiUrl(`/api/complaints/submit?userEmail=${encodeURIComponent(user.email)}`);
                     console.log('Request URL:', url);
                     console.log('Request body:', JSON.stringify(complaintData));
                     
@@ -305,7 +603,7 @@
                     priority: 'low'
                 };
                 
-                const url = `http://localhost:9090/api/complaints/submit?userEmail=${encodeURIComponent(user.email)}`;
+                const url = `http://localhost:8080/api/complaints/submit?userEmail=${encodeURIComponent(user.email)}`;
                 console.log('Test URL:', url);
                 
                 const response = await fetch(url, {

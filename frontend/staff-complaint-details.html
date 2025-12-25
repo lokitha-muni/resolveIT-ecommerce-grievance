@@ -4,129 +4,777 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Complaint Details – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="staff-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+            --status-pending-bg: #F5EEDC;
+            --status-pending-text: #8A6D3B;
+            --status-progress-bg: #E8EEF3;
+            --status-progress-text: #4A647D;
+            --status-resolved-bg: #E9F3EC;
+            --status-resolved-text: #3F6F58;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        /* Detail Rows */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row:hover {
+            background: rgba(45, 212, 191, 0.05);
+            margin: 0 -20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+        }
+
+        .label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Messages */
+        .message {
+            padding: 20px;
+            margin-bottom: 16px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+        }
+
+        .message:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .staff-message {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .customer-message {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .message-time {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .message-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Form Elements */
+        textarea {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100());
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Timeline */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+        }
+
+        .timeline-container.collapsed {
+            max-height: 400px;
+            overflow: hidden;
+        }
+
+        .timeline-container.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(transparent, var(--bg-card));
+            pointer-events: none;
+        }
+
+        .see-more-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: transparent;
+            border: var(--border-light);
+            border-radius: 12px;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .see-more-btn:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .timeline-item {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 4px solid var(--accent-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .timeline-item:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .timeline-date {
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-content {
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Staff Actions */
+        .staff-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .action-group label {
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .staff-action-btn {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .staff-action-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100());
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .staff-action-btn.secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .staff-action-btn.secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Notes */
+        .note-item {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .note-item:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .note-author {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-author .internal-badge {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.15) 0%, rgba(20, 184, 166, 0.1) 100%);
+            color: var(--accent-primary);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px solid rgba(15, 118, 110, 0.2);
+        }
+
+        .note-content {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .note-time {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .add-note {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .add-note label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .no-data, .no-notes {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px 20px;
+            font-style: italic;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.3) 100%);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
-<body class="complaint-details-body">
-    <div class="complaint-split-bg">
-        <div class="complaint-bg-left"></div>
-        <div class="complaint-bg-right"></div>
-    </div>
-
-    <div class="complaint-main">
-        <nav class="complaint-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
-                <span id="userGreeting">Hi, Staff</span>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Staff Complaint Details</h1>
+                <p>Manage and resolve customer complaints</p>
             </div>
-            <div class="nav-right">
-                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
-                <a href="staff-my-queue.html" class="nav-btn">My Queue</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+            <div class="header-right">
+                <a href="staff-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <a href="staff-my-queue.html" class="btn btn-secondary">
+                    <i data-lucide="list"></i> My Queue
+                </a>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="profilePhoto">S</div>
+                    <span id="userGreeting">Staff</span>
+                </div>
             </div>
-        </nav>
+        </header>
 
-        <div class="page-title">
-            <h1>Complaint Details</h1>
-        </div>
-
-        <div class="complaint-content">
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Left Column -->
             <div class="left-column">
-                <div class="complaint-header-card">
-                    <div class="detail-row">
-                        <span class="label">Complaint ID:</span>
-                        <span class="value" id="complaintId">Loading...</span>
+                <!-- Complaint Details Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Complaint Information</h2>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Customer Email:</span>
-                        <span class="value" id="userEmail">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Order ID:</span>
-                        <span class="value" id="orderId">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Issue Type:</span>
-                        <span class="value" id="issueType">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Current Status:</span>
-                        <span class="value" id="currentStatus">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Date Submitted:</span>
-                        <span class="value" id="dateSubmitted">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Description:</span>
-                        <span class="value" id="description">Loading...</span>
+                    <div class="card-content">
+                        <div class="detail-row">
+                            <span class="label">Complaint ID</span>
+                            <span class="value" id="complaintId">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Customer Email</span>
+                            <span class="value" id="userEmail">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Order ID</span>
+                            <span class="value" id="orderId">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Issue Type</span>
+                            <span class="value" id="issueType">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Current Status</span>
+                            <span class="value status-badge" id="currentStatus">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Date Submitted</span>
+                            <span class="value" id="dateSubmitted">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Description</span>
+                            <span class="value" id="description">Loading...</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-card">
-                    <h3>Status History</h3>
-                    <div class="timeline" id="timeline">
-                        <!-- Timeline will be loaded dynamically -->
+                <!-- Attachments Section -->
+                <div class="card" id="attachmentsSection" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">Attachments</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="attachments-list" id="attachmentsList">
+                            <!-- Attachments will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Status History</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="timeline">
+                            <!-- Timeline will be loaded dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Right Column -->
             <div class="right-column">
                 <!-- Staff Notes -->
-                <div class="user-view-card">
-                    <h3>Staff Notes</h3>
-                    <div class="notes-list" id="notesList">
-                        <!-- Notes loaded dynamically -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Staff Notes</h2>
                     </div>
-                    <div class="add-note">
-                        <textarea id="newNote" placeholder="Add internal note..." rows="3"></textarea>
-                        <label><input type="checkbox" id="isInternal" checked> Internal Note</label>
-                        <button onclick="addStaffNote()" class="action-btn">Add Note</button>
+                    <div class="card-content">
+                        <div class="notes-list" id="notesList">
+                            <!-- Notes loaded dynamically -->
+                        </div>
+                        <div class="add-note">
+                            <textarea id="newNote" placeholder="Add internal note..." rows="3"></textarea>
+                            <label><input type="checkbox" id="isInternal" checked> Internal Note</label>
+                            <button onclick="addStaffNote()" class="action-btn">Add Note</button>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Customer Communication -->
-                <div class="user-view-card">
-                    <h3>Customer Communication</h3>
-                    <div class="messages-list" id="messagesList">
-                        <!-- Messages loaded dynamically -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Customer Communication</h2>
                     </div>
-                    <div class="send-message">
-                        <textarea id="newMessage" placeholder="Send message to customer..." rows="3"></textarea>
-                        <button onclick="sendMessage()" class="action-btn">Send Message</button>
+                    <div class="card-content">
+                        <div class="messages-list" id="messagesList">
+                            <!-- Messages loaded dynamically -->
+                        </div>
+                        <div class="send-message">
+                            <textarea id="newMessage" placeholder="Send message to customer..." rows="3"></textarea>
+                            <button onclick="sendMessage()" class="action-btn">Send Message</button>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Staff Actions -->
-                <div class="user-view-card">
-                    <h3>Staff Actions</h3>
-                    
-                    <div class="status-update-section">
-                        <label for="statusSelect">Update Status:</label>
-                        <select id="statusSelect">
-                            <option value="PENDING">Pending</option>
-                            <option value="IN_PROGRESS">In Progress</option>
-                            <option value="RESOLVED">Resolved</option>
-                        </select>
-                        <button onclick="updateStatus()" class="action-btn">Update Status</button>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Staff Actions</h2>
                     </div>
+                    <div class="card-content">
+                        <div class="staff-actions">
+                            <div class="action-group">
+                                <label for="statusSelect">Update Status:</label>
+                                <select id="statusSelect" class="status-select">
+                                    <option value="PENDING">Pending</option>
+                                    <option value="IN_PROGRESS">In Progress</option>
+                                    <option value="RESOLVED">Resolved</option>
+                                </select>
+                                <button onclick="updateStatus()" class="staff-action-btn primary">Update Status</button>
+                            </div>
 
-                    <div class="action-buttons">
-                        <button class="action-btn" onclick="window.location.href='staff-my-queue.html'">Back to My Queue</button>
-                        <button class="action-btn secondary" onclick="window.print()">Print Details</button>
+                            <div class="action-buttons">
+                                <button class="staff-action-btn secondary" onclick="window.location.href='staff-my-queue.html'">
+                                    <i data-lucide="arrow-left"></i> Back to Queue
+                                </button>
+                                <button class="staff-action-btn secondary" onclick="window.print()">
+                                    <i data-lucide="printer"></i> Print Details
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="js/security.js"></script>
     <script>
         let currentComplaintId = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             loadComplaintDetails();
             loadUserData();
+            lucide.createIcons();
         });
 
         async function loadUserData() {
@@ -137,20 +785,20 @@
             }
             
             try {
-                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
                 if (response.ok) {
                     const data = await response.json();
                     const displayName = data.firstName || staff.email.split('@')[0];
-                    document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                    document.getElementById('userGreeting').textContent = displayName;
                     document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
                 } else {
                     const username = staff.email.split('@')[0];
-                    document.getElementById('userGreeting').textContent = `Hi, ${username}`;
+                    document.getElementById('userGreeting').textContent = username;
                     document.getElementById('profilePhoto').textContent = username.charAt(0).toUpperCase();
                 }
             } catch (error) {
                 const username = staff.email.split('@')[0];
-                document.getElementById('userGreeting').textContent = `Hi, ${username}`;
+                document.getElementById('userGreeting').textContent = username;
                 document.getElementById('profilePhoto').textContent = username.charAt(0).toUpperCase();
             }
         }
@@ -167,7 +815,7 @@
                     return;
                 }
 
-                const response = await fetch(`http://localhost:9090/api/staff/complaint/${complaintId}`);
+                const response = await fetch(`http://localhost:8080/api/staff/complaint/${complaintId}`);
 
                 if (!response.ok) {
                     throw new Error('Complaint not found');
@@ -190,8 +838,7 @@
             document.getElementById('userEmail').textContent = complaint.userEmail;
             document.getElementById('orderId').textContent = complaint.orderId;
             document.getElementById('issueType').textContent = complaint.issueType;
-            document.getElementById('currentStatus').textContent = complaint.status;
-            document.getElementById('description').textContent = complaint.description;
+            document.getElementById('description').textContent = complaint.description || 'No description provided';
 
             const createdDate = new Date(complaint.createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -200,69 +847,213 @@
             });
             document.getElementById('dateSubmitted').textContent = createdDate;
 
+            // Update status with proper styling
+            const statusElement = document.getElementById('currentStatus');
+            statusElement.textContent = formatStatus(complaint.status);
+            statusElement.className = 'value status-badge ' + getStatusClass(complaint.status);
+
             // Set current status in dropdown
             document.getElementById('statusSelect').value = complaint.status;
+            
+            // Display attachments if any
+            displayAttachments(complaint.attachments);
 
-            updateTimeline(complaint);
+            // Load complaint history from audit logs
+            loadComplaintHistory(complaint.complaintId);
         }
 
-        function updateTimeline(complaint) {
-            const timeline = document.getElementById('timeline');
-            const createdDate = new Date(complaint.createdAt).toLocaleDateString();
-            const updatedDate = new Date(complaint.updatedAt).toLocaleDateString();
-
-            let timelineItems = [
-                {
-                    date: createdDate,
-                    content: 'Complaint submitted by customer'
-                }
-            ];
-
-            if (complaint.status === 'IN_PROGRESS') {
-                timelineItems.unshift({
-                    date: updatedDate,
-                    content: 'Status updated to In Progress'
-                });
-            } else if (complaint.status === 'RESOLVED') {
-                timelineItems.unshift({
-                    date: updatedDate,
-                    content: 'Complaint resolved by staff'
-                });
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return status;
             }
+        }
 
-            let html = '';
-            timelineItems.forEach(item => {
-                html += `
-                    <div class="timeline-item">
-                        <div class="timeline-date">${item.date}</div>
-                        <div class="timeline-content">${item.content}</div>
-                    </div>
-                `;
-            });
-
-            timeline.innerHTML = html;
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
+            }
+        }
+        
+        function displayAttachments(attachments) {
+            const attachmentsSection = document.getElementById('attachmentsSection');
+            const attachmentsList = document.getElementById('attachmentsList');
+            
+            if (attachments && attachments.length > 0) {
+                attachmentsSection.style.display = 'block';
+                attachmentsList.innerHTML = '';
+                
+                attachments.forEach((attachment, index) => {
+                    const attachmentDiv = document.createElement('div');
+                    attachmentDiv.className = 'attachment-item';
+                    
+                    // Parse the attachment path: uploads/CMP-1766481635613/filename.jpg
+                    const pathParts = attachment.replace(/\\/g, '/').split('/');
+                    let complaintId = '';
+                    let fileName = '';
+                    
+                    // Find the complaint ID (starts with CMP-) and filename
+                    for (let i = 0; i < pathParts.length; i++) {
+                        if (pathParts[i].startsWith('CMP-')) {
+                            complaintId = pathParts[i];
+                            if (i + 1 < pathParts.length) {
+                                fileName = pathParts[i + 1];
+                            }
+                            break;
+                        }
+                    }
+                    
+                    console.log('Parsed:', { attachment, complaintId, fileName });
+                    
+                    // Create backend URL for file
+                    const fileUrl = `http://localhost:8080/api/complaints/file/${complaintId}/${fileName}`;
+                    
+                    // Check if it's an image
+                    if (attachment.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+                        attachmentDiv.innerHTML = `
+                            <div class="attachment-preview">
+                                <img src="${fileUrl}" alt="Attachment ${index + 1}" 
+                                     style="max-width: 200px; max-height: 200px; border-radius: 8px; cursor: pointer;"
+                                     onclick="window.open('${fileUrl}', '_blank')">
+                            </div>
+                            <div class="attachment-info">
+                                <span>Image Attachment ${index + 1}</span>
+                                <a href="${fileUrl}" target="_blank" class="view-link">View Full Size</a>
+                            </div>
+                        `;
+                    } else {
+                        attachmentDiv.innerHTML = `
+                            <div class="attachment-info">
+                                <span>📎 Attachment ${index + 1}</span>
+                                <a href="${fileUrl}" target="_blank" class="view-link">Download</a>
+                            </div>
+                        `;
+                    }
+                    
+                    attachmentsList.appendChild(attachmentDiv);
+                });
+            } else {
+                attachmentsSection.style.display = 'none';
+            }
+        }
+        
+        async function loadComplaintHistory(complaintId) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/staff/complaint/${complaintId}/history`);
+                if (response.ok) {
+                    const history = await response.json();
+                    displayComplaintHistory(history);
+                } else {
+                    console.log('No history found or error loading history');
+                    updateBasicTimeline();
+                }
+            } catch (error) {
+                console.error('Error loading complaint history:', error);
+                updateBasicTimeline();
+            }
+        }
+        
+        function displayComplaintHistory(history) {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+            
+            if (history && history.length > 0) {
+                const shouldCollapse = history.length > 3;
+                let html = `<div class="timeline-container ${shouldCollapse ? 'collapsed' : ''}" id="timelineContainer">`;
+                
+                history.forEach(entry => {
+                    const timeString = new Date(entry.timestamp).toLocaleDateString() + ' - ' + 
+                                     new Date(entry.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    html += `
+                        <div class="timeline-item">
+                            <div class="timeline-date">${timeString}</div>
+                            <div class="timeline-content">${entry.details}</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                if (shouldCollapse) {
+                    html += `
+                        <button class="see-more-btn" onclick="toggleStaffTimeline()">
+                            <i data-lucide="chevron-down"></i>
+                            <span>See More Updates</span>
+                        </button>
+                    `;
+                }
+                
+                timeline.innerHTML = html;
+                lucide.createIcons();
+            } else {
+                timeline.innerHTML = '<div class="no-data">No history available</div>';
+            }
+        }
+        
+        function updateBasicTimeline() {
+            const timeline = document.getElementById('timeline');
+            const today = new Date().toLocaleDateString();
+            
+            timeline.innerHTML = `
+                <div class="timeline-item">
+                    <div class="timeline-date">${today}</div>
+                    <div class="timeline-content">Complaint submitted by customer</div>
+                </div>
+            `;
+        }
+        
+        function toggleStaffTimeline() {
+            const container = document.getElementById('timelineContainer');
+            const btn = document.querySelector('.see-more-btn');
+            
+            if (container.classList.contains('collapsed')) {
+                container.classList.remove('collapsed');
+                btn.innerHTML = '<i data-lucide="chevron-up"></i><span>Show Less</span>';
+            } else {
+                container.classList.add('collapsed');
+                btn.innerHTML = '<i data-lucide="chevron-down"></i><span>See More Updates</span>';
+            }
+            lucide.createIcons();
         }
         
         async function loadStaffNotes(complaintId) {
             try {
-                const response = await fetch(`http://localhost:9090/api/staff/notes/${complaintId}`);
+                const response = await fetch(`http://localhost:8080/api/staff/internal-notes/${complaintId}`);
                 const notes = await response.json();
                 
                 const notesList = document.getElementById('notesList');
                 notesList.innerHTML = '';
                 
-                notes.forEach(note => {
-                    const noteDiv = document.createElement('div');
-                    noteDiv.className = 'note-item';
-                    noteDiv.innerHTML = `
-                        <div class="note-author">${note.staffEmail} ${note.internal ? '(Internal)' : ''}</div>
-                        <div class="note-content">${note.note}</div>
-                        <div class="note-time">${new Date(note.createdAt).toLocaleString()}</div>
-                    `;
-                    notesList.appendChild(noteDiv);
-                });
+                if (notes && notes.length > 0) {
+                        notes.forEach(note => {
+                            const noteDiv = document.createElement('div');
+                            noteDiv.className = 'note-item';
+                            
+                            const authorName = note.staffEmail.split('@')[0];
+                            const internalBadge = note.internal ? '<span class="internal-badge">Internal</span>' : '';
+                            
+                            noteDiv.innerHTML = `
+                                <div class="note-author">
+                                    <span>${authorName}</span>
+                                    ${internalBadge}
+                                </div>
+                                <div class="note-content">${note.note}</div>
+                                <div class="note-time">${new Date(note.createdAt).toLocaleString()}</div>
+                            `;
+                            notesList.appendChild(noteDiv);
+                        });
+                } else {
+                    notesList.innerHTML = '<div class="no-notes">No internal notes yet</div>';
+                }
             } catch (error) {
                 console.error('Error loading notes:', error);
+                document.getElementById('notesList').innerHTML = '<div class="no-notes">Error loading notes</div>';
             }
         }
         
@@ -275,7 +1066,7 @@
             const staff = JSON.parse(localStorage.getItem('staff'));
             
             try {
-                const response = await fetch('http://localhost:9090/api/staff/note', {
+                const response = await fetch(getApiUrl('/api/staff/note'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -302,25 +1093,37 @@
         
         async function loadMessages(complaintId) {
             try {
-                const response = await fetch(`http://localhost:9090/api/comments/complaint/${complaintId}`);
+                const response = await fetch(`http://localhost:8080/api/comments/complaint/${complaintId}`);
                 const messages = await response.json();
-                
-                const messagesList = document.getElementById('messagesList');
-                messagesList.innerHTML = '';
-                
-                messages.forEach(message => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = 'message-item';
-                    messageDiv.innerHTML = `
-                        <div class="message-author">${message.authorType}: ${message.authorEmail}</div>
-                        <div class="message-content">${message.message}</div>
-                        <div class="message-time">${new Date(message.createdAt).toLocaleString()}</div>
-                    `;
-                    messagesList.appendChild(messageDiv);
-                });
+                displayMessages(messages);
             } catch (error) {
                 console.error('Error loading messages:', error);
+                document.getElementById('messagesList').innerHTML = '<p class="no-data">No messages yet.</p>';
             }
+        }
+        
+        function displayMessages(messages) {
+            const messagesList = document.getElementById('messagesList');
+            if (messages.length === 0) {
+                messagesList.innerHTML = '<p class="no-data">No messages yet.</p>';
+                return;
+            }
+            
+            let html = '';
+            messages.forEach(message => {
+                const isStaff = message.authorType === 'STAFF';
+                const messageClass = isStaff ? 'staff-message' : 'customer-message';
+                html += `
+                    <div class="message ${messageClass}">
+                        <div class="message-header">
+                            <strong>${isStaff ? 'Support Team' : 'Customer'}</strong>
+                            <span class="message-time">${new Date(message.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div class="message-content">${message.message}</div>
+                    </div>
+                `;
+            });
+            messagesList.innerHTML = html;
         }
         
         async function sendMessage() {
@@ -330,7 +1133,7 @@
             const staff = JSON.parse(localStorage.getItem('staff'));
             
             try {
-                const response = await fetch('http://localhost:9090/api/comments/add', {
+                const response = await fetch(getApiUrl('/api/comments/add'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -364,7 +1167,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:9090/api/staff/complaint/${currentComplaintId}/status`, {
+                const response = await fetch(`http://localhost:8080/api/staff/complaint/${currentComplaintId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -375,8 +1178,11 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
+                    const statusElement = document.getElementById('currentStatus');
+                    statusElement.textContent = formatStatus(newStatus);
+                    statusElement.className = 'value status-badge ' + getStatusClass(newStatus);
+                    loadComplaintHistory(currentComplaintId);
                     alert('Status updated successfully!');
-                    loadComplaintDetails(); // Reload to show updated data
                 } else {
                     alert('Failed to update status: ' + data.message);
                 }
@@ -390,7 +1196,7 @@
             try {
                 const staff = JSON.parse(localStorage.getItem('staff'));
                 if (staff && staff.email) {
-                    await fetch('http://localhost:9090/api/staff/logout', {
+                    await fetch(getApiUrl('/api/staff/logout'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -406,5 +1212,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

@@ -4,11 +4,273 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ResolveIT - Login</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/ui-enhancements.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: inherit;
+        }
+
+        html, body {
+            background: #ffffff !important;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .squares-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-form-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+        }
+
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .auth-logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .auth-controls select {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(78, 124, 115, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .password-input-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 24px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider span {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            color: var(--text-muted);
+            padding: 0 16px;
+            font-size: 14px;
+        }
+
+        .social-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .social-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .switch-form {
+            text-align: center;
+        }
+
+        .switch-form p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .switch-form a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .auth-form-box {
+                padding: 24px;
+            }
+        }
+    </style>
 </head>
 <body class="auth-page">
+    <canvas class="squares-bg"></canvas>
     <div class="auth-container">
         <div class="auth-form-box">
             <div class="auth-header">
@@ -35,27 +297,16 @@
                 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    <div class="password-input-container">
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                            <i data-lucide="eye" id="loginPasswordIcon"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="submit-btn">Sign In</button>
             </form>
-            
-            <div class="divider">
-                <span>or</span>
-            </div>
-            
-            <div class="social-login">
-                <div class="social-btn google-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continue with Google
-                </div>
-            </div>
             
             <div class="switch-form">
                 <p>Don't have an account? <a href="register.html">Sign up</a></p>
@@ -65,8 +316,134 @@
     </div>
     
     <script src="js/ui-enhancements.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/security.js"></script>
     <script>
+        class Squares {
+            constructor(canvas, options = {}) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.direction = options.direction || 'diagonal';
+                this.speed = options.speed || 0.5;
+                this.borderColor = options.borderColor || '#000000';
+                this.squareSize = options.squareSize || 40;
+                this.hoverFillColor = options.hoverFillColor || 'rgba(0, 0, 0, 0.05)';
+                
+                this.gridOffset = { x: 0, y: 0 };
+                this.hoveredSquare = null;
+                this.animationId = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            drawGrid() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                for (let x = startX; x < this.canvas.width + this.squareSize; x += this.squareSize) {
+                    for (let y = startY; y < this.canvas.height + this.squareSize; y += this.squareSize) {
+                        const squareX = x - (this.gridOffset.x % this.squareSize);
+                        const squareY = y - (this.gridOffset.y % this.squareSize);
+                        
+                        if (this.hoveredSquare &&
+                            Math.floor((x - startX) / this.squareSize) === this.hoveredSquare.x &&
+                            Math.floor((y - startY) / this.squareSize) === this.hoveredSquare.y) {
+                            this.ctx.fillStyle = this.hoverFillColor;
+                            this.ctx.fillRect(squareX, squareY, this.squareSize, this.squareSize);
+                        }
+                        
+                        this.ctx.strokeStyle = this.borderColor;
+                        this.ctx.globalAlpha = 0.15;
+                        this.ctx.strokeRect(squareX, squareY, this.squareSize, this.squareSize);
+                        this.ctx.globalAlpha = 1;
+                    }
+                }
+                
+                const gradient = this.ctx.createRadialGradient(
+                    this.canvas.width / 2, this.canvas.height / 2, 0,
+                    this.canvas.width / 2, this.canvas.height / 2,
+                    Math.sqrt(this.canvas.width ** 2 + this.canvas.height ** 2) / 2
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(1, 'rgba(248, 250, 252, 0.3)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            
+            updateAnimation() {
+                const effectiveSpeed = Math.max(this.speed, 0.1);
+                this.gridOffset.x = (this.gridOffset.x - effectiveSpeed + this.squareSize) % this.squareSize;
+                this.gridOffset.y = (this.gridOffset.y - effectiveSpeed + this.squareSize) % this.squareSize;
+            }
+            
+            animate() {
+                this.updateAnimation();
+                this.drawGrid();
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            handleMouseMove(event) {
+                const mouseX = event.clientX;
+                const mouseY = event.clientY;
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                const hoveredSquareX = Math.floor((mouseX + this.gridOffset.x - startX) / this.squareSize);
+                const hoveredSquareY = Math.floor((mouseY + this.gridOffset.y - startY) / this.squareSize);
+                
+                this.hoveredSquare = { x: hoveredSquareX, y: hoveredSquareY };
+            }
+            
+            handleMouseLeave() {
+                this.hoveredSquare = null;
+            }
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + 'Icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+        
+        // Initialize icons and squares background
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Initialize squares background
+            const canvas = document.querySelector('.squares-bg');
+            new Squares(canvas, {
+                speed: 0.3,
+                squareSize: 40,
+                direction: 'diagonal',
+                borderColor: '#000000',
+                hoverFillColor: 'rgba(0, 0, 0, 0.05)'
+            });
+        });
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -81,7 +458,7 @@
             try {
                 showLoading('Signing in...');
                 
-                const response = await fetch('http://localhost:9090/api/auth/login', {
+                const response = await fetch(getApiUrl('/api/auth/login'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

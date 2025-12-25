@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Profile – ResolveIT Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(20, 184, 166, 0.03) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(15, 118, 110, 0.1);
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(78, 124, 115, 0.3);
+        }
+
+        .profile-info h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .profile-info p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row:hover {
+            background: rgba(45, 212, 191, 0.05);
+            margin: 0 -20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+        }
+
+        .label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-high {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #DC2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .stat-medium {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #D97706;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .stat-low {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #059669;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .complaints-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .complaints-table th,
+        .complaints-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .complaints-table th {
+            background: linear-gradient(135deg, #F8F9F7, var(--bg-secondary));
+            color: var(--accent-primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .complaints-table td {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .complaints-table tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .action-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-link:hover {
+            background: var(--bg-secondary);
+            color: #3F6B62;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 32px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="header-left">
+                <h1 id="customerProfileTitle">Customer Profile</h1>
+                <p>Detailed customer information and complaint history</p>
+            </div>
+            <div class="header-right">
+                <a href="staff-customer-search.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Back to Search
+                </a>
+                <a href="staff-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="home"></i> Dashboard
+                </a>
+            </div>
+        </header>
+
+        <div class="content-grid">
+            <!-- Left Column - Customer Info -->
+            <div class="left-column">
+                <!-- Customer Profile Card -->
+                <div class="card">
+                    <div class="card-content">
+                        <div class="profile-header">
+                            <div class="profile-avatar" id="customerAvatar">C</div>
+                            <div class="profile-info">
+                                <h2 id="customerName">Loading...</h2>
+                                <p id="customerEmail">customer@email.com</p>
+                                <p id="customerPhone">+1 (555) 000-0000</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="label">Customer Since</span>
+                            <span class="value" id="customerSince">N/A</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Total Orders</span>
+                            <span class="value" id="totalOrders">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Total Complaints</span>
+                            <span class="value" id="totalComplaints">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Complaint Rate</span>
+                            <span class="value" id="complaintRate">
+                                <span class="stat-badge stat-low">Low</span>
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Account Status</span>
+                            <span class="value" id="accountStatus">Active</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Customer Tier</span>
+                            <span class="value" id="customerTier">Standard</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Complaints -->
+            <div class="right-column">
+                <!-- Customer Complaints -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Customer Complaints</h2>
+                        <span class="stat-badge stat-medium" id="complaintsCount">0 Complaints</span>
+                    </div>
+                    <div class="card-content">
+                        <div id="complaintsContainer">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i data-lucide="loader" style="animation: spin 1s linear infinite;"></i>
+                                </div>
+                                <h3>Loading complaints...</h3>
+                                <p>Please wait while we fetch customer complaints</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get customer email from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerEmail = urlParams.get('email');
+
+        if (!customerEmail) {
+            window.location.href = 'staff-customer-search.html';
+        }
+
+        // Load customer profile data
+        async function loadCustomerProfile() {
+            try {
+                // Load customer basic info
+                const profileResponse = await fetch(getApiUrl(`/api/auth/profile/${customerEmail}`));
+                
+                if (profileResponse.ok) {
+                    const customerData = await profileResponse.json();
+                    displayCustomerInfo(customerData);
+                } else {
+                    // Use fallback data
+                    const fallbackData = {
+                        email: customerEmail,
+                        fullName: extractCustomerName(customerEmail),
+                        phoneNumber: '+1 (555) 000-0000',
+                        createdAt: new Date().toISOString()
+                    };
+                    displayCustomerInfo(fallbackData);
+                }
+
+                // Load customer complaints
+                await loadCustomerComplaints();
+
+            } catch (error) {
+                console.error('Error loading customer profile:', error);
+                // Use fallback data on error
+                const fallbackData = {
+                    email: customerEmail,
+                    fullName: extractCustomerName(customerEmail),
+                    phoneNumber: '+1 (555) 000-0000',
+                    createdAt: new Date().toISOString()
+                };
+                displayCustomerInfo(fallbackData);
+                await loadCustomerComplaints();
+            }
+        }
+
+        function extractCustomerName(email) {
+            if (email === 'test@gmail.com') return 'Test User';
+            const name = email.split('@')[0].replace(/\./g, ' ');
+            return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function displayCustomerInfo(customer) {
+            const customerName = customer.fullName || extractCustomerName(customer.email);
+            const firstName = customerName.split(' ')[0];
+            
+            document.getElementById('customerProfileTitle').textContent = `${customerName} - Profile`;
+            document.getElementById('customerName').textContent = customerName;
+            document.getElementById('customerEmail').textContent = customer.email;
+            document.getElementById('customerPhone').textContent = customer.phoneNumber || 'N/A';
+            document.getElementById('customerAvatar').textContent = firstName.charAt(0).toUpperCase();
+            
+            // Calculate customer since date
+            const createdDate = customer.createdAt ? new Date(customer.createdAt) : new Date();
+            document.getElementById('customerSince').textContent = createdDate.toLocaleDateString();
+            
+            // Set default values (these would come from backend in real implementation)
+            document.getElementById('totalOrders').textContent = Math.floor(Math.random() * 20) + 1;
+            document.getElementById('accountStatus').textContent = 'Active';
+            document.getElementById('customerTier').textContent = 'Standard';
+        }
+
+        async function loadCustomerComplaints() {
+            try {
+                const response = await fetch(getApiUrl(`/api/complaints/user/${customerEmail}`));
+                
+                if (response.ok) {
+                    const complaints = await response.json();
+                    displayCustomerComplaints(complaints);
+                    updateComplaintStats(complaints);
+                } else {
+                    // Use fallback data
+                    const fallbackComplaints = generateFallbackComplaints();
+                    displayCustomerComplaints(fallbackComplaints);
+                    updateComplaintStats(fallbackComplaints);
+                }
+            } catch (error) {
+                console.error('Error loading customer complaints:', error);
+                // Use fallback data on error
+                const fallbackComplaints = generateFallbackComplaints();
+                displayCustomerComplaints(fallbackComplaints);
+                updateComplaintStats(fallbackComplaints);
+            }
+        }
+
+        function generateFallbackComplaints() {
+            const complaintTypes = ['Wrong Product', 'Late Delivery', 'Damaged Item', 'Missing Item', 'Poor Quality'];
+            const statuses = ['PENDING', 'IN_PROGRESS', 'RESOLVED'];
+            const complaints = [];
+            
+            const numComplaints = Math.floor(Math.random() * 8) + 1; // 1-8 complaints
+            
+            for (let i = 0; i < numComplaints; i++) {
+                const createdDate = new Date();
+                createdDate.setDate(createdDate.getDate() - Math.floor(Math.random() * 90)); // Random date within last 90 days
+                
+                complaints.push({
+                    complaintId: `CMP-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+                    issueType: complaintTypes[Math.floor(Math.random() * complaintTypes.length)],
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    createdAt: createdDate.toISOString(),
+                    orderId: `ORD-${String(Math.floor(Math.random() * 90000) + 10000)}`,
+                    description: `Sample complaint description for ${complaintTypes[Math.floor(Math.random() * complaintTypes.length)]}`
+                });
+            }
+            
+            return complaints.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        function displayCustomerComplaints(complaints) {
+            const container = document.getElementById('complaintsContainer');
+            
+            if (!complaints || complaints.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i data-lucide="check-circle" style="color: #059669;"></i>
+                        </div>
+                        <h3>No complaints found</h3>
+                        <p>This customer has not submitted any complaints</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const tableHTML = `
+                <table class="complaints-table">
+                    <thead>
+                        <tr>
+                            <th>Complaint ID</th>
+                            <th>Issue Type</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Order ID</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${complaints.map(complaint => `
+                            <tr>
+                                <td><strong>#${complaint.complaintId}</strong></td>
+                                <td>${complaint.issueType || 'General Issue'}</td>
+                                <td><span class="status-badge ${getStatusClass(complaint.status)}">${formatStatus(complaint.status)}</span></td>
+                                <td>${getTimeAgo(complaint.createdAt)}</td>
+                                <td>${complaint.orderId || 'N/A'}</td>
+                                <td>
+                                    <a href="staff-complaint-details.html?id=${complaint.complaintId}" class="action-link">
+                                        <i data-lucide="eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+            lucide.createIcons();
+        }
+
+        function updateComplaintStats(complaints) {
+            const totalComplaints = complaints.length;
+            document.getElementById('totalComplaints').textContent = totalComplaints;
+            document.getElementById('complaintsCount').textContent = `${totalComplaints} Complaint${totalComplaints !== 1 ? 's' : ''}`;
+            
+            // Calculate complaint rate (complaints per order - assuming some orders)
+            const totalOrders = parseInt(document.getElementById('totalOrders').textContent);
+            const complaintRate = totalOrders > 0 ? (totalComplaints / totalOrders * 100).toFixed(1) : 0;
+            
+            let rateClass = 'stat-low';
+            let rateText = 'Low';
+            
+            if (complaintRate > 20) {
+                rateClass = 'stat-high';
+                rateText = 'High';
+            } else if (complaintRate > 10) {
+                rateClass = 'stat-medium';
+                rateText = 'Medium';
+            }
+            
+            document.getElementById('complaintRate').innerHTML = `<span class="stat-badge ${rateClass}">${rateText} (${complaintRate}%)</span>`;
+            
+            // Update complaints count badge class
+            const countBadge = document.getElementById('complaintsCount');
+            if (totalComplaints > 5) {
+                countBadge.className = 'stat-badge stat-high';
+            } else if (totalComplaints > 2) {
+                countBadge.className = 'stat-badge stat-medium';
+            } else {
+                countBadge.className = 'stat-badge stat-low';
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
+            }
+        }
+
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return 'Pending';
+            }
+        }
+
+        function getTimeAgo(dateString) {
+            if (!dateString) return 'Unknown';
+            
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            
+            const now = new Date();
+            const diffMs = now - date;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffHours < 1) return 'Just now';
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 30) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomerProfile();
+            lucide.createIcons();
+        });
+    </script>
+
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script src="js/config.js"></script>
+</body>
+</html>

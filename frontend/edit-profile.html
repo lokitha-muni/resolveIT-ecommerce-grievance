@@ -6,6 +6,123 @@
     <title>Edit Profile – ResolveIT</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        /* Match dashboard background and styling */
+        .dashboard-body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        }
+        
+        .split-background {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        }
+        
+        /* Update card styling to match dashboard */
+        .profile-pic-inline, .modern-form {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        /* Update navigation to match dashboard */
+        .dashboard-nav {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        /* Update page header */
+        .page-header h1 {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+        
+        /* Override colors to match dashboard theme */
+        .large-profile-photo {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+            box-shadow: 0 8px 32px rgba(15, 118, 110, 0.3) !important;
+            border-radius: 16px !important;
+        }
+        
+        .upload-overlay {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4) !important;
+        }
+        
+        .section-icon {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+            box-shadow: 0 8px 32px rgba(15, 118, 110, 0.4) !important;
+            border-radius: 16px !important;
+        }
+        
+        .modern-submit {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
+            border-radius: 10px !important;
+        }
+        
+        .modern-submit:hover {
+            background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%) !important;
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4) !important;
+            transform: translateY(-1px) !important;
+        }
+        
+        .profile-photo {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+            border-radius: 8px !important;
+        }
+        
+        .profile-photo:hover {
+            box-shadow: 0 4px 15px rgba(15, 118, 110, 0.4) !important;
+            transform: scale(1.05) !important;
+        }
+        
+        /* Update form section titles */
+        .form-section-title {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
+            border: 1px solid rgba(15, 118, 110, 0.2) !important;
+        }
+        
+        /* Update logout button to match dashboard theme */
+        .logout-btn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%) !important;
+            border: 1px solid rgba(15, 118, 110, 0.2) !important;
+            color: #0f766e !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
+        }
+        
+        /* Update back button to match teal theme */
+        .back-btn {
+            color: #0f766e !important;
+        }
+        
+        .back-btn:hover {
+            background: rgba(15, 118, 110, 0.1) !important;
+            color: #14b8a6 !important;
+        }
+        
+        .form-actions .cancel-btn,
+        .form-actions .submit-btn {
+            width: auto;
+            min-width: auto;
+        }
+    </style>
 </head>
 <body class="dashboard-body">
     <!-- Split Background -->
@@ -58,7 +175,7 @@
                     <form id="profileForm" class="profile-form">
                         <!-- Personal Information -->
                         <div class="form-section-title">
-                            <div class="section-icon">👤</div>
+                            <div class="section-icon"><i data-lucide="user"></i></div>
                             <div>
                                 <h3>Personal Information</h3>
                                 <p>Update your basic details</p>
@@ -90,7 +207,7 @@
 
                         <!-- Address Information -->
                         <div class="form-section-title">
-                            <div class="section-icon">🏠</div>
+                            <div class="section-icon"><i data-lucide="map-pin"></i></div>
                             <div>
                                 <h3>Address Information</h3>
                                 <p>Your delivery and billing address</p>
@@ -134,7 +251,7 @@
 
                         <!-- Preferences -->
                         <div class="form-section-title">
-                            <div class="section-icon">🔔</div>
+                            <div class="section-icon"><i data-lucide="bell"></i></div>
                             <div>
                                 <h3>Notification Preferences</h3>
                                 <p>Choose how you want to be notified</p>
@@ -167,7 +284,7 @@
 
                         <!-- Security -->
                         <div class="form-section-title">
-                            <div class="section-icon">🔒</div>
+                            <div class="section-icon"><i data-lucide="lock"></i></div>
                             <div>
                                 <h3>Security Settings</h3>
                                 <p>Keep your account secure</p>
@@ -193,11 +310,11 @@
                         <!-- Form Actions -->
                         <div class="form-actions modern-actions">
                             <button type="button" class="cancel-btn modern-cancel" onclick="window.location.href='dashboard.html'">
-                                <span class="btn-icon">←</span>
+                                <span class="btn-icon"><i data-lucide="arrow-left"></i></span>
                                 Cancel
                             </button>
                             <button type="submit" class="submit-btn modern-submit">
-                                <span class="btn-icon">✓</span>
+                                <span class="btn-icon"><i data-lucide="check"></i></span>
                                 Save Changes
                             </button>
                         </div>
@@ -208,6 +325,7 @@
     </div>
 
     <script src="js/security.js"></script>
+    <script src="js/config.js"></script>
     <script>
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
@@ -221,6 +339,7 @@
         // Load user data on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadUserProfile();
+            lucide.createIcons();
         });
         
         async function loadUserProfile() {
@@ -231,7 +350,7 @@
                     return;
                 }
                 
-                const response = await fetch(`http://localhost:9090/api/auth/profile/${user.email}`);
+                const response = await fetch(getApiUrl(`/api/auth/profile/${user.email}`));
                 const userData = await response.json();
                 
                 if (response.ok) {
@@ -336,7 +455,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:9090/api/auth/profile/${currentUser.email}`, {
+                const response = await fetch(getApiUrl(`/api/auth/profile/${currentUser.email}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -364,5 +483,6 @@
             }
         });
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

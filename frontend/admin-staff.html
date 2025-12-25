@@ -4,271 +4,632 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Staff – ResolveIT Admin</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="dashboard-body">
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
-
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
-                <span id="userGreeting">Hi, Admin</span>
-            </div>
-            <div class="nav-right">
-                <a href="admin-dashboard.html" class="nav-btn">Dashboard</a>
-                <a href="admin-users.html" class="nav-btn">Users</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
-            </div>
-        </nav>
-
-        <section class="page-header">
-            <h1>Staff Management</h1>
-            <p>Manage staff accounts and permissions</p>
-        </section>
-
-        <section class="staff-section">
-            <div class="staff-card">
-                <div class="card-header">
-                    <h2>Staff Management</h2>
-                    <div class="header-actions">
-                        <button class="refresh-btn" onclick="loadStaff()">🔄 Refresh</button>
-                        <span class="staff-count" id="staffCount">0 staff</span>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="staff-table">
-                        <thead>
-                            <tr>
-                                <th class="col-name">Full Name</th>
-                                <th class="col-email">Email</th>
-                                <th class="col-role">Role</th>
-                                <th class="col-department">Department</th>
-                                <th class="col-phone">Phone</th>
-                                <th class="col-workload">Workload</th>
-                                <th class="col-date">Created</th>
-                                <th class="col-actions">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="staffTableBody">
-                            <tr><td colspan="8" class="loading-row">Loading staff...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <style>
-        .staff-section {
-            margin: 2rem 0;
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .staff-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+            --success: #059669;
+            --warning: #D97706;
+            --error: #DC2626;
         }
-        
-        .card-header {
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 2rem;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
         }
-        
-        .card-header h2 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 1.5rem;
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100());
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
         }
-        
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: transparent;
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .btn-success:hover {
+            background: rgba(5, 150, 105, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100());
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 16px;
         }
-        
-        .refresh-btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-        }
-        
-        .refresh-btn:hover {
-            background: #0056b3;
-        }
-        
+
         .staff-count {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-size: 14px;
             font-weight: 500;
         }
-        
+
         .table-container {
             overflow-x: auto;
         }
-        
+
         .staff-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
         }
-        
+
         .staff-table th {
-            background: #f8f9fa;
-            color: #495057;
-            font-weight: 600;
-            padding: 1rem;
+            background: linear-gradient(135deg, rgba(248,250,252,0.8) 0%, rgba(241,245,249,0.6) 100%);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 24px;
             text-align: left;
-            border-bottom: 2px solid #dee2e6;
-            white-space: nowrap;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
-        
+
         .staff-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #dee2e6;
-            vertical-align: middle;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
         }
-        
-        .staff-table tbody tr:hover {
-            background: #f8f9fa;
+
+        .staff-table tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
         }
-        
-        .col-name { width: 18%; }
-        .col-email { width: 22%; }
-        .col-role { width: 12%; }
-        .col-department { width: 15%; }
-        .col-phone { width: 12%; }
-        .col-workload { width: 8%; }
-        .col-date { width: 10%; }
-        .col-actions { width: 8%; }
-        
-        .delete-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.2s;
+
+        .staff-name {
+            font-weight: 600;
+            color: var(--text-primary);
         }
-        
-        .delete-btn:hover {
-            background: #c82333;
-        }
-        
-        .loading-row {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            padding: 2rem;
-        }
-        
+
         .staff-email {
-            color: #007bff;
+            color: var(--accent-primary);
             text-decoration: none;
         }
-        
-        .staff-name {
-            font-weight: 500;
-            color: #2c3e50;
+
+        .staff-phone, .staff-department, .staff-date {
+            color: var(--text-secondary);
         }
-        
-        .staff-phone {
-            color: #6c757d;
+
+        .delete-btn {
+            background: transparent;
+            color: var(--error);
+            border: 1px solid var(--error);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        
-        .staff-department {
-            color: #6c757d;
+
+        .delete-btn:hover {
+            background: rgba(220, 38, 38, 0.1);
+            transform: translateY(-1px);
         }
-        
-        .staff-date {
-            color: #6c757d;
-            font-size: 0.85rem;
+
+        .loading-row {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 40px 20px;
         }
-        
-        .workload-badge {
-            background: #e9ecef;
-            color: #495057;
-            padding: 0.2rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .workload-high {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .workload-medium {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .workload-low {
-            background: #d1edff;
-            color: #0c5460;
-        }
-        
+
         .tag {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
-        
+
         .tag.blue {
-            background: #cce5ff;
-            color: #004085;
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
-        
+
         .tag.green {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(5, 150, 105, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(5, 150, 105, 0.3);
         }
-        
+
+        .workload-badge {
+            background: rgba(156, 163, 175, 0.15);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .workload-high {
+            background: rgba(220, 38, 38, 0.15);
+            color: #EF4444;
+        }
+
+        .workload-medium {
+            background: rgba(217, 119, 6, 0.15);
+            color: #F59E0B;
+        }
+
+        .workload-low {
+            background: rgba(45, 212, 191, 0.15);
+            color: var(--accent-primary);
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px 24px 40px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100());
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close {
+            color: var(--text-secondary);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin: 24px 40px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(78, 124, 115, 0.1);
+        }
+
+        .password-input-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 24px 40px 32px 40px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .cancel-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .submit-btn {
+            background: transparent;
+            color: var(--success);
+            border: 1px solid var(--success);
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background: rgba(5, 150, 105, 0.1);
+        }
+
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
             .card-header {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 16px;
                 text-align: center;
+                padding: 20px 24px;
             }
-            
-            .staff-table {
-                font-size: 0.8rem;
-            }
-            
+
             .staff-table th,
             .staff-table td {
-                padding: 0.5rem;
+                padding: 12px 16px;
+                font-size: 13px;
             }
         }
-        </style>
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Staff Management</h1>
+                <p>Manage staff accounts and permissions</p>
+            </div>
+            <div class="header-right">
+                <a href="admin-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <a href="admin-users.html" class="btn btn-secondary">
+                    <i data-lucide="users"></i> Users
+                </a>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="profilePhoto">A</div>
+                    <span id="userGreeting">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Staff Management</h2>
+                <div class="header-actions">
+                    <button class="btn btn-success" onclick="showAddStaffModal()">
+                        <i data-lucide="plus"></i> Add Staff
+                    </button>
+                    <button class="btn btn-primary" onclick="loadStaff()">
+                        <i data-lucide="refresh-cw"></i> Refresh
+                    </button>
+                    <span class="staff-count" id="staffCount">0 staff</span>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="staff-table">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Department</th>
+                            <th>Phone</th>
+                            <th>Workload</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffTableBody">
+                        <tr><td colspan="8" class="loading-row">Loading staff...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add Staff Modal -->
+        <div id="addStaffModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Staff Member</h3>
+                    <span class="close" onclick="hideAddStaffModal()">&times;</span>
+                </div>
+                <form id="addStaffForm">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" id="staffFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" id="staffLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="staffEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <div class="password-input-container">
+                            <input type="password" id="staffPassword" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('staffPassword')">
+                                <i data-lucide="eye" id="staffPasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select id="staffDepartment">
+                            <option value="Customer Support">Customer Support</option>
+                            <option value="Technical Support">Technical Support</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Management">Management</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="staffPhone">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="hideAddStaffModal()" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">Add Staff</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-
-
+    <script src="js/security.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadStaff();
             loadUserData();
+            lucide.createIcons();
         });
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + 'Icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
 
         async function loadUserData() {
             const staff = JSON.parse(localStorage.getItem('staff'));
@@ -278,11 +639,11 @@
             }
             
             try {
-                const response = await fetch(`http://localhost:9090/api/admin/profile/${staff.email}`);
+                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
                 if (response.ok) {
                     const data = await response.json();
                     const displayName = data.firstName || 'Admin';
-                    document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                    document.getElementById('userGreeting').textContent = displayName;
                     document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
                 }
             } catch (error) {
@@ -292,10 +653,9 @@
 
         async function loadStaff() {
             try {
-                // Initialize default staff accounts first
-                await fetch('http://localhost:9090/api/staff/init', { method: 'POST' });
+                await fetch(getApiUrl('/api/staff/init'), { method: 'POST' });
                 
-                const response = await fetch('http://localhost:9090/api/admin/staff');
+                const response = await fetch(getApiUrl('/api/staff/all'));
                 const staff = await response.json();
 
                 if (response.ok) {
@@ -338,20 +698,20 @@
                     <td><span class="workload-badge ${workloadClass}">${workload}</span></td>
                     <td><span class="staff-date">${createdDate}</span></td>
                     <td>
-                        <button onclick="deleteStaff('${member.id}')" class="delete-btn" title="Delete staff member">Delete</button>
+                        ${member.email === 'admin@gmail.com' ? '' : `<button onclick="deleteStaff('${member.email}')" class="delete-btn" title="Delete staff member"><i data-lucide="trash-2"></i> Delete</button>`}
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+            
+            lucide.createIcons();
         }
-
-
 
         async function deleteStaff(staffId) {
             if (!confirm('Are you sure you want to delete this staff member?')) return;
 
             try {
-                const response = await fetch(`http://localhost:9090/api/admin/staff/${staffId}`, {
+                const response = await fetch(`http://localhost:8080/api/admin/staff/${staffId}`, {
                     method: 'DELETE'
                 });
 
@@ -369,12 +729,58 @@
             }
         }
 
+        function showAddStaffModal() {
+            document.getElementById('addStaffModal').style.display = 'block';
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        function hideAddStaffModal() {
+            document.getElementById('addStaffModal').style.display = 'none';
+            document.getElementById('addStaffForm').reset();
+        }
+
+        document.getElementById('addStaffForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const staffData = {
+                firstName: document.getElementById('staffFirstName').value,
+                lastName: document.getElementById('staffLastName').value,
+                email: document.getElementById('staffEmail').value,
+                password: document.getElementById('staffPassword').value,
+                department: document.getElementById('staffDepartment').value,
+                phone: document.getElementById('staffPhone').value
+            };
+            
+            try {
+                const response = await fetch(getApiUrl('/api/admin/staff'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(staffData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert('Staff member created successfully!');
+                    hideAddStaffModal();
+                    loadStaff();
+                } else {
+                    alert('Failed to create staff: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error creating staff:', error);
+                alert('Failed to create staff member');
+            }
+        });
+
         async function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 try {
                     const staff = JSON.parse(localStorage.getItem('staff'));
                     if (staff && staff.email) {
-                        await fetch('http://localhost:9090/api/staff/logout', {
+                        await fetch(getApiUrl('/api/staff/logout'), {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -392,5 +798,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

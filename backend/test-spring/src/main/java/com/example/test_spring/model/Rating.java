@@ -13,6 +13,7 @@ public class Rating {
     
     private String complaintId;
     private String userEmail;
+    private String staffEmail;
     private int rating; // 1-5 stars
     private String feedback;
     private LocalDateTime createdAt;
@@ -30,6 +31,9 @@ public class Rating {
     
     public String getUserEmail() { return userEmail; }
     public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
+    
+    public String getStaffEmail() { return staffEmail; }
+    public void setStaffEmail(String staffEmail) { this.staffEmail = staffEmail; }
     
     public int getRating() { return rating; }
     public void setRating(int rating) { this.rating = rating; }

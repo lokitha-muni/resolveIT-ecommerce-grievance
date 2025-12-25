@@ -3,9 +3,11 @@ package com.example.test_spring.controller;
 import com.example.test_spring.model.Complaint;
 import com.example.test_spring.model.Staff;
 import com.example.test_spring.model.StaffNote;
+import com.example.test_spring.model.AuditLog;
 import com.example.test_spring.repository.ComplaintRepository;
 import com.example.test_spring.repository.StaffRepository;
 import com.example.test_spring.repository.StaffNoteRepository;
+import com.example.test_spring.repository.AuditLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,6 +34,9 @@ public class StaffController {
     @Autowired
     private StaffNoteRepository staffNoteRepository;
     
+    @Autowired
+    private AuditLogRepository auditLogRepository;
+    
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     @PostMapping("/login")
@@ -42,31 +47,24 @@ public class StaffController {
             String email = loginData.get("email");
             String password = loginData.get("password");
             
-            // Hardcoded credentials for testing
-            if ("staff@gmail.com".equals(email) && "staff@123".equals(password)) {
-                response.put("status", "success");
-                response.put("message", "Login successful");
-                response.put("staff", Map.of(
-                    "email", "staff@gmail.com",
-                    "firstName", "Support",
-                    "lastName", "Agent",
-                    "role", "STAFF",
-                    "department", "Customer Support"
-                ));
-                return ResponseEntity.ok(response);
-            }
-            
-            if ("admin@gmail.com".equals(email) && "admin@123".equals(password)) {
-                response.put("status", "success");
-                response.put("message", "Login successful");
-                response.put("staff", Map.of(
-                    "email", "admin@gmail.com",
-                    "firstName", "System",
-                    "lastName", "Administrator",
-                    "role", "ADMIN",
-                    "department", "Administration"
-                ));
-                return ResponseEntity.ok(response);
+            // Check database for staff account
+            Optional<Staff> staffOptional = staffRepository.findByEmail(email);
+            if (staffOptional.isPresent()) {
+                Staff staff = staffOptional.get();
+                
+                // Verify password
+                if (passwordEncoder.matches(password, staff.getPassword())) {
+                    response.put("status", "success");
+                    response.put("message", "Login successful");
+                    response.put("staff", Map.of(
+                        "email", staff.getEmail(),
+                        "firstName", staff.getFirstName() != null ? staff.getFirstName() : "Staff",
+                        "lastName", staff.getLastName() != null ? staff.getLastName() : "Member",
+                        "role", staff.getRole(),
+                        "department", staff.getDepartment() != null ? staff.getDepartment() : "N/A"
+                    ));
+                    return ResponseEntity.ok(response);
+                }
             }
             
             response.put("status", "error");
@@ -113,16 +111,32 @@ public class StaffController {
                 }
             }
             
-            // Get complaint statistics
-            long totalComplaints = complaintRepository.count();
-            long pendingComplaints = complaintRepository.countByStatus("PENDING");
-            long inProgressComplaints = complaintRepository.countByStatus("IN_PROGRESS");
-            long resolvedComplaints = complaintRepository.countByStatus("RESOLVED");
+            // Get complaint statistics for this specific staff member
+            List<Complaint> allComplaints = complaintRepository.findAll();
+            List<Complaint> assignedComplaints = allComplaints.stream()
+                .filter(c -> email.equals(c.getAssignedTo()))
+                .collect(Collectors.toList());
+                
+            long totalComplaints = assignedComplaints.size();
+            long pendingComplaints = assignedComplaints.stream()
+                .filter(c -> "PENDING".equals(c.getStatus()))
+                .count();
+            long inProgressComplaints = assignedComplaints.stream()
+                .filter(c -> "IN_PROGRESS".equals(c.getStatus()))
+                .count();
+            long resolvedComplaints = assignedComplaints.stream()
+                .filter(c -> "RESOLVED".equals(c.getStatus()))
+                .count();
             
             // Get recent complaints assigned to this staff member
-            List<Complaint> allComplaints = complaintRepository.findTop10ByOrderByCreatedAtDesc();
-            List<Complaint> recentComplaints = allComplaints.stream()
-                .filter(c -> email.equals(c.getAssignedTo()))
+            List<Complaint> recentComplaints = assignedComplaints.stream()
+                .sorted((c1, c2) -> {
+                    if (c1.getCreatedAt() == null && c2.getCreatedAt() == null) return 0;
+                    if (c1.getCreatedAt() == null) return 1;
+                    if (c2.getCreatedAt() == null) return -1;
+                    return c2.getCreatedAt().compareTo(c1.getCreatedAt());
+                })
+                .limit(10)
                 .collect(Collectors.toList());
             
             response.put("totalComplaints", totalComplaints);
@@ -188,9 +202,22 @@ public class StaffController {
             Optional<Complaint> complaintOptional = complaintRepository.findByComplaintId(complaintId);
             if (complaintOptional.isPresent()) {
                 Complaint complaint = complaintOptional.get();
-                complaint.setStatus(statusData.get("status"));
+                String oldStatus = complaint.getStatus();
+                String newStatus = statusData.get("status");
+                
+                complaint.setStatus(newStatus);
                 complaint.setUpdatedAt(java.time.LocalDateTime.now());
                 complaintRepository.save(complaint);
+                
+                // Save audit log for staff status update
+                AuditLog auditLog = new AuditLog(
+                    "staff@gmail.com", // This should be dynamic based on logged-in staff
+                    "STATUS_CHANGE", 
+                    "COMPLAINT", 
+                    complaintId, 
+                    "Status updated from " + oldStatus + " to " + newStatus + " by Staff"
+                );
+                auditLogRepository.save(auditLog);
                 
                 response.put("status", "success");
                 response.put("message", "Status updated successfully");
@@ -389,6 +416,19 @@ public class StaffController {
         }
     }
     
+    @GetMapping("/internal-notes/{complaintId}")
+    public ResponseEntity<List<StaffNote>> getInternalStaffNotes(@PathVariable String complaintId) {
+        try {
+            List<StaffNote> allNotes = staffNoteRepository.findByComplaintIdOrderByCreatedAtDesc(complaintId);
+            List<StaffNote> internalNotes = allNotes.stream()
+                .filter(StaffNote::isInternal)
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(internalNotes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
     @GetMapping("/performance/{email}")
     public ResponseEntity<Map<String, Object>> getStaffPerformance(@PathVariable String email) {
         Map<String, Object> response = new HashMap<>();
@@ -416,6 +456,45 @@ public class StaffController {
             response.put("resolved", resolved);
             response.put("inProgress", inProgress);
             response.put("pending", pending);
+            response.put("resolutionRate", Math.round(resolutionRate * 100.0) / 100.0);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    @GetMapping("/complaint/{complaintId}/history")
+    public ResponseEntity<List<AuditLog>> getComplaintHistory(@PathVariable String complaintId) {
+        try {
+            List<AuditLog> history = auditLogRepository.findByEntityTypeAndEntityIdOrderByTimestampDesc("COMPLAINT", complaintId);
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    @GetMapping("/ratings/{email}")
+    public ResponseEntity<Map<String, Object>> getStaffRatings(@PathVariable String email) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // This would need a RatingRepository - for now return calculated values
+            List<Complaint> assignedComplaints = complaintRepository.findAll().stream()
+                .filter(c -> email.equals(c.getAssignedTo()))
+                .collect(Collectors.toList());
+            
+            // Mock rating calculation based on resolution rate
+            long totalAssigned = assignedComplaints.size();
+            long resolved = assignedComplaints.stream()
+                .filter(c -> "RESOLVED".equals(c.getStatus()))
+                .count();
+            
+            double resolutionRate = totalAssigned > 0 ? (double) resolved / totalAssigned : 0;
+            double averageRating = 3.0 + (resolutionRate * 2.0); // Scale to 3-5 range
+            
+            response.put("averageRating", Math.round(averageRating * 10.0) / 10.0);
+            response.put("totalRatings", totalAssigned);
             response.put("resolutionRate", Math.round(resolutionRate * 100.0) / 100.0);
             
             return ResponseEntity.ok(response);

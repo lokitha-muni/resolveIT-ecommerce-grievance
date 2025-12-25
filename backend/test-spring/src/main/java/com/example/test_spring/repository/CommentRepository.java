@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends MongoRepository<Comment, String> {
     List<Comment> findByComplaintIdOrderByCreatedAtAsc(String complaintId);
+    void deleteByComplaintId(String complaintId);
 }

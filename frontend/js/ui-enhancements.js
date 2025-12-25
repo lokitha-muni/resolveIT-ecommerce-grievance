@@ -61,44 +61,22 @@ class UIManager {
 
     // Loading States
     setupLoadingOverlay() {
-        if (!document.getElementById('loading-overlay')) {
-            const overlay = document.createElement('div');
-            overlay.id = 'loading-overlay';
-            overlay.className = 'loading-overlay hidden';
-            overlay.innerHTML = `
-                <div class="loading-spinner">
-                    <div class="spinner"></div>
-                    <div class="loading-text" id="loading-text">Loading...</div>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-        }
+        // Disabled loading overlay
+        return;
     }
 
     showLoading(message = 'Loading...') {
-        const overlay = document.getElementById('loading-overlay');
-        const text = document.getElementById('loading-text');
-        if (text) text.textContent = this.translate(message);
-        overlay.classList.remove('hidden');
+        // Disabled loading overlay
+        return;
     }
 
     hideLoading() {
-        const overlay = document.getElementById('loading-overlay');
-        overlay.classList.add('hidden');
+        // Disabled loading overlay
+        return;
     }
 
     // Accessibility Features
     setupAccessibility() {
-        // Skip to main content link
-        if (!document.getElementById('skip-link')) {
-            const skipLink = document.createElement('a');
-            skipLink.id = 'skip-link';
-            skipLink.href = '#main-content';
-            skipLink.textContent = this.translate('skip_to_main');
-            skipLink.className = 'skip-link';
-            document.body.insertBefore(skipLink, document.body.firstChild);
-        }
-
         // Focus management
         this.setupFocusManagement();
         

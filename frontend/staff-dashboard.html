@@ -3,128 +3,733 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard – ResolveIT Support</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/ui-enhancements.css">
+    <title>Staff Dashboard – ResolveIT</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* User Menu Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 180px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu.active .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin: 4px;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+            color: var(--accent-primary);
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 64px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0f766e 0%, #14b8a6 50%, #2dd4bf 100%);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            font-size: 22px;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0 8px 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: center;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #F8F9F7, var(--bg-secondary));
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            text-align: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Staff Tools */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+            border-color: var(--accent-primary);
+        }
+
+        .tool-icon {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tool-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--accent-primary);
+        }
+
+        .tool-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Action Link */
+        .action-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .action-link:hover {
+            background: var(--bg-secondary);
+            color: #3F6B62;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 32px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
-    <div class="split-background"></div>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Staff Dashboard</h1>
+                <p id="userGreeting">Manage and resolve customer complaints efficiently</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="loadStaffDashboard()">
+                    <i data-lucide="refresh-cw"></i> Refresh
+                </button>
+                <a href="staff-my-queue.html" class="btn btn-secondary">
+                    <i data-lucide="list"></i> My Queue
+                </a>
+                <div class="user-menu" onclick="toggleUserMenu()">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <span id="userName">Staff</span>
+                    <div class="user-dropdown">
+                        <a href="staff-profile.html" class="dropdown-item">
+                            <i data-lucide="user"></i>
+                            <span>Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="logout(); return false;">
+                            <i data-lucide="log-out"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" tabindex="0" role="button" aria-label="View profile">ST</div>
-                <span id="userGreeting" data-translate="hi_staff">Hi, Staff</span>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">Total Assigned</div>
+                    <div class="stat-icon">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalComplaints">0</div>
+                <div class="stat-change">Complaints assigned to me</div>
             </div>
-            <div class="nav-right">
-                <button onclick="logout()" class="logout-btn" data-translate="logout">Logout</button>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-icon">
+                        <i data-lucide="clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="pendingComplaints">0</div>
+                <div class="stat-change">Awaiting action</div>
             </div>
-        </nav>
-
-        <section class="stats-section" id="main-content">
-            <div class="stat-card" tabindex="0">
-                <div class="stat-icon" aria-hidden="true">📊</div>
-                <div class="stat-label" data-translate="total_complaints">Total Complaints</div>
-                <div class="stat-number" id="totalComplaints" aria-live="polite">0</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-icon">
+                        <i data-lucide="loader"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="inProgressComplaints">0</div>
+                <div class="stat-change">Currently working on</div>
             </div>
-            <div class="stat-card" tabindex="0">
-                <div class="stat-icon" aria-hidden="true">⏳</div>
-                <div class="stat-label" data-translate="pending">Pending</div>
-                <div class="stat-number" id="pendingComplaints" aria-live="polite">0</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">Resolved</div>
+                    <div class="stat-icon">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="resolvedComplaints">0</div>
+                <div class="stat-change">Successfully completed</div>
             </div>
-            <div class="stat-card progress-card" tabindex="0">
-                <div class="stat-icon" aria-hidden="true">🔄</div>
-                <div class="stat-label" data-translate="in_progress">In Progress</div>
-                <div class="stat-number" id="inProgressComplaints" aria-live="polite">0</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">My Rating</div>
+                    <div class="stat-icon">
+                        <i data-lucide="star"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="myRating">N/A</div>
+                <div class="stat-change">Customer satisfaction</div>
             </div>
-            <div class="stat-card resolved-card" tabindex="0">
-                <div class="stat-icon" aria-hidden="true">✅</div>
-                <div class="stat-label" data-translate="resolved">Resolved</div>
-                <div class="stat-number" id="resolvedComplaints" aria-live="polite">0</div>
-            </div>
-        </section>
-
-        <div class="action-button-container">
-            <button class="primary-action-btn" onclick="window.location.href='staff-my-queue.html'">View My Queue</button>
         </div>
 
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>My Assigned Complaints</h2>
-                <div class="table-container">
-                    <table class="complaints-table">
-                        <thead>
-                            <tr>
-                                <th>Complaint ID</th>
-                                <th>Customer</th>
-                                <th>Issue Type</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Time Left</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="complaintsTableBody">
-                            <!-- Complaints will be loaded dynamically -->
-                        </tbody>
-                    </table>
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Recent Complaints -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Recent Complaints</h2>
+                    <a href="staff-my-queue.html" class="btn btn-secondary">
+                        <i data-lucide="external-link"></i> View All
+                    </a>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Issue</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintsTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon">
+                                                <i data-lucide="loader"></i>
+                                            </div>
+                                            <h3>Loading complaints...</h3>
+                                            <p>Please wait while we fetch your assigned complaints</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section class="admin-tools">
-            <div class="dashboard-container">
-                <h2>Staff Tools</h2>
+        <!-- Staff Tools -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Staff Tools</h2>
+            </div>
+            <div class="card-content">
                 <div class="tools-grid">
-                    <div class="tool-card">
-                        <div class="tool-icon">💬</div>
-                        <h3>Customer Chat</h3>
-                        <p>Communicate with customers directly</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">📞</div>
-                        <h3>Call Customer</h3>
-                        <p>Make calls for urgent issues</p>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon">📝</div>
-                        <h3>Update Status</h3>
-                        <p>Change complaint status and add notes</p>
+                    <div class="tool-card" onclick="window.location.href='staff-my-queue.html'">
+                        <div class="tool-icon">
+                            <i data-lucide="list"></i>
+                        </div>
+                        <h3>My Queue</h3>
+                        <p>View assigned complaints</p>
                     </div>
                     <div class="tool-card" onclick="window.location.href='staff-performance.html'">
-                        <div class="tool-icon">📊</div>
-                        <h3>My Performance</h3>
-                        <p>View your resolution statistics</p>
+                        <div class="tool-icon">
+                            <i data-lucide="bar-chart-3"></i>
+                        </div>
+                        <h3>Performance</h3>
+                        <p>View my statistics</p>
+                    </div>
+                    <div class="tool-card" onclick="window.location.href='staff-customer-search.html'">
+                        <div class="tool-icon">
+                            <i data-lucide="search"></i>
+                        </div>
+                        <h3>Customer Search</h3>
+                        <p>Find customer info</p>
+                    </div>
+                    <div class="tool-card" onclick="window.location.href='staff-reports.html'">
+                        <div class="tool-icon">
+                            <i data-lucide="file-text"></i>
+                        </div>
+                        <h3>Reports</h3>
+                        <p>Generate reports</p>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section class="recent-activity">
-            <div class="dashboard-container">
-                <h2>Recent Activity</h2>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-time">10:30 AM</div>
-                        <div class="activity-content">Resolved complaint CMP-003 for Sarah Brown</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-time">09:45 AM</div>
-                        <div class="activity-content">Updated status for CMP-005 to "In Progress"</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-time">09:15 AM</div>
-                        <div class="activity-content">Contacted customer for CMP-001 verification</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
 
-    <script src="js/ui-enhancements.js"></script>
     <script src="js/security.js"></script>
     <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStaffDashboard();
+            setInterval(loadStaffDashboard, 30000); // Auto-refresh every 30 seconds
+            lucide.createIcons();
+        });
+
         async function loadStaffDashboard() {
             const staff = JSON.parse(localStorage.getItem('staff'));
             if (!staff || !staff.email) {
@@ -142,89 +747,56 @@
                 displayName = 'Support';
             }
             
-            document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
-            document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+            document.getElementById('userGreeting').textContent = `Welcome back, ${displayName}`;
+            document.getElementById('userName').textContent = displayName;
+            document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
 
             try {
-                const data = await uiManager.apiCall(`http://localhost:9090/api/staff/dashboard/${staff.email}`);
+                const data = await fetch(`http://localhost:8080/api/staff/dashboard/${staff.email}`);
                 
-                if (data) {
-                    if (data.firstName) {
-                        document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
-                        document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
+                if (data.ok) {
+                    const dashboardData = await data.json();
+                    
+                    if (dashboardData.firstName) {
+                        document.getElementById('userGreeting').textContent = `Welcome back, ${dashboardData.firstName}`;
+                        document.getElementById('userName').textContent = dashboardData.firstName;
+                        document.getElementById('userAvatar').textContent = dashboardData.firstName.charAt(0).toUpperCase();
                     }
                     
-                    document.getElementById('totalComplaints').textContent = data.totalComplaints || 0;
-                    document.getElementById('pendingComplaints').textContent = data.pendingComplaints || 0;
-                    document.getElementById('inProgressComplaints').textContent = data.inProgressComplaints || 0;
-                    document.getElementById('resolvedComplaints').textContent = data.resolvedComplaints || 0;
+                    // Animate numbers
+                    animateNumber('totalComplaints', dashboardData.totalComplaints || 0);
+                    animateNumber('pendingComplaints', dashboardData.pendingComplaints || 0);
+                    animateNumber('inProgressComplaints', dashboardData.inProgressComplaints || 0);
+                    animateNumber('resolvedComplaints', dashboardData.resolvedComplaints || 0);
 
-                    updateComplaintsTable(data.recentComplaints || []);
+                    displayRecentComplaints(dashboardData.recentComplaints || []);
+                    loadStaffRating(staff.email);
+                } else {
+                    // Set default values if API fails
+                    animateNumber('totalComplaints', 0);
+                    animateNumber('pendingComplaints', 0);
+                    animateNumber('inProgressComplaints', 0);
+                    animateNumber('resolvedComplaints', 0);
+                    displayRecentComplaints([]);
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
+                // Set default values on error
+                animateNumber('totalComplaints', 0);
+                animateNumber('pendingComplaints', 0);
+                animateNumber('inProgressComplaints', 0);
+                animateNumber('resolvedComplaints', 0);
+                displayRecentComplaints([]);
             }
         }
 
-        function updateComplaintsTable(complaints) {
-            const tbody = document.getElementById('complaintsTableBody');
-            tbody.innerHTML = '';
-
-            if (!complaints || complaints.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No complaints found</td></tr>';
-                return;
-            }
-
-            complaints.forEach(complaint => {
-                const row = document.createElement('tr');
-                const statusClass = getStatusClass(complaint.status);
-                const timeAgo = getTimeAgo(complaint.createdAt);
-
-                row.innerHTML = `
-                    <td>${complaint.complaintId || 'N/A'}</td>
-                    <td>${complaint.userEmail || 'N/A'}</td>
-                    <td><span class="tag orange">${complaint.issueType || 'General'}</span></td>
-                    <td><span class="priority medium">Medium</span></td>
-                    <td><span class="tag ${statusClass}">${complaint.status || 'PENDING'}</span></td>
-                    <td>${timeAgo}</td>
-                    <td><a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-btn">View</a></td>
-                `;
-                row.classList.add('fade-in');
-                tbody.appendChild(row);
-            });
-        }
-        
-        function getStatusClass(status) {
-            const classes = {
-                'PENDING': 'warning',
-                'IN_PROGRESS': 'info', 
-                'RESOLVED': 'success',
-                'CLOSED': 'secondary'
-            };
-            return classes[status] || 'secondary';
-        }
-        
-        function getTimeAgo(dateString) {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMins / 60);
-            const diffDays = Math.floor(diffHours / 24);
-            
-            if (diffMins < 60) return `${diffMins} mins ago`;
-            if (diffHours < 24) return `${diffHours} hours ago`;
-            return `${diffDays} days ago`;
-        }
-
-        function animateCounter(elementId, targetValue) {
+        function animateNumber(elementId, targetValue) {
             const element = document.getElementById(elementId);
-            const startValue = parseInt(element.textContent) || 0;
+            const startValue = 0;
             const duration = 1000;
             const startTime = performance.now();
-            
-            function updateCounter(currentTime) {
+
+            function updateNumber(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
@@ -232,24 +804,142 @@
                 element.textContent = currentValue;
                 
                 if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
+                    requestAnimationFrame(updateNumber);
                 }
             }
             
-            requestAnimationFrame(updateCounter);
+            requestAnimationFrame(updateNumber);
+        }
+
+        async function loadStaffRating(staffEmail) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/staff/ratings/${staffEmail}`);
+                if (response.ok) {
+                    const ratingData = await response.json();
+                    const avgRating = ratingData.averageRating || 0;
+                    document.getElementById('myRating').textContent = avgRating > 0 ? `${avgRating}/5` : 'N/A';
+                } else {
+                    document.getElementById('myRating').textContent = 'N/A';
+                }
+            } catch (error) {
+                console.error('Error loading staff rating:', error);
+                document.getElementById('myRating').textContent = 'N/A';
+            }
+        }
+
+        function displayRecentComplaints(complaints) {
+            const tbody = document.getElementById('complaintsTableBody');
+            tbody.innerHTML = '';
+            
+            if (!complaints || complaints.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i data-lucide="inbox"></i>
+                                </div>
+                                <h3>No complaints assigned</h3>
+                                <p>You don't have any complaints assigned yet</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            complaints.slice(0, 10).forEach(complaint => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusClass(complaint.status);
+                const timeAgo = getTimeAgo(complaint.createdAt);
+
+                row.innerHTML = `
+                    <td><strong>#${complaint.complaintId || 'N/A'}</strong></td>
+                    <td>${complaint.userEmail || 'Unknown'}</td>
+                    <td>${complaint.issueType || complaint.description?.substring(0, 30) + '...' || 'No description'}</td>
+                    <td><span class="status-badge ${statusClass}">${formatStatus(complaint.status)}</span></td>
+                    <td>${timeAgo}</td>
+                    <td><a href="staff-complaint-details.html?id=${complaint.complaintId}" class="action-link"><i data-lucide="eye"></i> View</a></td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            lucide.createIcons();
         }
         
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.href = 'staff-login.html';
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
+            }
+        }
+
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return 'Pending';
             }
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            loadStaffDashboard();
-        });
+        function getTimeAgo(dateString) {
+            if (!dateString) return 'Unknown';
+            
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'Invalid date';
+            
+            const now = new Date();
+            const diffMs = now - date;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffHours < 1) return 'Just now';
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
+        }
+
+        function toggleUserMenu() {
+            const userMenu = document.querySelector('.user-menu');
+            userMenu.classList.toggle('active');
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function closeMenu(e) {
+                if (!userMenu.contains(e.target)) {
+                    userMenu.classList.remove('active');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+
+        function showUserMenu() {
+            toggleUserMenu();
+        }
+        
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch(getApiUrl('/api/staff/logout'), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

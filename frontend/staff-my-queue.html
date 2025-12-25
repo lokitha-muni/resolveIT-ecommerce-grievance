@@ -4,36 +4,357 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Queue – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="staff-styles.css">
-    <link rel="stylesheet" href="css/ui-enhancements.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Main Card */
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+        }
+
+        .complaints-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .complaints-table th {
+            text-align: center;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #F8F9F7, var(--bg-secondary));
+            border-bottom: 1px solid var(--border);
+        }
+
+        .complaints-table td {
+            text-align: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .complaints-table tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .issue-badge {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(234, 88, 12, 0.1) 100%);
+            color: #ea580c;
+            border: 1px solid rgba(251, 146, 60, 0.2);
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(20, 184, 166, 0.03) 100%);
+            border: 1px solid rgba(15, 118, 110, 0.1);
+        }
+
+        .view-link:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.08) 100%);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.3) 100%);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+
+            .complaints-table th,
+            .complaints-table td {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
-
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
-                <span id="userGreeting">Hi, Staff</span>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>My Assigned Complaints</h1>
+                <p>Complaints assigned to you for resolution</p>
             </div>
-            <div class="nav-right">
-                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+            <div class="header-right">
+                <a href="staff-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="profilePhoto">S</div>
+                    <span id="userGreeting">Staff</span>
+                </div>
             </div>
-        </nav>
+        </header>
 
-        <section class="page-header">
-            <h1>My Assigned Complaints</h1>
-            <p>Complaints assigned to you</p>
-        </section>
-
-        <section class="complaints-section">
-            <div class="complaints-card">
+        <!-- Main Content -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">My Queue</h2>
+            </div>
+            <div class="card-content">
                 <div class="table-container">
                     <table class="complaints-table">
                         <thead>
@@ -47,18 +368,20 @@
                             </tr>
                         </thead>
                         <tbody id="myQueueTableBody">
-                            <!-- My queue will be loaded dynamically -->
+                            <!-- Queue will be loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 
+    <script src="js/security.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadMyQueue();
             loadUserData();
+            lucide.createIcons();
         });
 
         async function loadUserData() {
@@ -76,16 +399,16 @@
                 displayName = 'Admin';
             }
             
-            document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+            document.getElementById('userGreeting').textContent = displayName;
             document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
             
             // Load updated name from backend
             try {
-                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.firstName) {
-                        document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                        document.getElementById('userGreeting').textContent = data.firstName;
                         document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                     }
                 }
@@ -97,7 +420,7 @@
         async function loadMyQueue() {
             try {
                 const staff = JSON.parse(localStorage.getItem('staff'));
-                const response = await fetch(`http://localhost:9090/api/staff/my-queue/${staff.email}`);
+                const response = await fetch(`http://localhost:8080/api/staff/my-queue/${staff.email}`);
                 const complaints = await response.json();
 
                 if (response.ok) {
@@ -115,7 +438,7 @@
             tbody.innerHTML = '';
 
             if (!complaints || complaints.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No complaints assigned to you</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">No complaints assigned to you</td></tr>';
                 return;
             }
 
@@ -125,25 +448,38 @@
                 const timeAgo = getTimeAgo(complaint.createdAt);
 
                 row.innerHTML = `
-                    <td>${complaint.complaintId}</td>
+                    <td><strong>${complaint.complaintId}</strong></td>
                     <td>${complaint.userEmail}</td>
-                    <td><span class="tag orange">${complaint.issueType}</span></td>
-                    <td><span class="tag ${statusClass}">${complaint.status}</span></td>
+                    <td><span class="issue-badge">${complaint.issueType}</span></td>
+                    <td><span class="status-badge ${statusClass}">${formatStatus(complaint.status)}</span></td>
                     <td>${timeAgo}</td>
                     <td>
-                        <a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">View Details</a>
+                        <a href="staff-complaint-details.html?id=${complaint.complaintId}" class="view-link">
+                            <i data-lucide="eye"></i> View Details
+                        </a>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+            
+            lucide.createIcons();
+        }
+
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return status;
+            }
         }
 
         function getStatusClass(status) {
             switch(status) {
-                case 'PENDING': return 'yellow';
-                case 'IN_PROGRESS': return 'blue';
-                case 'RESOLVED': return 'green';
-                default: return 'gray';
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
             }
         }
 
@@ -162,7 +498,7 @@
             try {
                 const staff = JSON.parse(localStorage.getItem('staff'));
                 if (staff && staff.email) {
-                    await fetch('http://localhost:9090/api/staff/logout', {
+                    await fetch(getApiUrl('/api/staff/logout'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -178,5 +514,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

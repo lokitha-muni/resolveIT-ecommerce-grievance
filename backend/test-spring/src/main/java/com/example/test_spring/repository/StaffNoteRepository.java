@@ -10,4 +10,6 @@ import java.util.List;
 public interface StaffNoteRepository extends MongoRepository<StaffNote, String> {
     List<StaffNote> findByComplaintIdOrderByCreatedAtDesc(String complaintId);
     List<StaffNote> findByStaffEmailOrderByCreatedAtDesc(String staffEmail);
+    void deleteByComplaintId(String complaintId);
+    void deleteByStaffEmail(String staffEmail);
 }

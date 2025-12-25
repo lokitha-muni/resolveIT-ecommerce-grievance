@@ -4,117 +4,691 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complaint Details – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="search-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+            --status-pending-bg: #F5EEDC;
+            --status-pending-text: #8A6D3B;
+            --status-progress-bg: #E8EEF3;
+            --status-progress-text: #4A647D;
+            --status-resolved-bg: #E9F3EC;
+            --status-resolved-text: #3F6F58;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .user-menu:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        /* Detail Rows */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row:hover {
+            background: rgba(45, 212, 191, 0.05);
+            margin: 0 -20px;
+            padding: 16px 20px;
+            border-radius: 8px;
+        }
+
+        .label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Messages */
+        .message {
+            padding: 20px;
+            margin-bottom: 16px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+        }
+
+        .message:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .staff-message {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .customer-message {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .message-time {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .message-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Form Elements */
+        textarea {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100());
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Timeline */
+        /* Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+        }
+
+        .timeline.collapsed {
+            max-height: 400px;
+            overflow: hidden;
+        }
+
+        .timeline.collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(transparent, var(--bg-card));
+            pointer-events: none;
+        }
+
+        .see-more-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: transparent;
+            border: var(--border-light);
+            border-radius: 12px;
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .see-more-btn:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .timeline-item {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border-left: 4px solid var(--accent-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .timeline-item:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .timeline-date {
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-content {
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Status Tracker */
+        .progress-tracker {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            background: var(--bg-card);
+            padding: 0 10px;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .status-step.active .step-circle {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .status-step.completed .step-circle {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .step-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .status-step.active .step-label {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .status-step.completed .step-label {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Rating Stars */
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin: 1rem 0;
+            justify-content: center;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            user-select: none;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+        }
+
+        .no-data {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+        }
+    </style>
 </head>
-<body class="complaint-details-body">
-    <!-- Split Background -->
-    <div class="complaint-split-bg">
-        <div class="complaint-bg-left"></div>
-        <div class="complaint-bg-right"></div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="complaint-main">
-        <!-- Top Navigation -->
-        <nav class="complaint-nav">
-            <div class="nav-left">
-                <div class="profile-photo" id="profilePhoto">U</div>
-                <span id="userGreeting">Hi, User</span>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 id="complaintTitle">Complaint Details</h1>
+                <p>Track your complaint status and updates</p>
             </div>
-            <div class="nav-right">
-                <a href="dashboard.html" class="nav-btn">Dashboard</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+            <div class="header-right">
+                <a href="dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <div class="user-menu" onclick="showUserMenu()">
+                    <div class="user-avatar" id="profilePhoto">U</div>
+                    <span id="userGreeting">User</span>
+                </div>
             </div>
-        </nav>
+        </header>
 
-        <!-- Page Title -->
-        <div class="page-title">
-            <h1>Complaint Details</h1>
-        </div>
-
-        <!-- Main Content Grid -->
-        <div class="complaint-content">
+        <!-- Content Grid -->
+        <div class="content-grid">
             <!-- Left Column -->
             <div class="left-column">
-                <!-- Complaint Header Card -->
-                <div class="complaint-header-card">
-                    <div class="detail-row">
-                        <span class="label">Complaint ID:</span>
-                        <span class="value" id="complaintId">Loading...</span>
+                <!-- Complaint Details Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Complaint Information</h2>
                     </div>
-                    <div class="detail-row">
-                        <span class="label">Order ID:</span>
-                        <span class="value" id="orderId">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Category:</span>
-                        <span class="value" id="issueType">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Date Submitted:</span>
-                        <span class="value" id="dateSubmitted">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Status:</span>
-                        <span class="value" id="currentStatus">Loading...</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Description:</span>
-                        <span class="value" id="description">Loading...</span>
+                    <div class="card-content">
+                        <div class="detail-row">
+                            <span class="label">Complaint ID</span>
+                            <span class="value" id="complaintId">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Order ID</span>
+                            <span class="value" id="orderId">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Issue Type</span>
+                            <span class="value" id="issueType">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Date Submitted</span>
+                            <span class="value" id="dateSubmitted">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Status</span>
+                            <span class="value status-badge" id="currentStatus">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">Description</span>
+                            <span class="value" id="description">Loading...</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Status Tracker -->
-                <div class="status-tracker-card">
-                    <h3>Complaint Status</h3>
-                    <div class="progress-tracker" id="statusTracker">
-                        <!-- Status will be loaded dynamically -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Progress Tracker</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="progress-tracker" id="statusTracker">
+                            <!-- Status will be loaded dynamically -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Admin Notes Timeline -->
-                <div class="timeline-card">
-                    <h3>Updates & Timeline</h3>
-                    <div class="timeline" id="timeline">
-                        <!-- Timeline will be loaded dynamically -->
+                <!-- Timeline -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Updates & Timeline</h2>
+                    </div>
+                    <div class="card-content">
+                        <div id="timeline">
+                            <!-- Timeline will be loaded dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Right Column -->
             <div class="right-column">
-                <!-- Comments Section -->
-                <div class="user-view-card">
-                    <h3>Comments</h3>
-                    <div class="comments-list" id="commentsList">
-                        <!-- Comments loaded dynamically -->
+                <!-- Messages -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Messages</h2>
                     </div>
-                    <div class="add-comment">
-                        <textarea id="newComment" placeholder="Add a comment..." rows="3"></textarea>
-                        <button onclick="addComment()" class="action-btn">Add Comment</button>
+                    <div class="card-content">
+                        <div id="commentsList">
+                            <!-- Messages loaded dynamically -->
+                        </div>
+                        <textarea id="newComment" placeholder="Send a message to support..." rows="3"></textarea>
+                        <button onclick="addComment()" class="action-btn">Send Message</button>
                     </div>
                 </div>
-                
+
                 <!-- Rating Section -->
-                <div class="user-view-card" id="ratingSection" style="display: none;">
-                    <h3>Rate This Resolution</h3>
-                    <div class="rating-stars">
-                        <span class="star" data-rating="1">★</span>
-                        <span class="star" data-rating="2">★</span>
-                        <span class="star" data-rating="3">★</span>
-                        <span class="star" data-rating="4">★</span>
-                        <span class="star" data-rating="5">★</span>
+                <div class="card" id="ratingSection" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="card-title">Rate This Resolution</h2>
                     </div>
-                    <textarea id="ratingFeedback" placeholder="Share your feedback..." rows="3"></textarea>
-                    <button onclick="submitRating()" class="action-btn">Submit Rating</button>
+                    <div class="card-content">
+                        <div class="rating-stars">
+                            <span class="star" data-rating="1">★</span>
+                            <span class="star" data-rating="2">★</span>
+                            <span class="star" data-rating="3">★</span>
+                            <span class="star" data-rating="4">★</span>
+                            <span class="star" data-rating="5">★</span>
+                        </div>
+                        <textarea id="ratingFeedback" placeholder="Share your feedback..." rows="3"></textarea>
+                        <button onclick="submitRating()" class="action-btn">Submit Rating</button>
+                    </div>
                 </div>
-                
+
                 <!-- Actions -->
-                <div class="user-view-card">
-                    <h3>Actions</h3>
-                    <div class="action-buttons">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Actions</h2>
+                    </div>
+                    <div class="card-content">
                         <button class="action-btn" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
                         <button class="action-btn secondary" onclick="window.print()">Print Details</button>
                     </div>
@@ -122,7 +696,8 @@
             </div>
         </div>
     </div>
-    
+
+    <script src="js/config.js"></script>
     <script src="js/security.js"></script>
     <script>
         function logout() {
@@ -132,11 +707,21 @@
                 window.location.href = 'index.html';
             }
         }
+
+        function showUserMenu() {
+            if (confirm('Do you want to logout?')) {
+                logout();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             loadComplaintDetails();
             loadUserData();
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
         });
-        
+
         async function loadUserData() {
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
@@ -144,84 +729,98 @@
                     window.location.href = 'login.html';
                     return;
                 }
-                
-                const response = await fetch(`http://localhost:9090/api/dashboard/${user.email}`);
+
+                const response = await fetch(getApiUrl(`/api/dashboard/${user.email}`));
                 const data = await response.json();
-                
+
                 if (response.ok) {
-                    document.getElementById('userGreeting').textContent = `Hi, ${data.firstName}`;
+                    document.getElementById('userGreeting').textContent = data.firstName;
                     document.getElementById('profilePhoto').textContent = data.firstName.charAt(0).toUpperCase();
                 }
             } catch (error) {
                 console.error('Error loading user data:', error);
             }
         }
-        
+
         async function loadComplaintDetails() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const complaintId = urlParams.get('id');
-                
-                console.log('URL params:', window.location.search);
-                console.log('Complaint ID from URL:', complaintId);
-                
+
                 if (!complaintId) {
                     alert('No complaint ID provided');
                     window.location.href = 'dashboard.html';
                     return;
                 }
-                
-                const url = `http://localhost:9090/api/dashboard/complaint/${complaintId}`;
-                console.log('Fetching from URL:', url);
-                
+
+                const url = getApiUrl(`/api/dashboard/complaint/${complaintId}`);
                 const response = await fetch(url);
-                console.log('Response status:', response.status);
-                
+
                 if (!response.ok) {
-                    console.error('Response not OK:', response.status, response.statusText);
                     throw new Error(`Complaint not found: ${response.status}`);
                 }
-                
+
                 const complaint = await response.json();
-                console.log('Complaint data received:', complaint);
                 displayComplaintDetails(complaint);
-                
+
             } catch (error) {
                 console.error('Error loading complaint details:', error);
                 alert('Failed to load complaint details: ' + error.message);
                 window.location.href = 'dashboard.html';
             }
         }
-        
+
         function displayComplaintDetails(complaint) {
             document.getElementById('complaintId').textContent = complaint.complaintId;
             document.getElementById('orderId').textContent = complaint.orderId;
             document.getElementById('issueType').textContent = complaint.issueType;
-            document.getElementById('currentStatus').textContent = complaint.status;
             document.getElementById('dateSubmitted').textContent = new Date(complaint.createdAt).toLocaleDateString();
             document.getElementById('description').textContent = complaint.description;
-            
+
+            // Update status with proper styling
+            const statusElement = document.getElementById('currentStatus');
+            statusElement.textContent = formatStatus(complaint.status);
+            statusElement.className = 'value status-badge ' + getStatusClass(complaint.status);
+
             // Update status tracker
             updateStatusTracker(complaint.status);
-            
+
             // Load comments and timeline
             loadComments(complaint.complaintId);
             loadTimeline(complaint.complaintId);
-            
+
             // Show rating section if resolved
             if (complaint.status === 'RESOLVED') {
                 document.getElementById('ratingSection').style.display = 'block';
             }
         }
-        
+
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return status;
+            }
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
+            }
+        }
+
         function updateStatusTracker(status) {
             const tracker = document.getElementById('statusTracker');
             const statuses = ['PENDING', 'IN_PROGRESS', 'RESOLVED'];
             const currentIndex = statuses.indexOf(status);
-            
+
             let html = '';
             statuses.forEach((s, index) => {
-                const isActive = index <= currentIndex;
+                const isActive = index === currentIndex;
                 const isCompleted = index < currentIndex;
                 html += `
                     <div class="status-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}">
@@ -232,114 +831,151 @@
             });
             tracker.innerHTML = html;
         }
-        
+
         async function loadComments(complaintId) {
             try {
-                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/comments`);
+                const response = await fetch(getApiUrl(`/api/comments/complaint/${complaintId}`));
                 if (response.ok) {
                     const comments = await response.json();
                     displayComments(comments);
+                } else {
+                    document.getElementById('commentsList').innerHTML = '<p class="no-data">No messages yet.</p>';
                 }
             } catch (error) {
                 console.error('Error loading comments:', error);
+                document.getElementById('commentsList').innerHTML = '<p class="no-data">No messages yet.</p>';
             }
         }
-        
+
         function displayComments(comments) {
             const commentsList = document.getElementById('commentsList');
             if (comments.length === 0) {
-                commentsList.innerHTML = '<p class="no-data">No comments yet.</p>';
+                commentsList.innerHTML = '<p class="no-data">No messages yet.</p>';
                 return;
             }
-            
+
             let html = '';
             comments.forEach(comment => {
+                const isStaff = comment.authorType === 'STAFF';
+                const messageClass = isStaff ? 'staff-message' : 'customer-message';
                 html += `
-                    <div class="comment">
-                        <div class="comment-header">
-                            <strong>${comment.authorName}</strong>
-                            <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString()}</span>
+                    <div class="message ${messageClass}">
+                        <div class="message-header">
+                            <strong>${isStaff ? 'Support Team' : 'You'}</strong>
+                            <span class="message-time">${new Date(comment.createdAt).toLocaleString()}</span>
                         </div>
-                        <div class="comment-text">${comment.text}</div>
+                        <div class="message-content">${comment.message}</div>
                     </div>
                 `;
             });
             commentsList.innerHTML = html;
         }
-        
+
         async function loadTimeline(complaintId) {
             try {
-                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/timeline`);
+                const response = await fetch(getApiUrl(`/api/admin/complaints/${complaintId}/history`));
                 if (response.ok) {
-                    const timeline = await response.json();
-                    displayTimeline(timeline);
+                    const history = await response.json();
+                    displayTimeline(history);
+                } else {
+                    document.getElementById('timeline').innerHTML = '<p class="no-data">No updates yet.</p>';
                 }
             } catch (error) {
                 console.error('Error loading timeline:', error);
                 document.getElementById('timeline').innerHTML = '<p class="no-data">No timeline data available.</p>';
             }
         }
-        
-        function displayTimeline(timeline) {
+
+        function displayTimeline(history) {
             const timelineEl = document.getElementById('timeline');
-            if (timeline.length === 0) {
+            if (!history || history.length === 0) {
                 timelineEl.innerHTML = '<p class="no-data">No updates yet.</p>';
                 return;
             }
+
+            const shouldCollapse = history.length > 5;
+            let html = `<div class="timeline ${shouldCollapse ? 'collapsed' : ''}" id="timelineContainer">`;
             
-            let html = '';
-            timeline.forEach(item => {
+            history.forEach(entry => {
+                const timeString = new Date(entry.timestamp).toLocaleDateString() + ' - ' + 
+                                 new Date(entry.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
                 html += `
                     <div class="timeline-item">
-                        <div class="timeline-date">${new Date(item.timestamp).toLocaleDateString()}</div>
-                        <div class="timeline-content">
-                            <h4>${item.title}</h4>
-                            <p>${item.description}</p>
-                        </div>
+                        <div class="timeline-date">${timeString}</div>
+                        <div class="timeline-content">${entry.details}</div>
                     </div>
                 `;
             });
+            
+            html += '</div>';
+            
+            if (shouldCollapse) {
+                html += `
+                    <button class="see-more-btn" onclick="toggleTimeline()">
+                        <i data-lucide="chevron-down"></i>
+                        <span>See More Updates</span>
+                    </button>
+                `;
+            }
+            
             timelineEl.innerHTML = html;
+            lucide.createIcons();
         }
-        
+
+        function toggleTimeline() {
+            const container = document.getElementById('timelineContainer');
+            const btn = document.querySelector('.see-more-btn');
+            
+            if (container.classList.contains('collapsed')) {
+                container.classList.remove('collapsed');
+                btn.innerHTML = '<i data-lucide="chevron-up"></i><span>Show Less</span>';
+            } else {
+                container.classList.add('collapsed');
+                btn.innerHTML = '<i data-lucide="chevron-down"></i><span>See More Updates</span>';
+            }
+            lucide.createIcons();
+        }
+
         async function addComment() {
             const commentText = document.getElementById('newComment').value.trim();
             if (!commentText) {
-                alert('Please enter a comment');
+                alert('Please enter a message');
                 return;
             }
-            
+
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const complaintId = urlParams.get('id');
                 const user = JSON.parse(localStorage.getItem('user'));
-                
-                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/comments`, {
+
+                const response = await fetch(getApiUrl('/api/comments/add'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        text: commentText,
+                        complaintId: complaintId,
                         authorEmail: user.email,
-                        authorName: user.firstName + ' ' + user.lastName
+                        authorType: 'CUSTOMER',
+                        message: commentText
                     })
                 });
-                
+
                 if (response.ok) {
                     document.getElementById('newComment').value = '';
                     loadComments(complaintId);
                 } else {
-                    alert('Failed to add comment');
+                    alert('Failed to send message');
                 }
             } catch (error) {
-                console.error('Error adding comment:', error);
-                alert('Failed to add comment');
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
             }
         }
-        
+
         let selectedRating = 0;
-        
+
         // Rating stars functionality
         document.addEventListener('DOMContentLoaded', function() {
             const stars = document.querySelectorAll('.star');
@@ -348,18 +984,18 @@
                     selectedRating = parseInt(this.dataset.rating);
                     updateStars(selectedRating);
                 });
-                
+
                 star.addEventListener('mouseover', function() {
                     const rating = parseInt(this.dataset.rating);
                     updateStars(rating);
                 });
             });
-            
+
             document.querySelector('.rating-stars').addEventListener('mouseleave', function() {
                 updateStars(selectedRating);
             });
         });
-        
+
         function updateStars(rating) {
             const stars = document.querySelectorAll('.star');
             stars.forEach((star, index) => {
@@ -370,32 +1006,33 @@
                 }
             });
         }
-        
+
         async function submitRating() {
             if (selectedRating === 0) {
                 alert('Please select a rating');
                 return;
             }
-            
+
             const feedback = document.getElementById('ratingFeedback').value.trim();
-            
+
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const complaintId = urlParams.get('id');
                 const user = JSON.parse(localStorage.getItem('user'));
-                
-                const response = await fetch(`http://localhost:9090/api/complaints/${complaintId}/rating`, {
+
+                const response = await fetch(getApiUrl('/api/ratings/submit'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        complaintId: complaintId,
                         rating: selectedRating,
-                        feedback: feedback,
+                        comment: feedback,
                         userEmail: user.email
                     })
                 });
-                
+
                 if (response.ok) {
                     alert('Thank you for your rating!');
                     document.getElementById('ratingSection').style.display = 'none';

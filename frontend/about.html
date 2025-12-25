@@ -4,8 +4,401 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About ResolveIT – Smart E-commerce Delivery Grievance System</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: inherit;
+        }
+
+        html, body {
+            background: #ffffff !important;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --accent-primary: #2DD4BF;
+            --accent-muted: #1DB584;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: rgba(45, 212, 191, 0.2);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary) !important;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .nav-logo span {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent-primary);
+        }
+
+        .squares-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .about-hero {
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .about-illustration {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 80px;
+        }
+
+        .about-section {
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-container h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .partner-logos {
+            margin-top: 32px;
+        }
+
+        .logo-loop-container {
+            height: 80px;
+            overflow: hidden;
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .logo-track {
+            display: flex;
+            animation: logoScroll 30s linear infinite;
+            will-change: transform;
+        }
+
+        .logo-track:hover {
+            animation-play-state: paused;
+        }
+
+        .logo-sequence {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            flex-shrink: 0;
+        }
+
+        @keyframes logoScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .logo-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            min-width: 150px;
+            height: 64px;
+        }
+
+        .logo-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .partner-logo {
+            max-width: 100px;
+            max-height: 40px;
+            object-fit: contain;
+            transition: all 0.2s ease;
+        }
+
+        .problem-grid, .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+
+        .problem-item, .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+
+        .problem-item:hover, .feature-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .problem-icon, .feature-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .problem-item span, .feature-item span {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+        }
+
+        .step-item {
+            text-align: center;
+            padding: 32px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+        }
+
+        .step-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            margin: 0 auto 16px;
+        }
+
+        .step-item h3 {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .about-cta {
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-cta h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .about-cta p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-muted);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.9);
+            border-top: 1px solid var(--border);
+            padding: 40px 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo span {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-content h1 {
+                font-size: 36px;
+            }
+
+            .section-container h2 {
+                font-size: 28px;
+            }
+
+            .about-cta h2 {
+                font-size: 28px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -27,6 +420,7 @@
 
     <!-- Hero Section -->
     <section class="about-hero">
+        <canvas class="squares-bg"></canvas>
         <div class="hero-container">
             <div class="hero-content">
                 <h1>Your Trusted E-commerce Resolution Partner</h1>
@@ -44,83 +438,42 @@
 
     <!-- Collaboration Section -->
     <section class="about-section">
+        <canvas class="squares-bg"></canvas>
         <div class="section-container">
             <h2>In Collaboration</h2>
             
             <!-- Partner Logos -->
             <div class="partner-logos">
-                <div class="logos-grid">
-                    <div class="logo-item">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png" alt="Flipkart" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://logos-world.net/wp-content/uploads/2021/02/Myntra-Logo.png" alt="Myntra" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://www.dealnloot.com/wp-content/uploads/2019/07/ajio-logo.png" alt="Ajio" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://logos-world.net/wp-content/uploads/2020/11/Swiggy-Logo.png" alt="Swiggy" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://logos-world.net/wp-content/uploads/2020/11/Zomato-Logo.png" alt="Zomato" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/nykaa-logo-hd.png" alt="Nykaa" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://logos-world.net/wp-content/uploads/2020/11/Paytm-Logo.png" alt="Paytm" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://images.seeklogo.com/logo-png/40/1/bigbasket-logo-png_seeklogo-409312.png" alt="BigBasket" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://i.pinimg.com/736x/1b/9a/b7/1b9ab754b22522b4056538b89e441961.jpg" alt="Blinkit" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://images.moneycontrol.com/static-mcnews/2023/06/Meesho-682x435.jpg?impolicy=website&width=1280&height=720" alt="Meesho" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTnkA8_yD56wqAhmXFGlhd8BIPVazz8A86Yw&s" alt="Snapdeal" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://img.favpng.com/17/14/20/limeroad-logo-XShxd2jt_t.jpg" alt="Limeroad" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZQqtG7Ajp9A7mVzJe-Lr61QqEl_HTEY5Z3A&s" alt="Shopclues" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://cdn.imgbin.com/11/12/10/tata-cliq-logo-mp5kaYFv.jpg" alt="Tata CLiQ" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/jiomart-logo-hd.png" alt="JioMart" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Dunzo_Logo.svg/2560px-Dunzo_Logo.svg.png" alt="Dunzo" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://akm-img-a-in.tosshub.com/businesstoday/images/story/202505/6837f630ede58-urban-company-is-looking-at-a-future-with-robots-295243331-16x9.png?size=948:533" alt="Urban Company" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://i0.wp.com/bwretailworld.com/wp-content/uploads/2024/06/Heading-49.png?resize=1280%2C700&ssl=1" alt="Zepto" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://img-cdn.publive.online/fit-in/1200x675/smstreet/media/media_files/b8hxDcPQWP4Gh1u0XvvW.jpg" alt="Instamart" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://images.seeklogo.com/logo-png/47/1/pharmeasy-logo-png_seeklogo-471933.png" alt="Pharmeasy" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://images.seeklogo.com/logo-png/52/2/tata-1mg-logo-png_seeklogo-529921.png" alt="1mg" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Bookmyshow-logoid.png?20210709154756" alt="BookMyShow" class="partner-logo">
-                    </div>
-                    <div class="logo-item">
-                        <img src="https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/makemytrip-logo-app-icon.png" alt="MakeMyTrip" class="partner-logo">
+                <div class="logo-loop-container">
+                    <div class="logo-track">
+                        <div class="logo-sequence">
+                            <div class="logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png" alt="Flipkart" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2021/02/Myntra-Logo.png" alt="Myntra" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://www.dealnloot.com/wp-content/uploads/2019/07/ajio-logo.png" alt="Ajio" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Swiggy-Logo.png" alt="Swiggy" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Zomato-Logo.png" alt="Zomato" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/nykaa-logo-hd.png" alt="Nykaa" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Paytm-Logo.png" alt="Paytm" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://images.seeklogo.com/logo-png/40/1/bigbasket-logo-png_seeklogo-409312.png" alt="BigBasket" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://i.pinimg.com/736x/1b/9a/b7/1b9ab754b22522b4056538b89e441961.jpg" alt="Blinkit" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://images.moneycontrol.com/static-mcnews/2023/06/Meesho-682x435.jpg?impolicy=website&width=1280&height=720" alt="Meesho" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTnkA8_yD56wqAhmXFGlhd8BIPVazz8A86Yw&s" alt="Snapdeal" class="partner-logo"></div>
+                        </div>
+                        <div class="logo-sequence">
+                            <div class="logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Logo.png" alt="Flipkart" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2021/02/Myntra-Logo.png" alt="Myntra" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://www.dealnloot.com/wp-content/uploads/2019/07/ajio-logo.png" alt="Ajio" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Swiggy-Logo.png" alt="Swiggy" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Zomato-Logo.png" alt="Zomato" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/nykaa-logo-hd.png" alt="Nykaa" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://logos-world.net/wp-content/uploads/2020/11/Paytm-Logo.png" alt="Paytm" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://images.seeklogo.com/logo-png/40/1/bigbasket-logo-png_seeklogo-409312.png" alt="BigBasket" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://i.pinimg.com/736x/1b/9a/b7/1b9ab754b22522b4056538b89e441961.jpg" alt="Blinkit" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://images.moneycontrol.com/static-mcnews/2023/06/Meesho-682x435.jpg?impolicy=website&width=1280&height=720" alt="Meesho" class="partner-logo"></div>
+                            <div class="logo-item"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTnkA8_yD56wqAhmXFGlhd8BIPVazz8A86Yw&s" alt="Snapdeal" class="partner-logo"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,6 +482,7 @@
 
     <!-- What We Solve Section -->
     <section class="about-section alt-bg">
+        <canvas class="squares-bg"></canvas>
         <div class="section-container">
             <h2>Why ResolveIT?</h2>
             <div class="problem-grid">
@@ -170,6 +524,7 @@
 
     <!-- Key Features Section -->
     <section class="about-section">
+        <canvas class="squares-bg"></canvas>
         <div class="section-container">
             <h2>What Our System Offers</h2>
             <div class="features-grid">
@@ -211,6 +566,7 @@
 
     <!-- How It Works Section -->
     <section class="about-section alt-bg">
+        <canvas class="squares-bg"></canvas>
         <div class="section-container">
             <h2>Simple. Fast. Efficient.</h2>
             <div class="steps-container">
@@ -246,6 +602,7 @@
 
     <!-- CTA Section -->
     <section class="about-cta">
+        <canvas class="squares-bg"></canvas>
         <div class="section-container">
             <h2>Facing a Delivery Issue?</h2>
             <p>We're here to resolve it.</p>
@@ -263,5 +620,123 @@
             <p>&copy; 2024 ResolveIT. All rights reserved.</p>
         </div>
     </footer>
+    <script>
+        class Squares {
+            constructor(canvas, options = {}) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.direction = options.direction || 'diagonal';
+                this.speed = options.speed || 0.5;
+                this.borderColor = options.borderColor || '#000000';
+                this.squareSize = options.squareSize || 40;
+                this.hoverFillColor = options.hoverFillColor || 'rgba(0, 0, 0, 0.05)';
+                
+                this.gridOffset = { x: 0, y: 0 };
+                this.hoveredSquare = null;
+                this.animationId = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = this.canvas.offsetWidth;
+                this.canvas.height = this.canvas.offsetHeight;
+            }
+            
+            drawGrid() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                for (let x = startX; x < this.canvas.width + this.squareSize; x += this.squareSize) {
+                    for (let y = startY; y < this.canvas.height + this.squareSize; y += this.squareSize) {
+                        const squareX = x - (this.gridOffset.x % this.squareSize);
+                        const squareY = y - (this.gridOffset.y % this.squareSize);
+                        
+                        if (this.hoveredSquare &&
+                            Math.floor((x - startX) / this.squareSize) === this.hoveredSquare.x &&
+                            Math.floor((y - startY) / this.squareSize) === this.hoveredSquare.y) {
+                            this.ctx.fillStyle = this.hoverFillColor;
+                            this.ctx.fillRect(squareX, squareY, this.squareSize, this.squareSize);
+                        }
+                        
+                        this.ctx.strokeStyle = this.borderColor;
+                        this.ctx.globalAlpha = 0.15;
+                        this.ctx.strokeRect(squareX, squareY, this.squareSize, this.squareSize);
+                        this.ctx.globalAlpha = 1;
+                    }
+                }
+                
+                const gradient = this.ctx.createRadialGradient(
+                    this.canvas.width / 2, this.canvas.height / 2, 0,
+                    this.canvas.width / 2, this.canvas.height / 2,
+                    Math.sqrt(this.canvas.width ** 2 + this.canvas.height ** 2) / 2
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(1, 'rgba(248, 250, 252, 0.3)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            
+            updateAnimation() {
+                const effectiveSpeed = Math.max(this.speed, 0.1);
+                switch (this.direction) {
+                    case 'diagonal':
+                        this.gridOffset.x = (this.gridOffset.x - effectiveSpeed + this.squareSize) % this.squareSize;
+                        this.gridOffset.y = (this.gridOffset.y - effectiveSpeed + this.squareSize) % this.squareSize;
+                        break;
+                }
+            }
+            
+            animate() {
+                this.updateAnimation();
+                this.drawGrid();
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            handleMouseMove(event) {
+                const rect = this.canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                const hoveredSquareX = Math.floor((mouseX + this.gridOffset.x - startX) / this.squareSize);
+                const hoveredSquareY = Math.floor((mouseY + this.gridOffset.y - startY) / this.squareSize);
+                
+                this.hoveredSquare = { x: hoveredSquareX, y: hoveredSquareY };
+            }
+            
+            handleMouseLeave() {
+                this.hoveredSquare = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Initialize squares backgrounds for all sections
+            document.querySelectorAll('.squares-bg').forEach(canvas => {
+                new Squares(canvas, {
+                    speed: 0.3,
+                    squareSize: 40,
+                    direction: 'diagonal',
+                    borderColor: '#000000',
+                    hoverFillColor: 'rgba(0, 0, 0, 0.05)'
+                });
+            });
+        });
+    </script>
 </body>
 </html>

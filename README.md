@@ -43,7 +43,7 @@ npm run install-all
 
 # Start both services
 npm start
-# Backend: http://localhost:9090
+# Backend: http://localhost:8080
 # Frontend: http://localhost:3000
 ```
 
@@ -138,7 +138,7 @@ npm run frontend
 ## 👥 User Roles & Access
 
 ### Default Accounts
-- **User**: test@gmail.com / lokitha2005
+- **Sample Users**: john.doe@gmail.com, jane.smith@gmail.com, etc. / password123
 - **Staff**: staff@gmail.com / staff@123 (requires 2FA)
 - **Admin**: admin@gmail.com / admin@123 (requires 2FA)
 
@@ -166,7 +166,7 @@ npm run frontend
 ## 📱 Access Points
 
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:9090/api/*
+- **Backend API**: http://localhost:8080/api/*
 - **MongoDB**: MongoDB Atlas (cloud)
 - **Admin Panel**: http://localhost:3000/admin-dashboard.html
 

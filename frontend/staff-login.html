@@ -4,10 +4,264 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Login - ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: inherit;
+        }
+
+        html, body {
+            background: #ffffff !important;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .squares-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-form-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .auth-logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .admin-toggle {
+            margin-bottom: 32px;
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .toggle-label input {
+            display: none;
+        }
+
+        .toggle-slider {
+            width: 44px;
+            height: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-label input:checked + .toggle-slider {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .toggle-label input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+            background: white;
+        }
+
+        .toggle-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(78, 124, 115, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .password-input-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100());
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .switch-form {
+            text-align: center;
+        }
+
+        .switch-form p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .switch-form a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .auth-form-box {
+                padding: 24px;
+            }
+        }
+    </style>
 </head>
 <body class="auth-page">
+    <canvas class="squares-bg"></canvas>
     <div class="auth-container">
         <div class="auth-form-box">
             <div class="auth-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
@@ -34,7 +288,12 @@
                 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="staffPassword" placeholder="Enter your password" required>
+                    <div class="password-input-container">
+                        <input type="password" id="staffPassword" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('staffPassword')">
+                            <i data-lucide="eye" id="staffPasswordIcon"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" class="submit-btn">Sign In</button>
@@ -48,6 +307,131 @@
     
     <script src="js/security.js"></script>
     <script>
+        class Squares {
+            constructor(canvas, options = {}) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.direction = options.direction || 'diagonal';
+                this.speed = options.speed || 0.5;
+                this.borderColor = options.borderColor || '#000000';
+                this.squareSize = options.squareSize || 40;
+                this.hoverFillColor = options.hoverFillColor || 'rgba(0, 0, 0, 0.05)';
+                
+                this.gridOffset = { x: 0, y: 0 };
+                this.hoveredSquare = null;
+                this.animationId = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            drawGrid() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                for (let x = startX; x < this.canvas.width + this.squareSize; x += this.squareSize) {
+                    for (let y = startY; y < this.canvas.height + this.squareSize; y += this.squareSize) {
+                        const squareX = x - (this.gridOffset.x % this.squareSize);
+                        const squareY = y - (this.gridOffset.y % this.squareSize);
+                        
+                        if (this.hoveredSquare &&
+                            Math.floor((x - startX) / this.squareSize) === this.hoveredSquare.x &&
+                            Math.floor((y - startY) / this.squareSize) === this.hoveredSquare.y) {
+                            this.ctx.fillStyle = this.hoverFillColor;
+                            this.ctx.fillRect(squareX, squareY, this.squareSize, this.squareSize);
+                        }
+                        
+                        this.ctx.strokeStyle = this.borderColor;
+                        this.ctx.globalAlpha = 0.15;
+                        this.ctx.strokeRect(squareX, squareY, this.squareSize, this.squareSize);
+                        this.ctx.globalAlpha = 1;
+                    }
+                }
+                
+                const gradient = this.ctx.createRadialGradient(
+                    this.canvas.width / 2, this.canvas.height / 2, 0,
+                    this.canvas.width / 2, this.canvas.height / 2,
+                    Math.sqrt(this.canvas.width ** 2 + this.canvas.height ** 2) / 2
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(1, 'rgba(248, 250, 252, 0.3)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            
+            updateAnimation() {
+                const effectiveSpeed = Math.max(this.speed, 0.1);
+                this.gridOffset.x = (this.gridOffset.x - effectiveSpeed + this.squareSize) % this.squareSize;
+                this.gridOffset.y = (this.gridOffset.y - effectiveSpeed + this.squareSize) % this.squareSize;
+            }
+            
+            animate() {
+                this.updateAnimation();
+                this.drawGrid();
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            handleMouseMove(event) {
+                const mouseX = event.clientX;
+                const mouseY = event.clientY;
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                const hoveredSquareX = Math.floor((mouseX + this.gridOffset.x - startX) / this.squareSize);
+                const hoveredSquareY = Math.floor((mouseY + this.gridOffset.y - startY) / this.squareSize);
+                
+                this.hoveredSquare = { x: hoveredSquareX, y: hoveredSquareY };
+            }
+            
+            handleMouseLeave() {
+                this.hoveredSquare = null;
+            }
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + 'Icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+        
+        // Initialize icons and squares background
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Initialize squares background
+            const canvas = document.querySelector('.squares-bg');
+            new Squares(canvas, {
+                speed: 0.3,
+                squareSize: 40,
+                direction: 'diagonal',
+                borderColor: '#000000',
+                hoverFillColor: 'rgba(0, 0, 0, 0.05)'
+            });
+        });
         const staffToggle = document.getElementById('staffToggle');
         const staffLoginForm = document.getElementById('staffLoginForm');
         const subtitle = document.querySelector('.subtitle');
@@ -78,12 +462,12 @@
             }
             
             try {
-                // Direct login without 2FA
+                // Check hardcoded accounts first
                 if ((email === 'staff@gmail.com' && password === 'staff@123') ||
                     (email === 'admin@gmail.com' && password === 'admin@123')) {
                     
                     const role = email === 'admin@gmail.com' ? 'ADMIN' : 'STAFF';
-                    const token = 'staff_token_' + Date.now(); // Simple token for demo
+                    const token = 'staff_token_' + Date.now();
                     
                     securityManager.setToken(token);
                     localStorage.setItem('staff', JSON.stringify({
@@ -96,14 +480,44 @@
                     } else {
                         window.location.href = 'staff-dashboard.html';
                     }
-                } else {
-                    alert('Invalid credentials');
+                    return;
                 }
+                
+                // Try backend authentication for agent accounts
+                const response = await fetch(getApiUrl('/api/staff/login'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        const token = 'staff_token_' + Date.now();
+                        securityManager.setToken(token);
+                        localStorage.setItem('staff', JSON.stringify({
+                            email: email,
+                            role: data.staff.role || 'STAFF'
+                        }));
+                        
+                        if (data.staff.role === 'ADMIN') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'staff-dashboard.html';
+                        }
+                        return;
+                    }
+                }
+                
+                alert('Invalid credentials');
             } catch (error) {
                 console.error('Login error:', error);
                 alert('Login failed. Please try again.');
             }
         });
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

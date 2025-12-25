@@ -4,63 +4,590 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin-styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+            --status-pending-bg: #F5EEDC;
+            --status-pending-text: #8A6D3B;
+            --status-progress-bg: #E8EEF3;
+            --status-progress-text: #4A647D;
+            --status-resolved-bg: #E9F3EC;
+            --status-resolved-text: #3F6F58;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 64px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0f766e 0%, #14b8a6 50%, #2dd4bf 100%);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            font-size: 22px;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0 8px 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: center;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #F8F9F7, var(--bg-secondary));
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            text-align: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Admin Tools */
+        .admin-tools-section {
+            margin-top: 40px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+            border-color: var(--accent-primary);
+        }
+
+        .tool-icon {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tool-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--accent-primary);
+        }
+
+        .tool-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Action Link */
+        .action-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .action-link:hover {
+            background: var(--bg-secondary);
+            color: #3F6B62;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 32px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Admin Dashboard</h1>
+                <p id="userGreeting">System overview and management</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="loadAdminDashboard()">
+                    Refresh
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='admin-users.html'">
+                    <i data-lucide="user"></i> Users
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='admin-staff.html'">
+                    <i data-lucide="users"></i> Staff
+                </button>
+                <div class="user-menu" onclick="showUserMenu()">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <span id="userName">Admin</span>
+                </div>
+            </div>
+        </header>
 
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
-                <span id="userGreeting">Hi, Admin</span>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card users">
+                <div class="stat-header">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-icon"><i data-lucide="user"></i></div>
+                </div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-change">Registered customers</div>
             </div>
-            <div class="nav-right">
-                <a href="admin-users.html" class="nav-btn">Manage Users</a>
-                <a href="admin-staff.html" class="nav-btn">Manage Staff</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+            <div class="stat-card staff">
+                <div class="stat-header">
+                    <div class="stat-label">Total Staff</div>
+                    <div class="stat-icon"><i data-lucide="users"></i></div>
+                </div>
+                <div class="stat-value" id="totalStaff">0</div>
+                <div class="stat-change">Active staff members</div>
             </div>
-        </nav>
+            <div class="stat-card complaints">
+                <div class="stat-header">
+                    <div class="stat-label">Total Complaints</div>
+                    <div class="stat-icon"><i data-lucide="clipboard-list"></i></div>
+                </div>
+                <div class="stat-value" id="totalComplaints">0</div>
+                <div class="stat-change">All time submissions</div>
+            </div>
+            <div class="stat-card resolved">
+                <div class="stat-header">
+                    <div class="stat-label">Resolved Today</div>
+                    <div class="stat-icon"><i data-lucide="check-circle"></i></div>
+                </div>
+                <div class="stat-value" id="resolvedToday">0</div>
+                <div class="stat-change">Completed today</div>
+            </div>
+        </div>
 
-        <section class="page-header">
-            <h1>Admin Dashboard</h1>
-            <p>System overview and management</p>
-        </section>
-
-        <section class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-label">Total Users</div>
-                <div class="stat-number" id="totalUsers">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-label">Total Staff</div>
-                <div class="stat-number" id="totalStaff">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📋</div>
-                <div class="stat-label">Total Complaints</div>
-                <div class="stat-number" id="totalComplaints">0</div>
-            </div>
-            <div class="stat-card resolved-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Resolved Today</div>
-                <div class="stat-number" id="resolvedToday">0</div>
-            </div>
-        </section>
-
-        <div class="admin-grid">
-            <section class="complaints-section">
-                <div class="complaints-card">
-                    <h2>Recent Complaints</h2>
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Recent Complaints -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Complaints</h2>
+                    <button class="btn btn-secondary" onclick="loadRecentComplaints()">
+                        <i data-lucide="refresh-cw"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-content">
                     <div class="table-container">
-                        <table class="complaints-table">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -68,67 +595,79 @@
                                     <th>Issue</th>
                                     <th>Status</th>
                                     <th>Created</th>
-                                    <th>Actions</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="complaintsTableBody">
-                                <!-- Complaints loaded dynamically -->
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon"><i data-lucide="clipboard-list" style="font-size: 64px; color: var(--text-muted);"></i></div>
+                                            <h3>Loading complaints...</h3>
+                                            <p>Please wait while we fetch the data</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <section class="admin-tools">
-                <div class="dashboard-container">
-                    <h2>Admin Tools</h2>
+        <!-- Admin Tools Section -->
+        <div class="admin-tools-section">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Admin Tools</h2>
+                </div>
+                <div class="card-content">
                     <div class="tools-grid">
                         <div class="tool-card" onclick="window.location.href='admin-users.html'">
-                            <div class="tool-icon">👤</div>
+                            <div class="tool-icon"><i data-lucide="user"></i></div>
                             <h3>User Management</h3>
                             <p>Manage customer accounts</p>
                         </div>
                         <div class="tool-card" onclick="window.location.href='admin-staff.html'">
-                            <div class="tool-icon">👥</div>
+                            <div class="tool-icon"><i data-lucide="users"></i></div>
                             <h3>Staff Management</h3>
                             <p>Manage staff accounts</p>
                         </div>
                         <div class="tool-card" onclick="window.location.href='admin-reports.html'">
-                            <div class="tool-icon">📊</div>
+                            <div class="tool-icon"><i data-lucide="bar-chart-3"></i></div>
                             <h3>Reports</h3>
-                            <p>System analytics and reports</p>
+                            <p>System analytics</p>
                         </div>
                         <div class="tool-card" onclick="window.location.href='admin-settings.html'">
-                            <div class="tool-icon">⚙️</div>
-                            <h3>System Settings</h3>
-                            <p>Configure system parameters</p>
+                            <div class="tool-icon"><i data-lucide="settings"></i></div>
+                            <h3>Settings</h3>
+                            <p>System configuration</p>
                         </div>
                         <div class="tool-card" onclick="window.location.href='admin-audit.html'">
-                            <div class="tool-icon">📄</div>
+                            <div class="tool-icon"><i data-lucide="file-text"></i></div>
                             <h3>Audit Logs</h3>
-                            <p>Track system activities</p>
+                            <p>Track activities</p>
                         </div>
                         <div class="tool-card" onclick="createBackup()">
-                            <div class="tool-icon">💾</div>
-                            <h3>Backup & Recovery</h3>
-                            <p>Data management tools</p>
-                        </div>
-                        <div class="tool-card" onclick="initRealData()">
-                            <div class="tool-icon">🔄</div>
-                            <h3>Initialize Real Data</h3>
-                            <p>Create sample users, staff & complaints</p>
+                            <div class="tool-icon"><i data-lucide="hard-drive"></i></div>
+                            <h3>Backup</h3>
+                            <p>Data management</p>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     </div>
 
+    <script src="js/config.js"></script>
     <script>
+        // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
             loadAdminDashboard();
-            // Auto-refresh every 30 seconds
-            setInterval(loadAdminDashboard, 30000);
+            setInterval(loadAdminDashboard, 30000); // Auto-refresh every 30 seconds
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
         });
 
         async function loadAdminDashboard() {
@@ -147,63 +686,81 @@
                     return;
                 }
 
-                // Set default name immediately
-                let displayName = 'Admin';
-                document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
-                document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+                // Update user info
+                document.getElementById('userGreeting').textContent = 'Welcome back, Admin';
+                document.getElementById('userName').textContent = 'Admin';
+                document.getElementById('userAvatar').textContent = 'A';
 
-                // Fetch real-time dashboard data
-                const response = await fetch('http://localhost:9090/api/admin/dashboard');
-                console.log('Admin dashboard response:', response.status);
+                // Load dashboard data and complaints from the same source
+                const [dashboardResponse, complaintsResponse] = await Promise.all([
+                    fetch(getApiUrl('/api/admin/dashboard')),
+                    fetch(getApiUrl('/api/admin/complaints'))
+                ]);
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Admin dashboard data:', data);
-                    
-                    // Update stats with real-time data (show actual counts, even if 0)
-                    document.getElementById('totalUsers').textContent = data.totalUsers;
-                    document.getElementById('totalStaff').textContent = data.totalStaff;
-                    document.getElementById('totalComplaints').textContent = data.totalComplaints;
-                    document.getElementById('resolvedToday').textContent = data.resolvedComplaints;
-
-                    // Load recent complaints
-                    loadRecentComplaints();
+                if (dashboardResponse.ok) {
+                    const data = await dashboardResponse.json();
+                    updateStats(data);
                 } else {
-                    console.error('Failed to load admin dashboard');
-                    // Show 0 for all stats if API fails
-                    document.getElementById('totalUsers').textContent = 0;
-                    document.getElementById('totalStaff').textContent = 0;
-                    document.getElementById('totalComplaints').textContent = 0;
-                    document.getElementById('resolvedToday').textContent = 0;
+                    updateStats({
+                        totalUsers: 0,
+                        totalStaff: 0,
+                        totalComplaints: 0,
+                        resolvedComplaints: 0
+                    });
                 }
-            } catch (error) {
-                console.error('Error loading admin dashboard:', error);
-                // Show 0 for all stats on error
-                document.getElementById('totalUsers').textContent = 0;
-                document.getElementById('totalStaff').textContent = 0;
-                document.getElementById('totalComplaints').textContent = 0;
-                document.getElementById('resolvedToday').textContent = 0;
-            }
-        }
 
-        async function loadRecentComplaints() {
-            try {
-                const response = await fetch('http://localhost:9090/api/admin/complaints');
-                if (response.ok) {
-                    const complaints = await response.json();
-                    console.log('Loaded', complaints.length, 'real complaints');
-                    // Show only the 5 most recent complaints, sorted by creation date
-                    const sortedComplaints = complaints.sort((a, b) => new Date(b.createdAt || b.submissionDate) - new Date(a.createdAt || a.submissionDate));
-                    const recentComplaints = sortedComplaints.slice(0, 5);
-                    updateComplaintsTable(recentComplaints);
+                if (complaintsResponse.ok) {
+                    const complaints = await complaintsResponse.json();
+                    const sortedComplaints = complaints
+                        .sort((a, b) => new Date(b.createdAt || b.submissionDate) - new Date(a.createdAt || a.submissionDate));
+                    updateComplaintsTable(sortedComplaints);
                 } else {
-                    console.error('Failed to load complaints');
                     updateComplaintsTable([]);
                 }
             } catch (error) {
-                console.error('Error loading complaints:', error);
+                console.error('Error loading admin dashboard:', error);
+                updateStats({
+                    totalUsers: 0,
+                    totalStaff: 0,
+                    totalComplaints: 0,
+                    resolvedComplaints: 0
+                });
                 updateComplaintsTable([]);
             }
+        }
+
+        function updateStats(data) {
+            // Animate numbers
+            animateNumber('totalUsers', data.totalUsers || 0);
+            animateNumber('totalStaff', data.totalStaff || 0);
+            animateNumber('totalComplaints', data.totalComplaints || 0);
+            animateNumber('resolvedToday', data.resolvedComplaints || 0);
+        }
+
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+
+        async function loadRecentComplaints() {
+            // This function now just calls loadAdminDashboard to ensure consistency
+            loadAdminDashboard();
         }
 
         function updateComplaintsTable(complaints) {
@@ -211,7 +768,19 @@
             tbody.innerHTML = '';
 
             if (!complaints || complaints.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666; padding: 2rem;">No complaints submitted yet</td></tr>';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i data-lucide="clipboard-list" style="font-size: 64px; color: var(--text-muted);"></i></div>
+                                <h3>No complaints yet</h3>
+                                <p>Complaints will appear here when users submit them</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                // Re-initialize icons for the new content
+                lucide.createIcons();
                 return;
             }
 
@@ -221,12 +790,12 @@
                 const timeAgo = getTimeAgo(complaint.createdAt || complaint.submissionDate);
 
                 row.innerHTML = `
-                    <td>${complaint.complaintId || 'N/A'}</td>
+                    <td><strong>#${complaint.complaintId || 'N/A'}</strong></td>
                     <td>${complaint.userEmail || 'Unknown'}</td>
                     <td>${complaint.issueType || complaint.description?.substring(0, 30) + '...' || 'No description'}</td>
-                    <td><span class="tag ${statusClass}">${complaint.status || 'PENDING'}</span></td>
+                    <td><span class="status-badge ${statusClass}">${formatStatus(complaint.status)}</span></td>
                     <td>${timeAgo}</td>
-                    <td><a href="admin-complaint-details.html?id=${complaint.id || complaint.complaintId}" class="view-link">View</a></td>
+                    <td><a href="admin-complaint-details.html?id=${complaint.complaintId}" class="action-link">View</a></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -234,10 +803,19 @@
 
         function getStatusClass(status) {
             switch(status) {
-                case 'PENDING': return 'yellow';
-                case 'IN_PROGRESS': return 'blue';
-                case 'RESOLVED': return 'green';
-                default: return 'gray';
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
+            }
+        }
+
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return 'Pending';
             }
         }
 
@@ -257,65 +835,61 @@
             return `${diffDays}d ago`;
         }
 
+        function showUserMenu() {
+            if (confirm('Do you want to logout?')) {
+                logout();
+            }
+        }
+
         async function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                try {
-                    const staff = JSON.parse(localStorage.getItem('staff'));
-                    if (staff && staff.email) {
-                        await fetch('http://localhost:9090/api/staff/logout', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ email: staff.email })
-                        });
-                    }
-                } catch (error) {
-                    console.error('Logout error:', error);
-                } finally {
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    window.location.href = 'index.html';
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch(getApiUrl('/api/staff/logout'), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
                 }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'index.html';
             }
         }
         
         async function createBackup() {
             if (confirm('Create a system backup? This may take a few minutes.')) {
                 try {
-                    const response = await fetch('http://localhost:9090/api/admin/backup', {
+                    const response = await fetch(getApiUrl('/api/admin/backup'), {
                         method: 'POST'
                     });
                     
                     if (response.ok) {
                         const data = await response.json();
                         if (data.status === 'success') {
-                            if (confirm(`Backup created successfully! Backup ID: ${data.backupId || 'BACKUP_' + Date.now()}`)) {
-                                // Backup success
-                            }
+                            alert(`Backup created successfully! Backup ID: ${data.backupId || 'BACKUP_' + Date.now()}`);
                         } else {
-                            if (confirm('Failed to create backup: ' + (data.message || 'Unknown error'))) {
-                                // Retry or handle error
-                            }
+                            alert('Failed to create backup: ' + (data.message || 'Unknown error'));
                         }
                     } else {
-                        if (confirm('Backup service temporarily unavailable. Try again later?')) {
-                            // Retry later
-                        }
+                        alert('Backup service temporarily unavailable. Try again later.');
                     }
                 } catch (error) {
                     console.error('Error creating backup:', error);
-                    if (confirm('Failed to create backup. Check connection and try again?')) {
-                        // Retry
-                    }
+                    alert('Failed to create backup. Check connection and try again.');
                 }
             }
         }
         
         async function initRealData() {
-            if (confirm('Create 5 users, 5 staff members, and 5 complaints?')) {
+            if (confirm('Create sample users, staff members, and complaints?')) {
                 try {
-                    const response = await fetch('http://localhost:9090/api/admin/init-data', {
+                    const response = await fetch(getApiUrl('/api/admin/init-data'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

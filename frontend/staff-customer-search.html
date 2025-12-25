@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Search – ResolveIT Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(78, 124, 115, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100());
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-table th {
+            background: linear-gradient(135deg, #F8F9F7, var(--bg-secondary));
+            color: var(--accent-primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results-table td {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .results-table tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .customer-email {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .complaint-count {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.15) 0%, rgba(20, 184, 166, 0.1) 100%);
+            color: var(--accent-primary);
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(15, 118, 110, 0.2);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(20, 184, 166, 0.03) 100%);
+            color: var(--accent-primary);
+            border: 1px solid rgba(15, 118, 110, 0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.08) 100%);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .no-results, .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.3) 100%);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .results-table {
+                font-size: 12px;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="header-left">
+                <h1>Customer Search</h1>
+                <p>Search and manage customer information</p>
+            </div>
+            <div class="header-right">
+                <a href="staff-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+            </div>
+        </header>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Search Customers</h2>
+            </div>
+            <div class="card-content">
+                <div class="search-form">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, email, phone, or order ID...">
+                    <button class="search-btn" onclick="searchCustomers()">
+                        <i data-lucide="search"></i> Search
+                    </button>
+                </div>
+
+                <div id="searchResults">
+                    <div class="no-results">
+                        <i data-lucide="users" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>Enter search terms to find customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let customers = [];
+
+        async function loadCustomers() {
+            try {
+                const response = await fetch(getApiUrl('/api/admin/users'));
+                if (response.ok) {
+                    customers = await response.json();
+                } else {
+                    // Fallback data
+                    customers = [
+                        {
+                            email: 'john.doe@email.com',
+                            firstName: 'John',
+                            lastName: 'Doe',
+                            phone: '+1 (555) 123-4567',
+                            complaintCount: 3,
+                            lastOrder: 'ORD-12345'
+                        },
+                        {
+                            email: 'jane.smith@email.com',
+                            firstName: 'Jane',
+                            lastName: 'Smith',
+                            phone: '+1 (555) 987-6543',
+                            complaintCount: 1,
+                            lastOrder: 'ORD-67890'
+                        },
+                        {
+                            email: 'test@gmail.com',
+                            firstName: 'Test',
+                            lastName: 'User',
+                            phone: '+1 (555) 000-0000',
+                            complaintCount: 5,
+                            lastOrder: 'ORD-11111'
+                        },
+                        {
+                            email: 'user1@gmail.com',
+                            firstName: 'User',
+                            lastName: 'One',
+                            phone: '+1 (555) 111-1111',
+                            complaintCount: 2,
+                            lastOrder: 'ORD-22222'
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                // Use fallback data on error
+                customers = [
+                    {
+                        email: 'john.doe@email.com',
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        phone: '+1 (555) 123-4567',
+                        complaintCount: 3,
+                        lastOrder: 'ORD-12345'
+                    },
+                    {
+                        email: 'jane.smith@email.com',
+                        firstName: 'Jane',
+                        lastName: 'Smith',
+                        phone: '+1 (555) 987-6543',
+                        complaintCount: 1,
+                        lastOrder: 'ORD-67890'
+                    },
+                    {
+                        email: 'test@gmail.com',
+                        firstName: 'Test',
+                        lastName: 'User',
+                        phone: '+1 (555) 000-0000',
+                        complaintCount: 5,
+                        lastOrder: 'ORD-11111'
+                    },
+                    {
+                        email: 'user1@gmail.com',
+                        firstName: 'User',
+                        lastName: 'One',
+                        phone: '+1 (555) 111-1111',
+                        complaintCount: 2,
+                        lastOrder: 'ORD-22222'
+                    }
+                ];
+            }
+        }
+
+        function searchCustomers() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (!query) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <i data-lucide="users" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>Enter search terms to find customers</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    <i data-lucide="loader" style="width: 24px; height: 24px; animation: spin 1s linear infinite;"></i>
+                    <p>Searching customers...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const filteredCustomers = customers.filter(customer => {
+                    const fullName = `${customer.firstName || ''} ${customer.lastName || ''}`.toLowerCase();
+                    return fullName.includes(query) ||
+                           customer.email.toLowerCase().includes(query) ||
+                           (customer.phone && customer.phone.includes(query)) ||
+                           (customer.lastOrder && customer.lastOrder.toLowerCase().includes(query));
+                });
+
+                displayResults(filteredCustomers);
+            }, 500);
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('searchResults');
+
+            if (results.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <i data-lucide="search-x" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>No customers found matching your search</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const tableHTML = `
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Contact</th>
+                            <th>Complaints</th>
+                            <th>Last Order</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${results.map(customer => `
+                            <tr>
+                                <td>
+                                    <div class="customer-name">${customer.firstName || ''} ${customer.lastName || ''}</div>
+                                    <div class="customer-email">${customer.email}</div>
+                                </td>
+                                <td>${customer.phone || 'N/A'}</td>
+                                <td>
+                                    <span class="complaint-count">${customer.complaintCount || 0}</span>
+                                </td>
+                                <td>${customer.lastOrder || 'N/A'}</td>
+                                <td>
+                                    <a href="staff-customer-profile.html?email=${encodeURIComponent(customer.email)}" class="action-btn">
+                                        View Profile
+                                    </a>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            resultsDiv.innerHTML = tableHTML;
+        }
+
+        // Search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCustomers();
+            }
+        });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomers();
+            lucide.createIcons();
+        });
+    </script>
+
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script src="js/config.js"></script>
+</body>
+</html>

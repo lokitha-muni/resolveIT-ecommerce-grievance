@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Reports – ResolveIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* User Menu Dropdown */
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 180px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu.active .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin: 4px;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+            color: var(--accent-primary);
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            height: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 64px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0f766e 0%, #14b8a6 50%, #2dd4bf 100%);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100());
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            color: white;
+        }
+
+        .stat-icon.complaints {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .stat-icon.resolved {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100());
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-icon.time {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100());
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .stat-icon.satisfaction {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100());
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1e293b;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0 8px 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: #059669;
+        }
+
+        .stat-change.negative {
+            color: #dc2626;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100());
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(248,250,252,0.6) 100());
+            padding: 16px;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            margin: 0 -20px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.08) 100());
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-primary);
+            border: 1px solid rgba(15, 118, 110, 0.1);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="header-left">
+                <h1>Staff Reports</h1>
+                <p>Analytics and performance insights</p>
+            </div>
+            <div class="header-right">
+                <a href="staff-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <div class="user-menu" onclick="toggleUserMenu()">
+                    <div class="user-avatar" id="userAvatar">S</div>
+                    <span id="userName">Staff</span>
+                    <div class="user-dropdown">
+                        <a href="staff-profile.html" class="dropdown-item">
+                            <i data-lucide="user"></i>
+                            <span>Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="logout(); return false;">
+                            <i data-lucide="log-out"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Total Complaints</span>
+                    <div class="stat-icon complaints">
+                        <i data-lucide="file-text"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalComplaints">0</div>
+                <div class="stat-change positive">+12% from last month</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Resolved Today</span>
+                    <div class="stat-icon resolved">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="resolvedToday">0</div>
+                <div class="stat-change positive">+8% from yesterday</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Avg Response Time</span>
+                    <div class="stat-icon time">
+                        <i data-lucide="clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="avgResponseTime">2.1h</div>
+                <div class="stat-change positive">-15% improvement</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Customer Satisfaction</span>
+                    <div class="stat-icon satisfaction">
+                        <i data-lucide="star"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="customerSatisfaction">4.8</div>
+                <div class="stat-change positive">+0.2 from last week</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="left-column">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Complaint Trends</h2>
+                        <div class="btn btn-secondary" onclick="refreshTrendsChart()">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="trendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Issue Categories</h2>
+                        <div class="btn btn-secondary" onclick="refreshCategoriesChart()">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="categoriesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Activity</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i data-lucide="check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Complaint CMP-001 resolved</div>
+                                <div class="activity-time">2 minutes ago</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i data-lucide="message-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New message from customer</div>
+                                <div class="activity-time">15 minutes ago</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i data-lucide="user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Complaint CMP-007 assigned</div>
+                                <div class="activity-time">1 hour ago</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i data-lucide="alert-triangle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">High priority complaint received</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let trendsChart = null;
+        let categoriesChart = null;
+
+        async function loadReportsData() {
+            try {
+                // Load multiple endpoints for comprehensive data
+                const [statsResponse, complaintsResponse, activityResponse] = await Promise.all([
+                    fetch(getApiUrl('/api/complaints/stats')),
+                    fetch(getApiUrl('/api/complaints/all')),
+                    fetch(getApiUrl('/api/complaints/recent-activity'))
+                ]);
+
+                let stats = {};
+                let complaints = [];
+                let activities = [];
+
+                // Get stats data
+                if (statsResponse.ok) {
+                    stats = await statsResponse.json();
+                }
+
+                // Get complaints data for calculations
+                if (complaintsResponse.ok) {
+                    complaints = await complaintsResponse.json();
+                }
+
+                // Get activity data
+                if (activityResponse.ok) {
+                    activities = await activityResponse.json();
+                } else {
+                    // Fallback to complaint history for activity
+                    activities = generateActivityFromComplaints(complaints);
+                }
+
+                // Calculate metrics from real data
+                const calculatedStats = calculateMetrics(complaints);
+                updateStats({ ...stats, ...calculatedStats });
+                updateActivity(activities);
+                
+                // Initialize charts
+                initializeCharts(complaints);
+
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                // Load from complaints endpoint as fallback
+                loadFallbackData();
+            }
+        }
+
+        async function loadFallbackData() {
+            try {
+                const response = await fetch(getApiUrl('/api/complaints/all'));
+                if (response.ok) {
+                    const complaints = await response.json();
+                    const stats = calculateMetrics(complaints);
+                    updateStats(stats);
+                    updateActivity(generateActivityFromComplaints(complaints));
+                    initializeCharts(complaints);
+                } else {
+                    // Use minimal fallback
+                    updateStats({ totalComplaints: 0, resolvedToday: 0 });
+                }
+            } catch (error) {
+                console.error('Fallback data load failed:', error);
+                updateStats({ totalComplaints: 0, resolvedToday: 0 });
+                initializeCharts([]);
+            }
+        }
+
+        function initializeCharts(complaints) {
+            initializeTrendsChart(complaints);
+            initializeCategoriesChart(complaints);
+        }
+
+        function initializeTrendsChart(complaints) {
+            const ctx = document.getElementById('trendsChart').getContext('2d');
+            
+            if (trendsChart) {
+                trendsChart.destroy();
+            }
+            
+            // Generate last 7 days data
+            const last7Days = [];
+            const complaintsData = [];
+            const resolvedData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                last7Days.push(dateStr);
+                
+                // Count complaints for this day
+                const dayComplaints = complaints.filter(c => {
+                    const complaintDate = new Date(c.createdAt);
+                    return complaintDate.toDateString() === date.toDateString();
+                }).length;
+                
+                const dayResolved = complaints.filter(c => {
+                    if (c.status === 'RESOLVED' && c.updatedAt) {
+                        const resolvedDate = new Date(c.updatedAt);
+                        return resolvedDate.toDateString() === date.toDateString();
+                    }
+                    return false;
+                }).length;
+                
+                complaintsData.push(dayComplaints);
+                resolvedData.push(dayResolved);
+            }
+            
+            trendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: last7Days,
+                    datasets: [{
+                        label: 'New Complaints',
+                        data: complaintsData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }, {
+                        label: 'Resolved',
+                        data: resolvedData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                color: '#64748b'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                color: '#64748b'
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 8
+                        }
+                    }
+                }
+            });
+        }
+
+        function initializeCategoriesChart(complaints) {
+            const ctx = document.getElementById('categoriesChart').getContext('2d');
+            
+            if (categoriesChart) {
+                categoriesChart.destroy();
+            }
+            
+            // Count complaints by issue type
+            const categories = {};
+            complaints.forEach(complaint => {
+                const category = complaint.issueType || 'Other';
+                categories[category] = (categories[category] || 0) + 1;
+            });
+            
+            // If no data, show sample data
+            if (Object.keys(categories).length === 0) {
+                categories['Delivery Issues'] = 15;
+                categories['Product Quality'] = 8;
+                categories['Payment Issues'] = 5;
+                categories['Customer Service'] = 3;
+                categories['Other'] = 2;
+            }
+            
+            const labels = Object.keys(categories);
+            const data = Object.values(categories);
+            const colors = [
+                '#3b82f6',
+                '#10b981',
+                '#f59e0b',
+                '#8b5cf6',
+                '#ef4444',
+                '#06b6d4',
+                '#84cc16'
+            ];
+            
+            categoriesChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverBorderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%',
+                    elements: {
+                        arc: {
+                            hoverBackgroundColor: function(ctx) {
+                                return ctx.element.options.backgroundColor;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function refreshTrendsChart() {
+            loadReportsData();
+        }
+
+        function refreshCategoriesChart() {
+            loadReportsData();
+        }
+
+        function calculateMetrics(complaints) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const totalComplaints = complaints.length;
+            const resolvedToday = complaints.filter(c => {
+                if (c.status === 'RESOLVED' && c.updatedAt) {
+                    const updatedDate = new Date(c.updatedAt);
+                    updatedDate.setHours(0, 0, 0, 0);
+                    return updatedDate.getTime() === today.getTime();
+                }
+                return false;
+            }).length;
+
+            const pendingComplaints = complaints.filter(c => c.status === 'PENDING').length;
+            const inProgressComplaints = complaints.filter(c => c.status === 'IN_PROGRESS').length;
+
+            return {
+                totalComplaints,
+                resolvedToday,
+                pendingComplaints,
+                inProgressComplaints
+            };
+        }
+
+        function generateActivityFromComplaints(complaints) {
+            const activities = [];
+            const now = new Date();
+            
+            // Get recent complaints (last 24 hours)
+            complaints.forEach(complaint => {
+                const createdAt = new Date(complaint.createdAt);
+                const timeDiff = now - createdAt;
+                const hoursDiff = timeDiff / (1000 * 60 * 60);
+                
+                if (hoursDiff <= 24) {
+                    activities.push({
+                        type: 'complaint_created',
+                        title: `New complaint ${complaint.complaintId} received`,
+                        time: formatTimeAgo(createdAt),
+                        icon: 'alert-triangle'
+                    });
+                }
+                
+                if (complaint.status === 'RESOLVED' && complaint.updatedAt) {
+                    const updatedAt = new Date(complaint.updatedAt);
+                    const updateHoursDiff = (now - updatedAt) / (1000 * 60 * 60);
+                    
+                    if (updateHoursDiff <= 24) {
+                        activities.push({
+                            type: 'complaint_resolved',
+                            title: `Complaint ${complaint.complaintId} resolved`,
+                            time: formatTimeAgo(updatedAt),
+                            icon: 'check'
+                        });
+                    }
+                }
+                
+                if (complaint.assignedTo && complaint.updatedAt) {
+                    const updatedAt = new Date(complaint.updatedAt);
+                    const updateHoursDiff = (now - updatedAt) / (1000 * 60 * 60);
+                    
+                    if (updateHoursDiff <= 24) {
+                        activities.push({
+                            type: 'complaint_assigned',
+                            title: `Complaint ${complaint.complaintId} assigned`,
+                            time: formatTimeAgo(updatedAt),
+                            icon: 'user-plus'
+                        });
+                    }
+                }
+            });
+            
+            // Sort by most recent and limit to 10
+            return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
+        }
+
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffMins < 60) {
+                return `${diffMins} minutes ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            } else {
+                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalComplaints').textContent = data.totalComplaints || 0;
+            document.getElementById('resolvedToday').textContent = data.resolvedToday || 0;
+            
+            // Animate counters
+            animateCounter('totalComplaints', data.totalComplaints || 0);
+            animateCounter('resolvedToday', data.resolvedToday || 0);
+        }
+
+        function updateActivity(activities) {
+            const activityContainer = document.querySelector('.right-column .card-content');
+            if (!activities || activities.length === 0) {
+                activityContainer.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i data-lucide="info"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">No recent activity</div>
+                            <div class="activity-time">Check back later</div>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const activityHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i data-lucide="${activity.icon || 'activity'}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            activityContainer.innerHTML = activityHTML;
+            lucide.createIcons();
+        }
+
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            const duration = 1000;
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReportsData();
+            loadUserData();
+            
+            // Initialize icons immediately and after any DOM changes
+            lucide.createIcons();
+            
+            // Re-initialize icons after a short delay to ensure all elements are rendered
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
+        });
+
+        async function loadUserData() {
+            const staff = JSON.parse(localStorage.getItem('staff'));
+            if (!staff || !staff.email) {
+                window.location.href = 'staff-login.html';
+                return;
+            }
+            
+            let displayName = 'Staff';
+            if (staff.email === 'staff@gmail.com') {
+                displayName = 'Support';
+            } else if (staff.email === 'admin@gmail.com') {
+                displayName = 'Admin';
+            }
+            
+            document.getElementById('userName').textContent = displayName;
+            document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.firstName) {
+                        document.getElementById('userName').textContent = data.firstName;
+                        document.getElementById('userAvatar').textContent = data.firstName.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading staff profile:', error);
+            }
+        }
+
+        function toggleUserMenu() {
+            const userMenu = document.querySelector('.user-menu');
+            userMenu.classList.toggle('active');
+            
+            document.addEventListener('click', function closeMenu(e) {
+                if (!userMenu.contains(e.target)) {
+                    userMenu.classList.remove('active');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+
+        async function logout() {
+            try {
+                const staff = JSON.parse(localStorage.getItem('staff'));
+                if (staff && staff.email) {
+                    await fetch(getApiUrl('/api/staff/logout'), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: staff.email })
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+    <script src="js/config.js"></script>
+</body>
+</html>

@@ -3,101 +3,625 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard – ResolveIT Delivery Grievance System</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="search-styles.css">
-    <link rel="stylesheet" href="css/ui-enhancements.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="dashboard-body">
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
-
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='edit-profile.html'" id="profilePhoto">U</div>
-                <span id="userGreeting">Hi, User</span>
-            </div>
-            <div class="nav-right">
-                <button onclick="loadDashboardData()" class="nav-btn" style="background: #f8f9fa; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; margin-right: 1rem;">🔄 Refresh</button>
-                <div class="bell-icon" onclick="toggleNotifications()">🔔<span class="notification-badge">0</span></div>
-                <button onclick="logout()" class="logout-btn">Logout</button>
-            </div>
-        </nav>
-
-        <section class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-label">Total Complaints</div>
-                <div class="stat-number" id="totalComplaints">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-label">Pending</div>
-                <div class="stat-number" id="pendingComplaints">0</div>
-            </div>
-            <div class="stat-card progress-card">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-label">In Progress</div>
-                <div class="stat-number" id="inProgressComplaints">0</div>
-            </div>
-            <div class="stat-card resolved-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Resolved</div>
-                <div class="stat-number" id="resolvedComplaints">0</div>
-            </div>
-        </section>
-
-        <div class="action-button-container">
-            <button class="primary-action-btn" onclick="window.location.href='submit-complaint.html'">Submit New Order Issue</button>
-            <button class="secondary-action-btn" onclick="toggleSearchFilter()">🔍 Search & Filter</button>
-            <button class="secondary-action-btn" onclick="exportData()">📥 Export Data</button>
-        </div>
-        
-        <section class="complaints-section">
-            <div class="complaints-card">
-                <h2>Recent Complaints</h2>
-                <div class="table-container">
-                    <table class="complaints-table">
-                        <thead>
-                            <tr>
-                                <th>Complaint ID</th>
-                                <th>Order ID</th>
-                                <th>Issue Type</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="complaintsTableBody">
-                            <tr><td colspan="6" style="text-align: center;">Loading complaints...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <script src="js/ui-enhancements.js"></script>
-    <script src="js/security.js"></script>
-    <script>
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.href = 'index.html';
-            }
+    <title>Dashboard – ResolveIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+            --status-pending-bg: #F5EEDC;
+            --status-pending-text: #8A6D3B;
+            --status-progress-bg: #E8EEF3;
+            --status-progress-text: #4A647D;
+            --status-resolved-bg: #E9F3EC;
+            --status-resolved-text: #3F6F58;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .user-menu:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            box-shadow: var(--shadow-hover);
+            min-width: 180px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+        }
+
+        .dropdown-item.logout:hover {
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 64px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0f766e 0%, #14b8a6 50%, #2dd4bf 100%);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            font-size: 22px;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0 8px 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: center;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #F8F9F7, var(--bg-secondary));
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            text-align: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            color: #92400e;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .status-in-progress {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+            color: #1d4ed8;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-resolved {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 100%);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 32px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Action Link */
+        .action-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .action-link:hover {
+            background: var(--bg-secondary);
+            color: #3F6B62;
+        }
+
+        /* Loading Animation */
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Dashboard</h1>
+                <p id="userGreeting">Welcome back to your control center</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="loadDashboardData()">
+                    <i data-lucide="refresh-cw"></i> Refresh
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='submit-complaint.html'">
+                    <i data-lucide="plus"></i> New Complaint
+                </button>
+                <div class="user-menu" onclick="toggleUserMenu()">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span id="userName">User</span>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="edit-profile.html" class="dropdown-item">
+                            <i data-lucide="user"></i> Profile
+                        </a>
+                        <a href="#" class="dropdown-item logout" onclick="logout(); return false;">
+                            <i data-lucide="log-out"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+                <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-header">
+                    <div class="stat-label">Total Complaints</div>
+                    <div class="stat-icon"><i data-lucide="clipboard-list"></i></div>
+                </div>
+                <div class="stat-value" id="totalComplaints">0</div>
+                <div class="stat-change">All time submissions</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-header">
+                    <div class="stat-label">Pending Review</div>
+                    <div class="stat-icon"><i data-lucide="clock"></i></div>
+                </div>
+                <div class="stat-value" id="pendingComplaints">0</div>
+                <div class="stat-change">Awaiting staff review</div>
+            </div>
+            <div class="stat-card in-progress">
+                <div class="stat-header">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-icon"><i data-lucide="refresh-cw"></i></div>
+                </div>
+                <div class="stat-value" id="inProgressComplaints">0</div>
+                <div class="stat-change">Being actively resolved</div>
+            </div>
+            <div class="stat-card resolved">
+                <div class="stat-header">
+                    <div class="stat-label">Resolved</div>
+                    <div class="stat-icon"><i data-lucide="check-circle"></i></div>
+                </div>
+                <div class="stat-value" id="resolvedComplaints">0</div>
+                <div class="stat-change">Successfully completed</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Complaints</h2>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        <i data-lucide="download"></i> Export
+                    </button>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Complaint ID</th>
+                                    <th>Order ID</th>
+                                    <th>Issue Type</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaintsTableBody">
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <div class="empty-state-icon"><i data-lucide="clipboard-list" style="font-size: 64px; color: var(--text-muted);"></i></div>
+                                            <h3>Loading your complaints...</h3>
+                                            <p>Please wait while we fetch your data</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboardData();
-        });
-
-        window.addEventListener('focus', function() {
-            loadDashboardData();
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
         });
 
         async function loadDashboardData() {
@@ -108,33 +632,62 @@
                     return;
                 }
 
+                // Update user info
                 const displayName = user.email.split('@')[0];
-                document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
-                document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
+                document.getElementById('userGreeting').textContent = `Welcome back, ${displayName}`;
+                document.getElementById('userName').textContent = displayName;
+                document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
 
-                const response = await fetch(`http://localhost:9090/api/complaints/user/${user.email}`);
+                // Load complaints data
+                const response = await fetch(getApiUrl(`/api/complaints/user/${user.email}`));
                 
                 if (response.ok) {
                     const complaints = await response.json();
-                    
-                    const totalComplaints = complaints.length;
-                    const pendingComplaints = complaints.filter(c => c.status === 'PENDING').length;
-                    const inProgressComplaints = complaints.filter(c => c.status === 'IN_PROGRESS').length;
-                    const resolvedComplaints = complaints.filter(c => c.status === 'RESOLVED').length;
-                    
-                    document.getElementById('totalComplaints').textContent = totalComplaints;
-                    document.getElementById('pendingComplaints').textContent = pendingComplaints;
-                    document.getElementById('inProgressComplaints').textContent = inProgressComplaints;
-                    document.getElementById('resolvedComplaints').textContent = resolvedComplaints;
-                    
+                    updateStats(complaints);
                     updateComplaintsTable(complaints);
                 } else {
+                    updateStats([]);
                     updateComplaintsTable([]);
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
+                updateStats([]);
                 updateComplaintsTable([]);
             }
+        }
+
+        function updateStats(complaints) {
+            const total = complaints.length;
+            const pending = complaints.filter(c => c.status === 'PENDING').length;
+            const inProgress = complaints.filter(c => c.status === 'IN_PROGRESS').length;
+            const resolved = complaints.filter(c => c.status === 'RESOLVED').length;
+
+            // Animate numbers
+            animateNumber('totalComplaints', total);
+            animateNumber('pendingComplaints', pending);
+            animateNumber('inProgressComplaints', inProgress);
+            animateNumber('resolvedComplaints', resolved);
+        }
+
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
         }
 
         function updateComplaintsTable(complaints) {
@@ -142,7 +695,22 @@
             tbody.innerHTML = '';
 
             if (complaints.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">No complaints found</td></tr>';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i data-lucide="clipboard-list" style="font-size: 64px; color: var(--text-muted);"></i></div>
+                                <h3>No complaints yet</h3>
+                                <p>When you submit complaints, they'll appear here for easy tracking.</p>
+                                <button class="btn btn-primary" onclick="window.location.href='submit-complaint.html'">
+                                    <i data-lucide="plus"></i> Submit Your First Complaint
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                // Re-initialize icons for the new content
+                lucide.createIcons();
                 return;
             }
 
@@ -152,12 +720,12 @@
                 const timeAgo = getTimeAgo(complaint.createdAt);
 
                 row.innerHTML = `
-                    <td>${complaint.complaintId || 'N/A'}</td>
+                    <td><strong>#${complaint.complaintId || 'N/A'}</strong></td>
                     <td>${complaint.orderId || 'N/A'}</td>
                     <td>${complaint.issueType || 'N/A'}</td>
-                    <td><span class="tag ${statusClass}">${complaint.status || 'PENDING'}</span></td>
+                    <td><span class="status-badge ${statusClass}">${formatStatus(complaint.status)}</span></td>
                     <td>${timeAgo}</td>
-                    <td><a href="complaint-details.html?id=${complaint.complaintId}" class="view-link">View</a></td>
+                    <td><a href="complaint-details.html?id=${complaint.complaintId}" class="action-link">View Details</a></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -165,10 +733,19 @@
 
         function getStatusClass(status) {
             switch(status) {
-                case 'PENDING': return 'orange';
-                case 'IN_PROGRESS': return 'blue';
-                case 'RESOLVED': return 'green';
-                default: return 'gray';
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'RESOLVED': return 'status-resolved';
+                default: return 'status-pending';
+            }
+        }
+
+        function formatStatus(status) {
+            switch(status) {
+                case 'PENDING': return 'Pending';
+                case 'IN_PROGRESS': return 'In Progress';
+                case 'RESOLVED': return 'Resolved';
+                default: return 'Pending';
             }
         }
 
@@ -183,21 +760,41 @@
             const diffDays = Math.floor(diffHours / 24);
 
             if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins} mins ago`;
-            if (diffHours < 24) return `${diffHours} hours ago`;
-            return `${diffDays} days ago`;
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return `${diffDays}d ago`;
         }
 
-        function toggleNotifications() {
-            console.log('Notifications clicked');
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
         }
 
-        function toggleSearchFilter() {
-            console.log('Search filter clicked');
+        function showUserMenu() {
+            if (confirm('Do you want to logout?')) {
+                logout();
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (!userMenu.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function logout() {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'index.html';
         }
 
         function exportData() {
-            console.log('Export data clicked');
+            console.log('Export functionality would be implemented here');
+            alert('Export feature coming soon! 📊');
         }
     </script>
 </body>

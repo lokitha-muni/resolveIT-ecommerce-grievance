@@ -8,14 +8,12 @@ import com.example.test_spring.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -36,16 +34,11 @@ public class ComplaintController {
             @RequestBody ComplaintRequest request,
             @RequestParam String userEmail) {
         
-        System.out.println("Complaint submission received for user: " + userEmail);
-        System.out.println("Request data: " + request.getIssueType() + " - " + request.getIssueTitle());
-        
         Map<String, String> response = new HashMap<>();
         
         try {
-            // Generate complaint ID
             String complaintId = "CMP-" + System.currentTimeMillis();
             
-            // Create complaint
             Complaint complaint = new Complaint();
             complaint.setComplaintId(complaintId);
             complaint.setUserEmail(userEmail);
@@ -57,10 +50,8 @@ public class ComplaintController {
             complaint.setContactPhone(request.getContactPhone());
             complaint.setExpectedResolution(request.getExpectedResolution());
             
-            // Save complaint
             complaintRepository.save(complaint);
             
-            // Create notification
             Notification notification = new Notification(
                 userEmail,
                 "Complaint Submitted",
@@ -76,8 +67,6 @@ public class ComplaintController {
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
-            System.err.println("Error submitting complaint: " + e.getMessage());
-            e.printStackTrace();
             response.put("status", "error");
             response.put("message", "Failed to submit complaint: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
@@ -100,16 +89,13 @@ public class ComplaintController {
         Map<String, String> response = new HashMap<>();
         
         try {
-            // Generate complaint ID
             String complaintId = "CMP-" + System.currentTimeMillis();
             
-            // Handle file uploads
             List<String> filePaths = new ArrayList<>();
             if (attachments != null && attachments.length > 0) {
                 filePaths = saveUploadedFiles(attachments, complaintId);
             }
             
-            // Create complaint
             Complaint complaint = new Complaint();
             complaint.setComplaintId(complaintId);
             complaint.setUserEmail(userEmail);
@@ -122,10 +108,8 @@ public class ComplaintController {
             complaint.setExpectedResolution(expectedResolution);
             complaint.setAttachments(filePaths);
             
-            // Save complaint
             complaintRepository.save(complaint);
             
-            // Create notification
             Notification notification = new Notification(
                 userEmail,
                 "Complaint Submitted",
@@ -141,8 +125,6 @@ public class ComplaintController {
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
-            System.err.println("Error submitting complaint with files: " + e.getMessage());
-            e.printStackTrace();
             response.put("status", "error");
             response.put("message", "Failed to submit complaint: " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
@@ -152,7 +134,6 @@ public class ComplaintController {
     private List<String> saveUploadedFiles(MultipartFile[] files, String complaintId) throws IOException {
         List<String> filePaths = new ArrayList<>();
         
-        // Create upload directory if it doesn't exist
         Path uploadPath = Paths.get(UPLOAD_DIR + complaintId);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
@@ -174,40 +155,65 @@ public class ComplaintController {
     public ResponseEntity<List<Complaint>> getUserComplaints(@PathVariable String userEmail) {
         try {
             List<Complaint> complaints = complaintRepository.findByUserEmailOrderByUpdatedAtDesc(userEmail);
-            System.out.println("Found " + complaints.size() + " complaints for user: " + userEmail);
             return ResponseEntity.ok(complaints);
         } catch (Exception e) {
-            System.err.println("Error fetching user complaints: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/init-sample-data")
-    public ResponseEntity<Map<String, String>> initSampleData() {
+    @GetMapping("/all")
+    public ResponseEntity<List<Complaint>> getAllComplaints() {
         try {
-            return ResponseEntity.ok(Map.of("status", "success", "message", "Sample data endpoint is working"));
+            List<Complaint> complaints = complaintRepository.findAll();
+            return ResponseEntity.ok(complaints);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("status", "error", "message", e.getMessage()));
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping("/create-sample")
-    public ResponseEntity<Map<String, String>> createSample() {
+    @GetMapping("/file/{complaintId}/{fileName}")
+    public ResponseEntity<org.springframework.core.io.Resource> getFile(
+            @PathVariable String complaintId, 
+            @PathVariable String fileName) {
         try {
-            for (int i = 1; i <= 3; i++) {
-                Complaint complaint = new Complaint();
-                complaint.setComplaintId("CMP-" + String.format("%04d", i));
-                complaint.setUserEmail("test@gmail.com");
-                complaint.setOrderId("ORD-10000" + i);
-                complaint.setIssueType(i == 1 ? "Late Delivery" : i == 2 ? "Wrong Product" : "Damaged Product");
-                complaint.setDescription("Sample complaint #" + i);
-                complaint.setStatus(i == 1 ? "PENDING" : i == 2 ? "IN_PROGRESS" : "RESOLVED");
-                complaint.setPriority("Medium");
-                complaintRepository.save(complaint);
+            String decodedFileName = java.net.URLDecoder.decode(fileName, "UTF-8");
+            Path filePath = Paths.get(UPLOAD_DIR + complaintId + "/" + decodedFileName);
+            
+            if (!Files.exists(filePath)) {
+                Path uploadDir = Paths.get(UPLOAD_DIR + complaintId);
+                if (Files.exists(uploadDir)) {
+                    Optional<Path> matchingFile = Files.list(uploadDir)
+                        .filter(f -> f.getFileName().toString().contains(decodedFileName.substring(0, Math.min(20, decodedFileName.length()))))
+                        .findFirst();
+                    
+                    if (matchingFile.isPresent()) {
+                        filePath = matchingFile.get();
+                    }
+                }
             }
-            return ResponseEntity.ok(Map.of("status", "success", "message", "Created 3 sample complaints"));
+            
+            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(filePath.toUri());
+            
+            if (resource.exists() && resource.isReadable()) {
+                String contentType = "application/octet-stream";
+                String fileNameLower = filePath.getFileName().toString().toLowerCase();
+                if (fileNameLower.endsWith(".jpg") || fileNameLower.endsWith(".jpeg")) {
+                    contentType = "image/jpeg";
+                } else if (fileNameLower.endsWith(".png")) {
+                    contentType = "image/png";
+                } else if (fileNameLower.endsWith(".gif")) {
+                    contentType = "image/gif";
+                }
+                
+                return ResponseEntity.ok()
+                    .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, contentType)
+                    .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filePath.getFileName() + "\"")
+                    .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of("status", "error", "message", e.getMessage()));
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -220,7 +226,6 @@ public class ComplaintController {
             }
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            System.err.println("Error fetching complaint: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

@@ -4,69 +4,502 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Performance – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="staff-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 64px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0f766e 0%, #14b8a6 50%, #2dd4bf 100%);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100());
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            font-size: 22px;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1e293b;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0 8px 0;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Performance Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-bottom: 64px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+        }
+
+        .metric-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: #0f766e;
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .metric-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Chart Placeholder */
+        .chart-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-content {
+            padding: 32px 40px 40px 40px;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 2px dashed rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-placeholder-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.08) 100%);
+            color: var(--accent-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-placeholder h3 {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-placeholder p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .card-header, .card-content {
+                padding: 20px 24px;
+            }
+
+            .card-header {
+                padding-bottom: 0;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
-
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='staff-profile.html'" id="profilePhoto" style="cursor: pointer;">S</div>
-                <span id="userGreeting">Hi, Staff</span>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>My Performance</h1>
+                <p>Analytics and KPI dashboard</p>
             </div>
-            <div class="nav-right">
-                <a href="staff-dashboard.html" class="nav-btn">Dashboard</a>
-                <a href="staff-my-queue.html" class="nav-btn">My Queue</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+            <div class="header-right">
+                <a href="staff-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <a href="staff-my-queue.html" class="btn btn-secondary">
+                    <i data-lucide="list"></i> My Queue
+                </a>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="profilePhoto">S</div>
+                    <span id="userGreeting">Staff</span>
+                </div>
             </div>
-        </nav>
+        </header>
 
-        <section class="page-header">
-            <h1>My Performance</h1>
-            <p>Analytics and KPI dashboard</p>
-        </section>
-
-        <section class="stats-section">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">📋</div>
-                <div class="stat-label">Total Assigned</div>
-                <div class="stat-number" id="totalAssigned">0</div>
+                <div class="stat-header">
+                    <div class="stat-label">Total Assigned</div>
+                    <div class="stat-icon">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalAssigned">0</div>
+                <div class="stat-change">Complaints assigned to me</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⏳</div>
-                <div class="stat-label">Pending</div>
-                <div class="stat-number" id="pending">0</div>
+                <div class="stat-header">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-icon">
+                        <i data-lucide="clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="pending">0</div>
+                <div class="stat-change">Awaiting action</div>
             </div>
-            <div class="stat-card progress-card">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-label">In Progress</div>
-                <div class="stat-number" id="inProgress">0</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">In Progress</div>
+                    <div class="stat-icon">
+                        <i data-lucide="loader"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="inProgress">0</div>
+                <div class="stat-change">Currently working on</div>
             </div>
-            <div class="stat-card resolved-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Resolved</div>
-                <div class="stat-number" id="resolved">0</div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-label">Resolved</div>
+                    <div class="stat-icon">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="resolved">0</div>
+                <div class="stat-change">Successfully completed</div>
             </div>
-        </section>
+        </div>
 
-        <section class="performance-metrics">
+        <!-- Performance Metrics -->
+        <div class="metrics-grid">
             <div class="metric-card">
                 <h3>Resolution Rate</h3>
                 <div class="metric-value" id="resolutionRate">0%</div>
                 <div class="metric-description">Percentage of resolved complaints</div>
             </div>
-        </section>
+            <div class="metric-card">
+                <h3>Average Response Time</h3>
+                <div class="metric-value" id="avgResponseTime">N/A</div>
+                <div class="metric-description">Time to first response</div>
+            </div>
+            <div class="metric-card">
+                <h3>Customer Rating</h3>
+                <div class="metric-value" id="customerRating">N/A</div>
+                <div class="metric-description">Average customer satisfaction</div>
+            </div>
+        </div>
+
+        <!-- Performance Chart -->
+        <div class="chart-card">
+            <div class="card-header">
+                <h2 class="card-title">Performance Trends</h2>
+                <button class="btn btn-secondary">
+                    <i data-lucide="download"></i> Export
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="chart-placeholder">
+                    <div class="chart-placeholder-icon">
+                        <i data-lucide="bar-chart-3"></i>
+                    </div>
+                    <h3>Performance Chart</h3>
+                    <p>Chart visualization will be implemented here</p>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <script src="js/security.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadPerformanceData();
+            lucide.createIcons();
         });
 
         async function loadPerformanceData() {
@@ -85,16 +518,16 @@
                     displayName = 'Admin';
                 }
                 
-                document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                document.getElementById('userGreeting').textContent = displayName;
                 document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
                 
                 // Load updated name from backend
                 try {
-                    const profileResponse = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                    const profileResponse = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
                     if (profileResponse.ok) {
                         const profileData = await profileResponse.json();
                         if (profileData.firstName) {
-                            document.getElementById('userGreeting').textContent = `Hi, ${profileData.firstName}`;
+                            document.getElementById('userGreeting').textContent = profileData.firstName;
                             document.getElementById('profilePhoto').textContent = profileData.firstName.charAt(0).toUpperCase();
                         }
                     }
@@ -102,28 +535,64 @@
                     console.error('Error loading staff profile:', error);
                 }
 
-                const response = await fetch(`http://localhost:9090/api/staff/performance/${staff.email}`);
-                const data = await response.json();
-
+                const response = await fetch(`http://localhost:8080/api/staff/performance/${staff.email}`);
+                
                 if (response.ok) {
-                    document.getElementById('totalAssigned').textContent = data.totalAssigned;
-                    document.getElementById('pending').textContent = data.pending;
-                    document.getElementById('inProgress').textContent = data.inProgress;
-                    document.getElementById('resolved').textContent = data.resolved;
-                    document.getElementById('resolutionRate').textContent = data.resolutionRate + '%';
+                    const data = await response.json();
+                    
+                    // Animate numbers
+                    animateNumber('totalAssigned', data.totalAssigned || 0);
+                    animateNumber('pending', data.pending || 0);
+                    animateNumber('inProgress', data.inProgress || 0);
+                    animateNumber('resolved', data.resolved || 0);
+                    
+                    document.getElementById('resolutionRate').textContent = (data.resolutionRate || 0) + '%';
+                    document.getElementById('avgResponseTime').textContent = data.avgResponseTime || 'N/A';
+                    document.getElementById('customerRating').textContent = data.customerRating ? `${data.customerRating}/5` : 'N/A';
                 } else {
                     console.error('Failed to load performance data');
+                    // Set default values
+                    animateNumber('totalAssigned', 0);
+                    animateNumber('pending', 0);
+                    animateNumber('inProgress', 0);
+                    animateNumber('resolved', 0);
                 }
             } catch (error) {
                 console.error('Error loading performance data:', error);
+                // Set default values on error
+                animateNumber('totalAssigned', 0);
+                animateNumber('pending', 0);
+                animateNumber('inProgress', 0);
+                animateNumber('resolved', 0);
             }
+        }
+
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
         }
 
         async function logout() {
             try {
                 const staff = JSON.parse(localStorage.getItem('staff'));
                 if (staff && staff.email) {
-                    await fetch('http://localhost:9090/api/staff/logout', {
+                    await fetch(getApiUrl('/api/staff/logout'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -139,5 +608,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

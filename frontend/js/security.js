@@ -257,7 +257,7 @@ class SecurityManager {
         }
 
         try {
-            const response = await fetch('http://localhost:9090/api/auth/validate-token', {
+            const response = await fetch(getApiUrl('/api/auth/validate-token'), {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

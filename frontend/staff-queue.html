@@ -103,7 +103,7 @@
             
             // Load updated name from backend
             try {
-                const response = await fetch(`http://localhost:9090/api/staff/profile/${staff.email}`);
+                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.firstName) {
@@ -118,7 +118,7 @@
 
         async function loadStaffQueue() {
             try {
-                const response = await fetch('http://localhost:9090/api/staff/queue');
+                const response = await fetch(getApiUrl('/api/staff/queue'));
                 const complaints = await response.json();
 
                 if (response.ok) {
@@ -186,7 +186,7 @@
             try {
                 const staff = JSON.parse(localStorage.getItem('staff'));
                 if (staff && staff.email) {
-                    await fetch('http://localhost:9090/api/staff/logout', {
+                    await fetch(getApiUrl('/api/staff/logout'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -206,7 +206,7 @@
         
         async function loadStaffOptions() {
             try {
-                const response = await fetch('http://localhost:9090/api/staff/all');
+                const response = await fetch(getApiUrl('/api/staff/all'));
                 const staff = await response.json();
                 
                 const select = document.getElementById('bulkAssign');
@@ -258,7 +258,7 @@
             }
             
             try {
-                const response = await fetch('http://localhost:9090/api/staff/bulk-update', {
+                const response = await fetch(getApiUrl('/api/staff/bulk-update'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -290,7 +290,7 @@
             if (!staffEmail) return;
             
             try {
-                const response = await fetch('http://localhost:9090/api/staff/assign', {
+                const response = await fetch(getApiUrl('/api/staff/assign'), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -315,5 +315,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

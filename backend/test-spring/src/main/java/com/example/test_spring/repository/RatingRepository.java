@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface RatingRepository extends MongoRepository<Rating, String> {
     Optional<Rating> findByComplaintId(String complaintId);
     boolean existsByComplaintId(String complaintId);
+    void deleteByComplaintId(String complaintId);
 }

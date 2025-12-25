@@ -4,227 +4,375 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users – ResolveIT Admin</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="dashboard-body">
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
-
-    <div class="dashboard-main">
-        <nav class="dashboard-nav">
-            <div class="nav-left">
-                <div class="profile-photo" onclick="window.location.href='admin-profile.html'" id="profilePhoto" style="cursor: pointer;">A</div>
-                <span id="userGreeting">Hi, Admin</span>
-            </div>
-            <div class="nav-right">
-                <a href="admin-dashboard.html" class="nav-btn">Dashboard</a>
-                <a href="admin-staff.html" class="nav-btn">Staff</a>
-                <button onclick="logout()" class="logout-btn">Logout</button>
-            </div>
-        </nav>
-
-        <section class="page-header">
-            <h1>User Management</h1>
-            <p>Manage customer accounts</p>
-        </section>
-
-        <section class="users-section">
-            <div class="users-card">
-                <div class="card-header">
-                    <h2>User Management</h2>
-                    <div class="header-actions">
-                        <button class="refresh-btn" onclick="loadUsers()">🔄 Refresh</button>
-                        <span class="user-count" id="userCount">0 users</span>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th class="col-name">Full Name</th>
-                                <th class="col-email">Email</th>
-                                <th class="col-phone">Phone</th>
-                                <th class="col-address">Address</th>
-                                <th class="col-date">Registered</th>
-                                <th class="col-actions">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <tr><td colspan="6" class="loading-row">Loading users...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <style>
-        .users-section {
-            margin: 2rem 0;
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .users-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+
+        :root {
+            --bg-primary: #F3F4F1;
+            --bg-secondary: #EEF0EC;
+            --bg-card: #FAFAF8;
+            --accent-primary: #4E7C73;
+            --accent-secondary: #7A9E9F;
+            --text-primary: #2F2F2F;
+            --text-secondary: #5F6368;
+            --text-muted: #7A7D81;
+            --border: #E3E5E1;
+            --shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-light: 1px solid rgba(0, 0, 0, 0.06);
+            --success: #059669;
+            --warning: #D97706;
+            --error: #DC2626;
         }
-        
-        .card-header {
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 2rem;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 56px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 36px 44px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
         }
-        
-        .card-header h2 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 1.5rem;
+
+        .header:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
         }
-        
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .user-menu:hover {
+            box-shadow: var(--shadow-hover);
+            background: var(--bg-secondary);
+            border-color: var(--accent-primary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100());
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 16px;
         }
-        
-        .refresh-btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-        }
-        
-        .refresh-btn:hover {
-            background: #0056b3;
-        }
-        
+
         .user-count {
-            color: #6c757d;
-            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-size: 14px;
             font-weight: 500;
         }
-        
+
         .table-container {
             overflow-x: auto;
         }
-        
+
         .users-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
         }
-        
+
         .users-table th {
-            background: #f8f9fa;
-            color: #495057;
-            font-weight: 600;
-            padding: 1rem;
+            background: linear-gradient(135deg, rgba(248,250,252,0.8) 0%, rgba(241,245,249,0.6) 100());
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 24px;
             text-align: left;
-            border-bottom: 2px solid #dee2e6;
-            white-space: nowrap;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
-        
+
         .users-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #dee2e6;
-            vertical-align: middle;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
         }
-        
-        .users-table tbody tr:hover {
-            background: #f8f9fa;
+
+        .users-table tr:hover {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.03) 0%, rgba(20, 184, 166, 0.02) 100());
         }
-        
-        .col-name { width: 20%; }
-        .col-email { width: 25%; }
-        .col-phone { width: 15%; }
-        .col-address { width: 25%; }
-        .col-date { width: 10%; }
-        .col-actions { width: 5%; }
-        
-        .delete-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.2s;
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
         }
-        
-        .delete-btn:hover {
-            background: #c82333;
-        }
-        
-        .loading-row {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            padding: 2rem;
-        }
-        
+
         .user-email {
-            color: #007bff;
+            color: var(--accent-primary);
             text-decoration: none;
         }
-        
-        .user-name {
-            font-weight: 500;
-            color: #2c3e50;
+
+        .user-phone, .user-address, .user-date {
+            color: var(--text-secondary);
         }
-        
-        .user-phone {
-            color: #6c757d;
-        }
-        
+
         .user-address {
-            color: #6c757d;
             max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
-        .user-date {
-            color: #6c757d;
-            font-size: 0.85rem;
+
+        .delete-btn {
+            background: transparent;
+            color: var(--error);
+            border: 1px solid var(--error);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        
+
+        .delete-btn:hover {
+            background: rgba(220, 38, 38, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .loading-row {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
         @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding: 20px 24px;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
             .card-header {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 16px;
                 text-align: center;
+                padding: 20px 24px;
             }
-            
-            .users-table {
-                font-size: 0.8rem;
-            }
-            
+
             .users-table th,
             .users-table td {
-                padding: 0.5rem;
+                padding: 12px 16px;
+                font-size: 13px;
             }
         }
-        </style>
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>User Management</h1>
+                <p>Manage customer accounts and data</p>
+            </div>
+            <div class="header-right">
+                <a href="admin-dashboard.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Dashboard
+                </a>
+                <a href="admin-staff.html" class="btn btn-secondary">
+                    <i data-lucide="users"></i> Staff
+                </a>
+                <div class="user-menu" onclick="logout()">
+                    <div class="user-avatar" id="profilePhoto">A</div>
+                    <span id="userGreeting">Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">User Management</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="loadUsers()">
+                        <i data-lucide="refresh-cw"></i> Refresh
+                    </button>
+                    <span class="user-count" id="userCount">0 users</span>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="6" class="loading-row">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
+    <script src="js/security.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadUsers();
             loadUserData();
+            lucide.createIcons();
         });
 
         async function loadUserData() {
@@ -235,11 +383,11 @@
             }
             
             try {
-                const response = await fetch(`http://localhost:9090/api/admin/profile/${staff.email}`);
+                const response = await fetch(`http://localhost:8080/api/auth/profile/${staff.email}`);
                 if (response.ok) {
                     const data = await response.json();
                     const displayName = data.firstName || 'Admin';
-                    document.getElementById('userGreeting').textContent = `Hi, ${displayName}`;
+                    document.getElementById('userGreeting').textContent = displayName;
                     document.getElementById('profilePhoto').textContent = displayName.charAt(0).toUpperCase();
                 }
             } catch (error) {
@@ -249,7 +397,7 @@
 
         async function loadUsers() {
             try {
-                const response = await fetch('http://localhost:9090/api/admin/users');
+                const response = await fetch(getApiUrl('/api/auth/users'));
                 const users = await response.json();
 
                 if (response.ok) {
@@ -287,18 +435,22 @@
                     <td><span class="user-address" title="${user.address || 'N/A'}">${user.address || 'N/A'}</span></td>
                     <td><span class="user-date">${registeredDate}</span></td>
                     <td>
-                        <button onclick="deleteUser('${user.id}')" class="delete-btn" title="Delete user">Delete</button>
+                        <button onclick="deleteUser('${user.email}')" class="delete-btn" title="Delete user">
+                            <i data-lucide="trash-2"></i> Delete
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+            
+            lucide.createIcons();
         }
 
-        async function deleteUser(userId) {
+        async function deleteUser(userEmail) {
             if (!confirm('Are you sure you want to delete this user?')) return;
 
             try {
-                const response = await fetch(`http://localhost:9090/api/admin/user/${userId}`, {
+                const response = await fetch(`http://localhost:8080/api/admin/users/${userEmail}`, {
                     method: 'DELETE'
                 });
 
@@ -321,7 +473,7 @@
                 try {
                     const staff = JSON.parse(localStorage.getItem('staff'));
                     if (staff && staff.email) {
-                        await fetch('http://localhost:9090/api/staff/logout', {
+                        await fetch(getApiUrl('/api/staff/logout'), {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -339,5 +491,6 @@
             }
         }
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>
