@@ -1020,6 +1020,15 @@
                 const complaintId = urlParams.get('id');
                 const user = JSON.parse(localStorage.getItem('user'));
 
+                // Get complaint details to find the assigned staff
+                const complaintResponse = await fetch(getApiUrl(`/api/dashboard/complaint/${complaintId}`));
+                const complaint = await complaintResponse.json();
+                
+                if (!complaint.assignedTo) {
+                    alert('Cannot submit rating - no staff assigned to this complaint');
+                    return;
+                }
+
                 const response = await fetch(getApiUrl('/api/ratings/submit'), {
                     method: 'POST',
                     headers: {
@@ -1027,17 +1036,19 @@
                     },
                     body: JSON.stringify({
                         complaintId: complaintId,
+                        userEmail: user.email,
+                        staffEmail: complaint.assignedTo,
                         rating: selectedRating,
-                        comment: feedback,
-                        userEmail: user.email
+                        feedback: feedback
                     })
                 });
 
-                if (response.ok) {
+                const data = await response.json();
+                if (data.status === 'success') {
                     alert('Thank you for your rating!');
                     document.getElementById('ratingSection').style.display = 'none';
                 } else {
-                    alert('Failed to submit rating');
+                    alert(data.message || 'Failed to submit rating');
                 }
             } catch (error) {
                 console.error('Error submitting rating:', error);

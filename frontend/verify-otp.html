@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password – ResolveIT</title>
+    <title>Verify OTP – ResolveIT</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
@@ -121,10 +121,6 @@
             box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
         }
 
-        input::placeholder {
-            color: #94a3b8;
-        }
-
         .submit-btn {
             width: 100%;
             padding: 14px;
@@ -153,24 +149,6 @@
             transform: none;
         }
 
-        .switch-form {
-            color: #64748b;
-            font-size: 15px;
-            margin-top: 20px;
-        }
-
-        .switch-form a {
-            color: #0f766e;
-            cursor: pointer;
-            font-weight: 500;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .switch-form a:hover {
-            color: #14b8a6;
-        }
-
         .error-message {
             color: #dc2626;
             font-size: 14px;
@@ -190,12 +168,6 @@
             border-radius: 8px;
             display: none;
         }
-
-        @media (max-width: 480px) {
-            .auth-form-box {
-                padding: 24px 20px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -205,101 +177,77 @@
                 <div class="logo-icon">R</div>
                 <h1>ResolveIT</h1>
             </div>
-            <h2>Reset Password</h2>
-            <p class="subtitle">Enter your email to receive an OTP</p>
+            <h2>Verify OTP</h2>
+            <p class="subtitle">Enter the OTP sent to your email</p>
             
-            <form id="forgotPasswordForm">
+            <form id="verifyOtpForm">
                 <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="email" placeholder="Enter your email" required>
+                    <label>Enter OTP</label>
+                    <input type="text" id="otpCode" placeholder="Enter 6-digit OTP" maxlength="6" required>
                 </div>
                 
-                <button type="submit" class="submit-btn">Send OTP</button>
+                <button type="submit" class="submit-btn">Verify OTP</button>
                 
                 <div class="error-message" id="errorMessage"></div>
                 <div class="success-message" id="successMessage"></div>
             </form>
-            
-            <div class="switch-form">
-                <p>Remember password? <a href="login.html">Login here</a></p>
-                <p>Don't have an account? <a href="register.html">Create Account</a></p>
-            </div>
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // Initialize EmailJS with placeholder - replace with your public key
-        emailjs.init('YOUR_EMAILJS_PUBLIC_KEY');
+        document.addEventListener('DOMContentLoaded', function() {
+            const resetEmail = localStorage.getItem('resetEmail');
+            if (!resetEmail) {
+                window.location.href = 'forgot-password.html';
+                return;
+            }
+        });
         
-        function generateOTP() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-        
-        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+        document.getElementById('verifyOtpForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('email').value.trim();
+            const otpCode = document.getElementById('otpCode').value.trim();
             const submitBtn = document.querySelector('.submit-btn');
+            const resetEmail = localStorage.getItem('resetEmail');
             
-            if (submitBtn.disabled) return;
-            if (!email) {
-                showError('Please enter your email address');
+            if (!otpCode) {
+                showError('Please enter the OTP');
+                return;
+            }
+            
+            if (otpCode.length !== 6) {
+                showError('OTP must be 6 digits');
                 return;
             }
             
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Checking...';
+            submitBtn.textContent = 'Verifying...';
             
             try {
-                // Check if user exists
-                const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+                const response = await fetch('http://localhost:8080/api/auth/verify-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ 
+                        email: resetEmail,
+                        otp: otpCode 
+                    })
                 });
                 
                 const data = await response.json();
-                if (data.status !== 'success') {
-                    showError(data.message || 'User not found');
-                    return;
-                }
-                
-                submitBtn.textContent = 'Sending OTP...';
-                
-                // Generate and send OTP via EmailJS
-                const otp = generateOTP();
-                const templateParams = {
-                    passcode: otp,
-                    time: 15,
-                    email: email
-                };
-                
-                const emailResult = await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
-                
-                if (emailResult.status === 200) {
-                    // Store OTP in MongoDB
-                    await fetch('http://localhost:8080/api/auth/store-otp', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, otp })
-                    });
-                    
-                    localStorage.setItem('resetEmail', email);
-                    showSuccess('OTP sent to your email successfully!');
-                    
+                if (data.status === 'success') {
+                    showSuccess('OTP verified! Redirecting...');
                     setTimeout(() => {
-                        window.location.href = `reset-password.html?email=${encodeURIComponent(email)}`;
-                    }, 2000);
+                        window.location.href = `reset-password.html?email=${encodeURIComponent(resetEmail)}`;
+                    }, 1500);
                 } else {
-                    showError('Failed to send OTP email. Please try again.');
+                    showError(data.message || 'Invalid OTP');
                 }
                 
             } catch (error) {
                 showError('Network error. Please try again.');
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Send OTP';
+                submitBtn.textContent = 'Verify OTP';
             }
         });
         

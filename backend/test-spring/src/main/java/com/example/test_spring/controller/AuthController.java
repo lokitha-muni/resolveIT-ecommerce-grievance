@@ -4,6 +4,7 @@ import com.example.test_spring.dto.LoginRequest;
 import com.example.test_spring.dto.RegisterRequest;
 import com.example.test_spring.dto.ProfileUpdateRequest;
 import com.example.test_spring.service.AuthService;
+import com.example.test_spring.service.EmailService;
 import com.example.test_spring.model.User;
 import com.example.test_spring.repository.UserRepository;
 import com.example.test_spring.security.*;
@@ -38,6 +39,9 @@ public class AuthController {
     
     @Autowired
     private TwoFactorService twoFactorService;
+    
+    @Autowired
+    private EmailService emailService;
     
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
@@ -187,23 +191,76 @@ public class AuthController {
         Map<String, String> response = new HashMap<>();
         
         try {
-            String email = request.get("email");
+            String email = inputSanitizer.sanitizeHtml(request.get("email"));
+            
+            if (!inputSanitizer.isValidEmail(email)) {
+                response.put("status", "error");
+                response.put("message", "Invalid email format");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
             Optional<User> userOptional = userRepository.findByEmail(email);
             
             if (userOptional.isPresent()) {
-                // In a real app, send email with reset token
-                // For demo, we'll just return success
                 response.put("status", "success");
-                response.put("message", "Password reset instructions sent to your email");
+                response.put("message", "User verified. Frontend will send OTP via EmailJS.");
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "error");
-                response.put("message", "Email not found");
+                response.put("message", "No account found with this email. Please register first.");
                 return ResponseEntity.badRequest().body(response);
             }
         } catch (Exception e) {
             response.put("status", "error");
-            response.put("message", "Failed to process request");
+            response.put("message", "Failed to process request: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+    
+    @PostMapping("/store-otp")
+    public ResponseEntity<Map<String, String>> storeOTP(@RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+        
+        try {
+            String email = inputSanitizer.sanitizeHtml(request.get("email"));
+            String otp = request.get("otp");
+            
+            // Store OTP in MongoDB via TwoFactorService
+            twoFactorService.storeOTP(email, otp);
+            
+            response.put("status", "success");
+            response.put("message", "OTP stored successfully");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Failed to store OTP");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    
+    @PostMapping("/verify-reset-otp")
+    public ResponseEntity<Map<String, String>> verifyResetOTP(@RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+        
+        try {
+            String email = inputSanitizer.sanitizeHtml(request.get("email"));
+            String otp = request.get("otp");
+            
+            if (twoFactorService.verifyOTP(email, otp)) {
+                response.put("status", "success");
+                response.put("message", "OTP verified successfully");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("status", "error");
+                response.put("message", "Invalid or expired OTP");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "OTP verification failed");
             return ResponseEntity.internalServerError().body(response);
         }
     }

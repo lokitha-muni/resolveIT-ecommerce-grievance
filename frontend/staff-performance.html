@@ -548,7 +548,16 @@
                     
                     document.getElementById('resolutionRate').textContent = (data.resolutionRate || 0) + '%';
                     document.getElementById('avgResponseTime').textContent = data.avgResponseTime || 'N/A';
-                    document.getElementById('customerRating').textContent = data.customerRating ? `${data.customerRating}/5` : 'N/A';
+                }
+                
+                // Load customer rating separately from ratings endpoint
+                const ratingResponse = await fetch(`http://localhost:8080/api/staff/ratings/${staff.email}?t=${Date.now()}`);
+                if (ratingResponse.ok) {
+                    const ratingData = await ratingResponse.json();
+                    const avgRating = ratingData.averageRating || 0;
+                    document.getElementById('customerRating').textContent = avgRating > 0 ? `${avgRating}/5` : 'No ratings yet';
+                } else {
+                    document.getElementById('customerRating').textContent = 'No ratings yet';
                 } else {
                     console.error('Failed to load performance data');
                     // Set default values
@@ -556,6 +565,7 @@
                     animateNumber('pending', 0);
                     animateNumber('inProgress', 0);
                     animateNumber('resolved', 0);
+                    document.getElementById('customerRating').textContent = 'No ratings yet';
                 }
             } catch (error) {
                 console.error('Error loading performance data:', error);
@@ -564,6 +574,7 @@
                 animateNumber('pending', 0);
                 animateNumber('inProgress', 0);
                 animateNumber('resolved', 0);
+                document.getElementById('customerRating').textContent = 'No ratings yet';
             }
         }
 

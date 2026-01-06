@@ -78,6 +78,12 @@ public class TwoFactorService {
         });
     }
 
+    public void storeOTP(String email, String otp) {
+        otpStorage.put(email, otp);
+        otpTimestamps.put(email, System.currentTimeMillis());
+        System.out.println("Stored OTP for " + email + ": " + otp);
+    }
+
     public void invalidateOTP(String email) {
         otpStorage.remove(email);
         otpTimestamps.remove(email);

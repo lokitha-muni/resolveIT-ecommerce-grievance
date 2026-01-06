@@ -3,133 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Edit Profile – ResolveIT</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/ui-enhancements.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background: inherit;
+        }
+
+        html, body {
+            background: #ffffff !important;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --accent-primary: #4E7C73;
+            --accent-muted: #7A9E9F;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: rgba(78, 124, 115, 0.2);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary) !important;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
-        
-        /* Match dashboard background and styling */
-        .dashboard-body {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+
+        .squares-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
         }
-        
-        .split-background {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+
+        .dashboard-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
         }
-        
-        /* Update card styling to match dashboard */
-        .profile-pic-inline, .modern-form {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%) !important;
-            backdrop-filter: blur(10px) !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        }
-        
-        /* Update navigation to match dashboard */
+
         .dashboard-nav {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%) !important;
-            backdrop-filter: blur(10px) !important;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
         }
-        
-        /* Update page header */
-        .page-header h1 {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        /* Override colors to match dashboard theme */
-        .large-profile-photo {
-            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
-            box-shadow: 0 8px 32px rgba(15, 118, 110, 0.3) !important;
-            border-radius: 16px !important;
-        }
-        
-        .upload-overlay {
-            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4) !important;
-        }
-        
-        .section-icon {
-            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
-            box-shadow: 0 8px 32px rgba(15, 118, 110, 0.4) !important;
-            border-radius: 16px !important;
-        }
-        
-        .modern-submit {
-            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
-            border-radius: 10px !important;
-        }
-        
-        .modern-submit:hover {
-            background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%) !important;
-            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4) !important;
-            transform: translateY(-1px) !important;
-        }
-        
+
         .profile-photo {
-            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
-            border-radius: 8px !important;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        
+
         .profile-photo:hover {
-            box-shadow: 0 4px 15px rgba(15, 118, 110, 0.4) !important;
-            transform: scale(1.05) !important;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(78, 124, 115, 0.4);
         }
-        
-        /* Update form section titles */
-        .form-section-title {
-            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
-            border: 1px solid rgba(15, 118, 110, 0.2) !important;
+
+        .nav-left span {
+            font-weight: 500;
+            color: var(--text-primary);
         }
-        
-        /* Update logout button to match dashboard theme */
-        .logout-btn {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%) !important;
-            border: 1px solid rgba(15, 118, 110, 0.2) !important;
-            color: #0f766e !important;
-            border-radius: 10px !important;
-            font-weight: 600 !important;
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        .logout-btn:hover {
-            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
-            color: white !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3) !important;
-        }
-        
-        /* Update back button to match teal theme */
+
         .back-btn {
-            color: #0f766e !important;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        
+
         .back-btn:hover {
-            background: rgba(15, 118, 110, 0.1) !important;
-            color: #14b8a6 !important;
+            background: rgba(78, 124, 115, 0.1);
         }
-        
-        .form-actions .cancel-btn,
-        .form-actions .submit-btn {
-            width: auto;
-            min-width: auto;
+
+        .logout-btn {
+            background: var(--bg-secondary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .logout-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .profile-form-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-pic-inline {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--card-shadow);
+        }
+
+        .profile-pic-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .large-profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(78, 124, 115, 0.3);
+        }
+
+        .large-profile-photo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(78, 124, 115, 0.4);
+        }
+
+        .upload-overlay {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 30px;
+            height: 30px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(78, 124, 115, 0.4);
+            border: 2px solid white;
+        }
+
+        .upload-overlay:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(78, 124, 115, 0.5);
+        }
+
+        .upload-overlay span {
+            font-size: 0.9rem;
+        }
+
+        .profile-pic-info h3 {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .profile-pic-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .modern-form {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+        }
+
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-section-title {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(78, 124, 115, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            box-shadow: 0 8px 32px rgba(78, 124, 115, 0.4);
+            color: white;
+        }
+
+        .form-section-title h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin: 0 0 0.3rem 0;
+        }
+
+        .form-section-title p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(78, 124, 115, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .checkbox-group {
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .modern-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .modern-cancel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            color: var(--text-secondary);
+            border: 2px solid var(--border);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 32px rgba(78, 124, 115, 0.2);
+        }
+
+        .modern-cancel:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(78, 124, 115, 0.3);
+        }
+
+        .modern-submit {
+            background: var(--accent-muted);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 32px rgba(78, 124, 115, 0.4);
+        }
+
+        .modern-submit:hover {
+            background: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(78, 124, 115, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .profile-pic-inline {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .modern-form {
+                padding: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modern-actions {
+                flex-direction: column;
+            }
+
+            .modern-cancel,
+            .modern-submit {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
-<body class="dashboard-body">
-    <!-- Split Background -->
-    <div class="split-background">
-        <div class="bg-left"></div>
-        <div class="bg-right"></div>
-    </div>
+<body>
+    <canvas class="squares-bg"></canvas>
 
     <!-- Main Container -->
     <div class="dashboard-main">
@@ -327,6 +658,103 @@
     <script src="js/security.js"></script>
     <script src="js/config.js"></script>
     <script>
+        class Squares {
+            constructor(canvas, options = {}) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.direction = options.direction || 'diagonal';
+                this.speed = options.speed || 0.5;
+                this.borderColor = options.borderColor || '#000000';
+                this.squareSize = options.squareSize || 40;
+                this.hoverFillColor = options.hoverFillColor || 'rgba(0, 0, 0, 0.05)';
+                
+                this.gridOffset = { x: 0, y: 0 };
+                this.hoveredSquare = null;
+                this.animationId = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            drawGrid() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                for (let x = startX; x < this.canvas.width + this.squareSize; x += this.squareSize) {
+                    for (let y = startY; y < this.canvas.height + this.squareSize; y += this.squareSize) {
+                        const squareX = x - (this.gridOffset.x % this.squareSize);
+                        const squareY = y - (this.gridOffset.y % this.squareSize);
+                        
+                        if (this.hoveredSquare &&
+                            Math.floor((x - startX) / this.squareSize) === this.hoveredSquare.x &&
+                            Math.floor((y - startY) / this.squareSize) === this.hoveredSquare.y) {
+                            this.ctx.fillStyle = this.hoverFillColor;
+                            this.ctx.fillRect(squareX, squareY, this.squareSize, this.squareSize);
+                        }
+                        
+                        this.ctx.strokeStyle = this.borderColor;
+                        this.ctx.globalAlpha = 0.15;
+                        this.ctx.strokeRect(squareX, squareY, this.squareSize, this.squareSize);
+                        this.ctx.globalAlpha = 1;
+                    }
+                }
+                
+                const gradient = this.ctx.createRadialGradient(
+                    this.canvas.width / 2, this.canvas.height / 2, 0,
+                    this.canvas.width / 2, this.canvas.height / 2,
+                    Math.sqrt(this.canvas.width ** 2 + this.canvas.height ** 2) / 2
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(1, 'rgba(248, 250, 252, 0.3)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            
+            updateAnimation() {
+                const effectiveSpeed = Math.max(this.speed, 0.1);
+                this.gridOffset.x = (this.gridOffset.x - effectiveSpeed + this.squareSize) % this.squareSize;
+                this.gridOffset.y = (this.gridOffset.y - effectiveSpeed + this.squareSize) % this.squareSize;
+            }
+            
+            animate() {
+                this.updateAnimation();
+                this.drawGrid();
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            handleMouseMove(event) {
+                const mouseX = event.clientX;
+                const mouseY = event.clientY;
+                
+                const startX = Math.floor(this.gridOffset.x / this.squareSize) * this.squareSize;
+                const startY = Math.floor(this.gridOffset.y / this.squareSize) * this.squareSize;
+                
+                const hoveredSquareX = Math.floor((mouseX + this.gridOffset.x - startX) / this.squareSize);
+                const hoveredSquareY = Math.floor((mouseY + this.gridOffset.y - startY) / this.squareSize);
+                
+                this.hoveredSquare = { x: hoveredSquareX, y: hoveredSquareY };
+            }
+            
+            handleMouseLeave() {
+                this.hoveredSquare = null;
+            }
+        }
+
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.clear();
@@ -340,6 +768,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadUserProfile();
             lucide.createIcons();
+            
+            // Initialize squares background
+            const canvas = document.querySelector('.squares-bg');
+            new Squares(canvas, {
+                speed: 0.3,
+                squareSize: 40,
+                direction: 'diagonal',
+                borderColor: '#000000',
+                hoverFillColor: 'rgba(0, 0, 0, 0.05)'
+            });
         });
         
         async function loadUserProfile() {

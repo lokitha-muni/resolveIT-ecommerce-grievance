@@ -813,12 +813,15 @@
 
         async function loadStaffRating(staffEmail) {
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/ratings/${staffEmail}`);
+                // Add cache busting parameter
+                const response = await fetch(`http://localhost:8080/api/staff/ratings/${staffEmail}?t=${Date.now()}`);
                 if (response.ok) {
                     const ratingData = await response.json();
+                    console.log('Rating API Response:', ratingData); // Debug log
                     const avgRating = ratingData.averageRating || 0;
                     document.getElementById('myRating').textContent = avgRating > 0 ? `${avgRating}/5` : 'N/A';
                 } else {
+                    console.log('Rating API Error:', response.status); // Debug log
                     document.getElementById('myRating').textContent = 'N/A';
                 }
             } catch (error) {

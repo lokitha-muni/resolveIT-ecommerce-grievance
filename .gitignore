@@ -1,23 +1,17 @@
 # Environment files
 .env
+*.env
 .env.local
 .env.production
-.env.development
-
-# Backend environment
-backend/test-spring/.env
-
-# Deployment scripts
-deploy.bat
-deploy.sh
 
 # Node modules
 node_modules/
 npm-debug.log*
 
 # Build outputs
-backend/test-spring/target/
-backend/test-spring/uploads/
+target/
+build/
+dist/
 
 # IDE files
 .vscode/

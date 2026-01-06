@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Rating API</title>
+</head>
+<body>
+    <h1>Rating API Test</h1>
+    <button onclick="testRating()">Test Staff Rating API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testRating() {
+            try {
+                const response = await fetch('http://localhost:8080/api/staff/ratings/staff@gmail.com');
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `
+                    <h3>API Response:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Error:</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

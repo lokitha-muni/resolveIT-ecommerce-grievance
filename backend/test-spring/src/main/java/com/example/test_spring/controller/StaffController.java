@@ -4,16 +4,19 @@ import com.example.test_spring.model.Complaint;
 import com.example.test_spring.model.Staff;
 import com.example.test_spring.model.StaffNote;
 import com.example.test_spring.model.AuditLog;
+import com.example.test_spring.model.Rating;
 import com.example.test_spring.repository.ComplaintRepository;
 import com.example.test_spring.repository.StaffRepository;
 import com.example.test_spring.repository.StaffNoteRepository;
 import com.example.test_spring.repository.AuditLogRepository;
+import com.example.test_spring.repository.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,9 @@ public class StaffController {
     
     @Autowired
     private AuditLogRepository auditLogRepository;
+    
+    @Autowired
+    private RatingRepository ratingRepository;
     
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
@@ -479,23 +485,36 @@ public class StaffController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // This would need a RatingRepository - for now return calculated values
-            List<Complaint> assignedComplaints = complaintRepository.findAll().stream()
-                .filter(c -> email.equals(c.getAssignedTo()))
-                .collect(Collectors.toList());
+            // Get all ratings for this staff member directly
+            List<Rating> staffRatings = ratingRepository.findByStaffEmail(email);
             
-            // Mock rating calculation based on resolution rate
-            long totalAssigned = assignedComplaints.size();
-            long resolved = assignedComplaints.stream()
-                .filter(c -> "RESOLVED".equals(c.getStatus()))
-                .count();
-            
-            double resolutionRate = totalAssigned > 0 ? (double) resolved / totalAssigned : 0;
-            double averageRating = 3.0 + (resolutionRate * 2.0); // Scale to 3-5 range
-            
-            response.put("averageRating", Math.round(averageRating * 10.0) / 10.0);
-            response.put("totalRatings", totalAssigned);
-            response.put("resolutionRate", Math.round(resolutionRate * 100.0) / 100.0);
+            if (staffRatings.isEmpty()) {
+                // No ratings yet - return default values
+                response.put("averageRating", 0.0);
+                response.put("totalRatings", 0);
+                response.put("resolutionRate", 0.0);
+            } else {
+                // Calculate actual average rating from customer feedback
+                double totalRating = staffRatings.stream()
+                    .mapToInt(Rating::getRating)
+                    .sum();
+                double averageRating = totalRating / staffRatings.size();
+                
+                // Calculate resolution rate for additional context
+                List<Complaint> assignedComplaints = complaintRepository.findAll().stream()
+                    .filter(c -> email.equals(c.getAssignedTo()))
+                    .collect(Collectors.toList());
+                    
+                long resolved = assignedComplaints.stream()
+                    .filter(c -> "RESOLVED".equals(c.getStatus()))
+                    .count();
+                double resolutionRate = assignedComplaints.size() > 0 ? 
+                    (double) resolved / assignedComplaints.size() * 100 : 0;
+                
+                response.put("averageRating", Math.round(averageRating * 10.0) / 10.0);
+                response.put("totalRatings", staffRatings.size());
+                response.put("resolutionRate", Math.round(resolutionRate * 100.0) / 100.0);
+            }
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
