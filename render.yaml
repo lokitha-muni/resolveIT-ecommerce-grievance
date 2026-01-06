@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: resolveit-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    buildCommand: docker build -t backend .
+    startCommand: java -jar target/test-spring-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: MONGODB_USERNAME
+        sync: false
+      - key: MONGODB_PASSWORD
+        sync: false
+      - key: MONGODB_CLUSTER
+        sync: false
+      - key: MONGODB_DATABASE
+        value: resolveIT_db
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION
+        value: "86400000"
+      - key: EMAIL_USERNAME
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
