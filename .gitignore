@@ -1,26 +1,42 @@
-# Environment files
+# Environment files - NEVER COMMIT THESE
 .env
-*.env
 .env.local
 .env.production
+.env.development
+backend/test-spring/.env
+backend/test-spring/.env.local
+backend/test-spring/.env.production
+
+# Sensitive configuration files
+**/application.properties
+**/application-*.properties
+**/application.yml
+**/application-*.yml
 
 # Node modules
 node_modules/
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Build outputs
 target/
 build/
 dist/
+out/
 
 # IDE files
 .vscode/
 .idea/
 *.iml
+*.iws
+*.ipr
 
 # OS files
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
 
 # Logs
 *.log
@@ -29,3 +45,33 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+temp/
+
+# Docker
+.dockerignore
+
+# Uploads and user data
+uploads/
+*.upload
+user-uploads/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Keys and certificates
+*.key
+*.pem
+*.p12
+*.jks
+*.keystore
+
+# Backup files
+*.bak
+*.backup
+
+# Cache directories
+.cache/
+.npm/
+.yarn/

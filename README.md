@@ -1,246 +1,274 @@
 # ResolveIT - E-commerce Grievance System
 
-A comprehensive full-stack web application for managing e-commerce delivery complaints with advanced security, modern UI/UX, and complete admin management.
+🚀 **A comprehensive full-stack web application for managing e-commerce delivery complaints with advanced security, modern UI/UX, and complete admin management.**
 
-## 🏗️ Project Structure
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-green)](https://spring.io/projects/spring-boot)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://mongodb.com)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+
+## 🔒 **SECURITY NOTICE**
+
+**⚠️ IMPORTANT: This repository contains NO sensitive credentials. All environment files use placeholder values.**
+
+- Copy `.env.example` to `.env` and add your actual credentials
+- Never commit real passwords, API keys, or database credentials
+- Use environment variables for all sensitive configuration
+
+## 🌟 Features
+
+### 🔐 **Security & Authentication**
+- JWT Authentication with secure token management
+- Two-Factor Authentication (2FA) for staff/admin
+- Rate Limiting (100 requests/minute)
+- Input Sanitization with OWASP protection
+- Session Management with auto-logout
+- BCrypt password encryption
+- CORS protection
+
+### 🎨 **Modern UI/UX**
+- Mobile-first responsive design
+- Dark mode with theme persistence
+- Loading states and smooth transitions
+- Toast notifications for real-time feedback
+- WCAG compliant accessibility
+- Multi-language support (EN/ES/FR)
+- Counter animations and smooth transitions
+
+### 👥 **User Management**
+- Complete user registration and authentication
+- Profile management with photo upload
+- Role-based access control (User/Staff/Admin)
+- Password reset functionality
+- User activity tracking
+
+### 📋 **Complaint Management**
+- Submit complaints with file attachments
+- Real-time status tracking
+- Advanced search and filtering
+- Bulk operations for staff
+- Comment system with notifications
+- Rating and feedback system
+- Export data (CSV/PDF)
+
+### 📊 **Analytics & Reporting**
+- Real-time dashboard with metrics
+- Performance analytics for staff
+- System health monitoring
+- Audit logs and security tracking
+- Custom report generation
+
+## 🏗️ Architecture
 
 ```
-Ecommerce_grievance/
+ResolveIT/
 ├── frontend/                    # Modern responsive frontend
-│   ├── css/                    # Enhanced styling
-│   │   └── ui-enhancements.css # Dark mode, responsive design
-│   ├── js/                     # JavaScript utilities
-│   │   ├── security.js         # JWT, session management
-│   │   └── ui-enhancements.js  # UI/UX features
-│   ├── index.html              # Landing page
-│   ├── login.html              # User authentication
-│   ├── dashboard.html          # User dashboard
-│   ├── staff-login.html        # Staff 2FA login
-│   ├── staff-dashboard.html    # Staff management
-│   ├── admin-dashboard.html    # Admin portal
-│   └── enhanced-dashboard.html # Full-featured dashboard
-├── backend/                    # Spring Boot REST API
-│   └── test-spring/           # Java backend
-│       ├── src/main/java/     # Source code
-│       │   ├── controller/    # REST controllers
-│       │   ├── model/         # MongoDB entities
-│       │   ├── repository/    # Data repositories
-│       │   ├── service/       # Business logic
-│       │   ├── security/      # JWT, 2FA, rate limiting
-│       │   └── config/        # Configuration
-│       ├── pom.xml           # Maven dependencies
-│       └── Dockerfile        # Container config
+│   ├── css/                    # Enhanced styling with dark mode
+│   ├── js/                     # JavaScript utilities & security
+│   └── *.html                  # All application pages
+├── backend/test-spring/        # Spring Boot REST API
+│   ├── src/main/java/         # Java source code
+│   │   ├── controller/        # REST controllers
+│   │   ├── model/             # MongoDB entities
+│   │   ├── repository/        # Data repositories
+│   │   ├── service/           # Business logic
+│   │   ├── security/          # JWT, 2FA, rate limiting
+│   │   └── config/            # Configuration
+│   ├── pom.xml               # Maven dependencies
+│   └── Dockerfile            # Backend container
 ├── docker-compose.yml        # Production deployment
 └── README.md                # This documentation
 ```
 
 ## 🚀 Quick Start
 
-### Development Mode
-```bash
-# Install dependencies
-npm run install-all
-
-# Start both services
-npm start
-# Backend: http://localhost:8080
-# Frontend: http://localhost:3000
-```
-
-### Production Deployment
-```bash
-# Using Docker Compose
-docker-compose up -d
-```
-
-### Individual Services
-```bash
-# Backend only
-npm run backend
-
-# Frontend only
-npm run frontend
-```
-
-## 🔐 Security Features
-
-- **JWT Authentication**: Secure token-based auth
-- **Two-Factor Authentication**: OTP for staff/admin
-- **Rate Limiting**: API abuse prevention (100 req/min)
-- **Input Sanitization**: XSS protection with OWASP
-- **Session Management**: Auto-logout after 30min inactivity
-- **Password Encryption**: BCrypt hashing
-- **CORS Protection**: Secure cross-origin requests
-
-## 🎨 UI/UX Features
-
-- **Mobile Optimization**: Responsive design for all devices
-- **Dark Mode**: Theme switching with persistence
-- **Loading States**: Smooth transitions and feedback
-- **Toast Notifications**: Real-time success/error messages
-- **Accessibility**: WCAG compliant, keyboard navigation
-- **Internationalization**: Multi-language support (EN/ES/FR)
-- **Animations**: Counter animations, smooth transitions
-
-## 🔌 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login (JWT)
-- `POST /api/auth/staff/login` - Staff login (2FA)
-- `POST /api/auth/staff/verify-otp` - OTP verification
-- `POST /api/auth/validate-token` - Token validation
-- `POST /api/auth/logout` - Secure logout
-
-### User Management
-- `GET /api/auth/profile/{email}` - Get user profile
-- `PUT /api/auth/profile/{email}` - Update profile
-- `POST /api/auth/forgot-password` - Password reset
-
-### Complaints
-- `GET /api/complaints/user/{email}` - User complaints
-- `POST /api/complaints` - Submit complaint
-- `PUT /api/complaints/{id}` - Update complaint
-- `GET /api/complaints/{id}` - Complaint details
-
-### Staff & Admin
-- `GET /api/staff/dashboard/{email}` - Staff dashboard
-- `GET /api/admin/users` - User management
-- `GET /api/admin/reports` - System reports
-- `GET /api/admin/audit-logs` - Audit trail
-
-## 🛠️ Technology Stack
-
-**Frontend**
-- HTML5, CSS3, Vanilla JavaScript
-- Responsive Design (Mobile-first)
-- PWA capabilities
-- Modern UI components
-
-**Backend**
-- Spring Boot 4.0
-- Java 21
-- Spring Security
-- JWT Authentication
-- MongoDB Atlas
-
-**Security**
-- OWASP Input Sanitization
-- Rate Limiting (Bucket4j)
-- Two-Factor Authentication
-- Session Management
-
-**Deployment**
+### Prerequisites
 - Docker & Docker Compose
-- Nginx Reverse Proxy
-- Environment Configuration
+- Git
 
-## 👥 User Roles & Access
+### 1. Clone Repository
+```bash
+git clone https://github.com/lokitha-muni/resolveIT-ecommerce-grievance.git
+cd resolveIT-ecommerce-grievance
+```
 
-### Default Accounts
-- **Sample Users**: john.doe@gmail.com, jane.smith@gmail.com, etc. / password123
-- **Staff**: staff@gmail.com / staff@123 (requires 2FA)
-- **Admin**: admin@gmail.com / admin@123 (requires 2FA)
+### 2. Configure Environment
+```bash
+# Copy example environment files
+cp .env.example .env
+cp backend/test-spring/.env.example backend/test-spring/.env
 
-### User Features
-- Submit and track complaints
-- Real-time notifications
-- Profile management
-- Search and filter complaints
-- Export data (CSV)
+# Edit .env files with your actual credentials
+# NEVER use the example values in production!
+```
 
-### Staff Features
-- Complaint assignment and management
-- Customer communication
-- Performance analytics
-- Bulk actions
-- Staff notes and escalation
+### 3. Start Application
+```bash
+# Start all services in detached mode
+docker-compose up -d
 
-### Admin Features
-- Complete user management
-- Staff oversight and analytics
-- System settings and configuration
-- Audit logs and security monitoring
-- Backup and recovery tools
+# Check status
+docker-compose ps
 
-## 📱 Access Points
+# View logs
+docker-compose logs --tail=50
+```
 
+### 4. Access Application
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080/api/*
-- **MongoDB**: MongoDB Atlas (cloud)
-- **Admin Panel**: http://localhost:3000/admin-dashboard.html
+- **Backend API**: http://localhost:8080
+- **Health Check**: http://localhost:8080/api/test/mongodb
 
 ## 🔧 Configuration
 
 ### Environment Variables
-```bash
-# MongoDB Configuration
-MONGODB_USERNAME=your_username
-MONGODB_PASSWORD=your_password
-MONGODB_CLUSTER=your_cluster
+
+**⚠️ SECURITY WARNING: Replace ALL placeholder values with your actual credentials**
+
+Create `.env` file in root directory:
+
+```env
+# MongoDB Configuration - USE YOUR ACTUAL CREDENTIALS
+MONGODB_USERNAME=your_actual_mongodb_username
+MONGODB_PASSWORD=your_actual_mongodb_password
+MONGODB_CLUSTER=your_actual_cluster.mongodb.net
 MONGODB_DATABASE=resolveIT_db
 
-# JWT Configuration
-JWT_SECRET=your_secret_key
+# JWT Configuration - GENERATE A SECURE SECRET
+JWT_SECRET=your_actual_secure_jwt_secret_minimum_32_characters_long
 JWT_EXPIRATION=86400000
+
+# Email Configuration - USE YOUR ACTUAL EMAIL CREDENTIALS
+EMAIL_USERNAME=your_actual_email@gmail.com
+EMAIL_PASSWORD=your_actual_gmail_app_password
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
 ```
 
 ### Database Setup
 1. Create MongoDB Atlas account
 2. Set up cluster and database
 3. Configure connection string
-4. Update environment variables
+4. Update environment variables with REAL credentials
+
+## 🛠️ Technology Stack
+
+### Backend
+- **Framework**: Spring Boot 3.2.0
+- **Language**: Java 21
+- **Database**: MongoDB Atlas
+- **Security**: Spring Security + JWT
+- **Build Tool**: Maven
+- **Container**: Docker
+
+### Frontend
+- **Languages**: HTML5, CSS3, Vanilla JavaScript
+- **Design**: Mobile-first responsive
+- **Features**: PWA capabilities, Dark mode
+- **Server**: Nginx (containerized)
+
+### DevOps
+- **Containerization**: Docker & Docker Compose
+- **Reverse Proxy**: Nginx
+- **Environment**: Multi-stage builds
+- **Deployment**: Production-ready
+
+## 👥 Default Accounts
+
+### Sample Users
+- **Email**: john.doe@gmail.com / **Password**: password123
+- **Email**: jane.smith@gmail.com / **Password**: password123
+
+### Staff Account
+- **Email**: staff@gmail.com / **Password**: staff@123 (requires 2FA)
+
+### Admin Account
+- **Email**: admin@gmail.com / **Password**: admin@123 (requires 2FA)
+
+## 🔌 API Documentation
+
+### Authentication Endpoints
+```
+POST /api/auth/register     - User registration
+POST /api/auth/login        - User login (JWT)
+POST /api/auth/staff/login  - Staff login (2FA)
+POST /api/auth/logout       - Secure logout
+```
+
+### Complaint Management
+```
+GET  /api/complaints/user/{email}  - User complaints
+POST /api/complaints               - Submit complaint
+PUT  /api/complaints/{id}          - Update complaint
+GET  /api/complaints/{id}          - Complaint details
+```
+
+### Admin & Staff
+```
+GET /api/admin/users        - User management
+GET /api/admin/reports      - System reports
+GET /api/staff/dashboard    - Staff dashboard
+```
 
 ## 🚀 Deployment
 
-### Local Development
-1. Clone repository
-2. Install dependencies: `npm run install-all`
-3. Configure environment variables
-4. Start services: `npm start`
+### Production Deployment
 
-### Production
-1. Set up environment variables
-2. Build Docker images: `docker-compose build`
-3. Deploy: `docker-compose up -d`
-4. Configure reverse proxy (optional)
+1. **Update environment variables** with REAL production credentials
+2. **Configure SSL/HTTPS** with reverse proxy
+3. **Set up monitoring** and logging
+4. **Configure backups** for MongoDB
 
-## 📊 Features Implemented
+### Cloud Platforms
+- AWS ECS/Fargate
+- Google Cloud Run
+- Azure Container Instances
+- DigitalOcean App Platform
+- Heroku (with Docker)
+- **Render** (recommended for easy deployment)
 
-✅ **Complete Authentication System**
-✅ **JWT Security with 2FA**
-✅ **Modern Responsive UI**
-✅ **Dark Mode & Themes**
-✅ **Multi-language Support**
-✅ **Real-time Notifications**
-✅ **Advanced Search & Filtering**
-✅ **Data Export Capabilities**
-✅ **Staff Management Portal**
-✅ **Admin Dashboard**
-✅ **Audit Logging**
-✅ **Rate Limiting & Security**
-✅ **Mobile Optimization**
-✅ **Accessibility Compliance**
-✅ **Production Deployment**
+### Docker Commands
+```bash
+# Production build
+docker-compose -f docker-compose.prod.yml up -d
 
-## 🎯 Usage Guide
+# Scale services
+docker-compose up -d --scale backend=3
 
-1. **Setup**: Configure environment and start services
-2. **Register**: Create user account or use default credentials
-3. **Login**: Authenticate with JWT tokens
-4. **Submit**: Create and track complaints
-5. **Manage**: Use staff/admin portals for management
-6. **Monitor**: View analytics and system health
+# Update services
+docker-compose pull && docker-compose up -d
+```
 
-## 🔍 Testing
+## 🔍 Monitoring & Health Checks
 
-- **Unit Tests**: Backend service layer
-- **Integration Tests**: API endpoints
-- **Security Tests**: Authentication and authorization
-- **UI Tests**: Frontend functionality
-- **Performance Tests**: Load and stress testing
+### Health Endpoints
+- **MongoDB**: `GET /api/test/mongodb`
+- **Application**: `GET /api/health`
+- **Metrics**: `GET /api/metrics`
 
-## 📈 Performance
+### Logging
+```bash
+# View all logs
+docker-compose logs -f
+
+# Service-specific logs
+docker-compose logs -f backend
+docker-compose logs -f frontend
+```
+
+## 🛡️ Security Features
+
+- **Authentication**: JWT with refresh tokens
+- **Authorization**: Role-based access control
+- **Rate Limiting**: API abuse prevention
+- **Input Validation**: OWASP sanitization
+- **Session Security**: Auto-logout, secure cookies
+- **Password Security**: BCrypt hashing
+- **CORS**: Configured for production
+- **Headers**: Security headers implemented
+- **Environment Security**: No credentials in code
+
+## 📊 Performance
 
 - **Response Time**: < 200ms average
 - **Throughput**: 100+ requests/second
@@ -251,24 +279,41 @@ JWT_EXPIRATION=86400000
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch
-3. Implement changes with tests
-4. Submit pull request
-5. Code review and merge
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+**⚠️ NEVER commit sensitive credentials or API keys!**
 
 ## 📄 License
 
-MIT License - see LICENSE file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-For issues and questions:
-- Create GitHub issue
-- Check documentation
+For support and questions:
+- Create an issue on GitHub
+- Check the documentation
 - Review API endpoints
 - Test with default credentials
 
+## 🎯 Roadmap
+
+- [ ] Mobile app (React Native)
+- [ ] Advanced analytics dashboard
+- [ ] AI-powered complaint categorization
+- [ ] Integration with popular e-commerce platforms
+- [ ] Multi-tenant support
+- [ ] Advanced reporting with charts
+
 ---
 
-**ResolveIT** - Complete E-commerce Grievance Management System
+**ResolveIT** - Complete E-commerce Grievance Management System  
 *Built with Spring Boot, MongoDB, and Modern Web Technologies*
+
+⭐ **Star this repository if you find it helpful!**
+
+## 🔒 **FINAL SECURITY REMINDER**
+
+**This repository is now SECURE and contains NO sensitive information. All credentials are placeholder values that must be replaced with your actual values during deployment.**
