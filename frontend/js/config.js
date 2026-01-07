@@ -1,7 +1,7 @@
 // Configuration for frontend application
 const CONFIG = {
     // API Base URL - reads from environment or defaults to localhost
-    API_BASE_URL: 'http://localhost:8080', // This should be updated for production
+    API_BASE_URL: 'https://resolve-it-ak21.onrender.com', // Production URL
     
     // Other configuration options
     APP_NAME: 'ResolveIT',
