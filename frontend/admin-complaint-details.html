@@ -1291,7 +1291,7 @@
             console.log('Loading complaint data for ID:', complaintId);
             
             try {
-                const response = await fetch(`http://localhost:8080/api/complaints/${complaintId}`);
+                const response = await fetch(getApiUrl(`/api/complaints/${complaintId}`));
                 console.log('API Response status:', response.status);
                 
                 if (response.ok) {
@@ -1322,7 +1322,7 @@
                     priority: 'medium'
                 };
                 
-                await fetch(`http://localhost:8080/api/complaints/submit?userEmail=test@gmail.com`, {
+                await fetch(getApiUrl(`/api/complaints/submit?userEmail=test@gmail.com`), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1478,7 +1478,7 @@
 
         async function setPriority(priority) {
             try {
-                const response = await fetch(`http://localhost:8080/api/admin/complaints/${complaintId}/priority`, {
+                const response = await fetch(getApiUrl(`/api/admin/complaints/${complaintId}/priority`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1503,7 +1503,7 @@
         async function setStatus(status) {
             try {
                 const apiStatus = status === 'In Progress' ? 'IN_PROGRESS' : status.toUpperCase();
-                const response = await fetch(`http://localhost:8080/api/admin/complaints/${complaintId}/status`, {
+                const response = await fetch(getApiUrl(`/api/admin/complaints/${complaintId}/status`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1526,7 +1526,7 @@
 
         async function assignAgent(agentEmail, agentName) {
             try {
-                const response = await fetch(`http://localhost:8080/api/admin/complaints/${complaintId}/assign`, {
+                const response = await fetch(getApiUrl(`/api/admin/complaints/${complaintId}/assign`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1558,7 +1558,7 @@
         async function confirmForceClose() {
             try {
                 // Since there's no force close endpoint, just update status to resolved
-                const response = await fetch(`http://localhost:8080/api/staff/complaint/${complaintId}/status`, {
+                const response = await fetch(getApiUrl(`/api/staff/complaint/${complaintId}/status`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1593,7 +1593,7 @@
             const note = document.getElementById('adminNotes').value;
             if (note.trim()) {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/admin/complaints/${complaintId}/note`, {
+                    const response = await fetch(getApiUrl(`/api/admin/complaints/${complaintId}/note`), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1625,7 +1625,7 @@
         async function loadComplaintHistory(complaintId) {
             try {
                 // Use the same endpoint as staff since it works
-                const response = await fetch(`http://localhost:8080/api/staff/complaint/${complaintId}/history`);
+                const response = await fetch(getApiUrl(`/api/staff/complaint/${complaintId}/history`));
                 if (response.ok) {
                     const history = await response.json();
                     console.log('Loaded history:', history);
@@ -1725,8 +1725,8 @@
         async function loadAgentPerformance(agentEmail) {
             try {
                 const [performanceResponse, ratingsResponse] = await Promise.all([
-                    fetch(`http://localhost:8080/api/staff/performance/${agentEmail}`),
-                    fetch(`http://localhost:8080/api/staff/ratings/${agentEmail}`)
+                    fetch(getApiUrl(`/api/staff/performance/${agentEmail}`)),
+                    fetch(getApiUrl(`/api/staff/ratings/${agentEmail}`))
                 ]);
                 
                 if (performanceResponse.ok) {
