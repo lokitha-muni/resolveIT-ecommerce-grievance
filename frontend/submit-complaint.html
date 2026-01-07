@@ -603,7 +603,7 @@
                     priority: 'low'
                 };
                 
-                const url = `http://localhost:8080/api/complaints/submit?userEmail=${encodeURIComponent(user.email)}`;
+                const url = getApiUrl(`/api/complaints/submit?userEmail=${encodeURIComponent(user.email)}`);
                 console.log('Test URL:', url);
                 
                 const response = await fetch(url, {
