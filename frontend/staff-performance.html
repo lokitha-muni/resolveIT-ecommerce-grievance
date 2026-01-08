@@ -523,7 +523,7 @@
                 
                 // Load updated name from backend
                 try {
-                    const profileResponse = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
+                    const profileResponse = await fetch(getApiUrl(`/api/staff/profile/${staff.email}`));
                     if (profileResponse.ok) {
                         const profileData = await profileResponse.json();
                         if (profileData.firstName) {
@@ -535,7 +535,7 @@
                     console.error('Error loading staff profile:', error);
                 }
 
-                const response = await fetch(`http://localhost:8080/api/staff/performance/${staff.email}`);
+                const response = await fetch(getApiUrl(`/api/staff/performance/${staff.email}`));
                 
                 if (response.ok) {
                     const data = await response.json();
@@ -551,7 +551,7 @@
                 }
                 
                 // Load customer rating separately from ratings endpoint
-                const ratingResponse = await fetch(`http://localhost:8080/api/staff/ratings/${staff.email}?t=${Date.now()}`);
+                const ratingResponse = await fetch(getApiUrl(`/api/staff/ratings/${staff.email}?t=${Date.now()}`));
                 if (ratingResponse.ok) {
                     const ratingData = await ratingResponse.json();
                     const avgRating = ratingData.averageRating || 0;

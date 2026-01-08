@@ -1055,7 +1055,7 @@
             document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
             
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
+                const response = await fetch(getApiUrl(`/api/staff/profile/${staff.email}`));
                 if (response.ok) {
                     const data = await response.json();
                     if (data.firstName) {

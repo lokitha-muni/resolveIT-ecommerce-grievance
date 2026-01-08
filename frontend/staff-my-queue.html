@@ -404,7 +404,7 @@
             
             // Load updated name from backend
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
+                const response = await fetch(getApiUrl(`/api/staff/profile/${staff.email}`));
                 if (response.ok) {
                     const data = await response.json();
                     if (data.firstName) {
@@ -420,7 +420,7 @@
         async function loadMyQueue() {
             try {
                 const staff = JSON.parse(localStorage.getItem('staff'));
-                const response = await fetch(`http://localhost:8080/api/staff/my-queue/${staff.email}`);
+                const response = await fetch(getApiUrl(`/api/staff/my-queue/${staff.email}`));
                 const complaints = await response.json();
 
                 if (response.ok) {
