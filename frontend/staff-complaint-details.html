@@ -785,7 +785,7 @@
             }
             
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/profile/${staff.email}`);
+                const response = await fetch(getApiUrl(`/api/staff/profile/${staff.email}`));
                 if (response.ok) {
                     const data = await response.json();
                     const displayName = data.firstName || staff.email.split('@')[0];
@@ -815,7 +815,7 @@
                     return;
                 }
 
-                const response = await fetch(`http://localhost:8080/api/staff/complaint/${complaintId}`);
+                const response = await fetch(getApiUrl(`/api/staff/complaint/${complaintId}`));
 
                 if (!response.ok) {
                     throw new Error('Complaint not found');
@@ -911,7 +911,7 @@
                     console.log('Parsed:', { attachment, complaintId, fileName });
                     
                     // Create backend URL for file
-                    const fileUrl = `http://localhost:8080/api/complaints/file/${complaintId}/${fileName}`;
+                    const fileUrl = getApiUrl(`/api/complaints/file/${complaintId}/${fileName}`);
                     
                     // Check if it's an image
                     if (attachment.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
@@ -944,7 +944,7 @@
         
         async function loadComplaintHistory(complaintId) {
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/complaint/${complaintId}/history`);
+                const response = await fetch(getApiUrl(`/api/staff/complaint/${complaintId}/history`));
                 if (response.ok) {
                     const history = await response.json();
                     displayComplaintHistory(history);
@@ -1024,7 +1024,7 @@
         
         async function loadStaffNotes(complaintId) {
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/internal-notes/${complaintId}`);
+                const response = await fetch(getApiUrl(`/api/staff/internal-notes/${complaintId}`));
                 const notes = await response.json();
                 
                 const notesList = document.getElementById('notesList');
@@ -1093,7 +1093,7 @@
         
         async function loadMessages(complaintId) {
             try {
-                const response = await fetch(`http://localhost:8080/api/comments/complaint/${complaintId}`);
+                const response = await fetch(getApiUrl(`/api/comments/complaint/${complaintId}`));
                 const messages = await response.json();
                 displayMessages(messages);
             } catch (error) {
@@ -1167,7 +1167,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:8080/api/staff/complaint/${currentComplaintId}/status`, {
+                const response = await fetch(getApiUrl(`/api/staff/complaint/${currentComplaintId}/status`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
