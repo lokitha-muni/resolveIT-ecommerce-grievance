@@ -87,7 +87,7 @@
                     return;
                 }
 
-                const response = await fetch(`http://localhost:8080/api/admin/profile/${staff.email}`);
+                const response = await fetch(getApiUrl(`/api/admin/profile/${staff.email}`));
                 
                 if (response.ok) {
                     const profileData = await response.json();
@@ -127,7 +127,7 @@
             };
 
             try {
-                const response = await fetch(`http://localhost:8080/api/admin/profile/${staff.email}`, {
+                const response = await fetch(getApiUrl(`/api/admin/profile/${staff.email}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
