@@ -752,7 +752,7 @@
             document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
 
             try {
-                const data = await fetch(`http://localhost:8080/api/staff/dashboard/${staff.email}`);
+                const data = await fetch(getApiUrl(`/api/staff/dashboard/${staff.email}`));
                 
                 if (data.ok) {
                     const dashboardData = await data.json();
@@ -814,7 +814,7 @@
         async function loadStaffRating(staffEmail) {
             try {
                 // Add cache busting parameter
-                const response = await fetch(`http://localhost:8080/api/staff/ratings/${staffEmail}?t=${Date.now()}`);
+                const response = await fetch(getApiUrl(`/api/staff/ratings/${staffEmail}?t=${Date.now()}`));
                 if (response.ok) {
                     const ratingData = await response.json();
                     console.log('Rating API Response:', ratingData); // Debug log
